@@ -1,0 +1,15 @@
+{
+  "presets": [
+    "babel-preset-es2015"
+  ],
+  "plugins": [
+    "babel-plugin-transform-object-rest-spread",
+    "babel-plugin-transform-es2015-parameters",
+    [
+      "babel-plugin-transform-es2015-classes",
+      {
+        "loose": true
+      }
+    ]
+  ]
+}
