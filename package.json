@@ -1,0 +1,25 @@
+{
+  "name": "swagger-examples-validator",
+  "version": "0.0.0",
+  "description": "Validates embedded examples in Swagger-JSONs",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codekie/swagger-examples-validator.git"
+  },
+  "keywords": [
+    "swagger",
+    "json",
+    "validate",
+    "examples"
+  ],
+  "author": "Josua Amann",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/codekie/swagger-examples-validator/issues"
+  },
+  "homepage": "https://github.com/codekie/swagger-examples-validator#readme"
+}
