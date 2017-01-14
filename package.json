@@ -9,7 +9,8 @@
     "build:webpack": "webpack --bail --progress --profile --config ./webpack/config.babel.js",
     "coverage": "rimraf ./coverage && nyc --reporter=lcov --reporter=text -x \"test/**/*.js\" npm test",
     "test": "npm run build && npm run test:mocha",
-    "test:mocha": "BABEL_DISABLE_CACHE=1 mocha --require \"babel-register\" --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\""
+    "test:mocha": "BABEL_DISABLE_CACHE=1 mocha --require \"babel-register\" --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\"",
+    "release": "standard-version"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,7 @@
     "mocha": "3.2.0",
     "nyc": "10.0.0",
     "rimraf": "2.5.4",
+    "standard-version": "4.0.0",
     "webpack": "1.14.0"
   },
   "dependencies": {
