@@ -1,9 +1,10 @@
-import jsonPath from 'jsonpath-plus';
-import Ajv from 'ajv';
+const
+    jsonPath = require('jsonpath-plus'),
+    Ajv = require('ajv');
 
 // PUBLIC API
 
-export default validateExamples;
+module.exports.default = validateExamples;
 
 // IMPLEMENTATION DETAILS
 

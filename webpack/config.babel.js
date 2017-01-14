@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import webpack from 'webpack';
 import {
     PROJECT_ROOT,
@@ -6,16 +7,28 @@ import {
 } from './constants.babel';
 
 
+const nodeModules = {};
+fs.readdirSync('node_modules')
+    .filter(function(x) {
+        return ['.bin'].indexOf(x) === -1;
+    })
+    .forEach(function(mod) {
+        nodeModules[mod] = 'commonjs ' + mod;
+    });
+
 export default {
     entry: {
         index: `${PROJECT_ROOT}/src/index.js`
     },
-    devtool: 'source-map',
+    target: 'node',
+    devtool: 'sourcemap',
+    externals: nodeModules,
     module: {
         preLoaders: [
             { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'eslint' }
         ],
         loaders: [
+            { test: /\.json$/, loader: 'json-loader' },
             { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'babel-loader',
                 query: {
                     presets: ['es2015'],
