@@ -17,5 +17,6 @@ program
             result = validate(jsonSchema);
         if (result.valid) { return; }
         process.stderr.write(JSON.stringify(result.errors, null, '    '));
+        process.exit(1);
     });
 program.parse(process.argv);
