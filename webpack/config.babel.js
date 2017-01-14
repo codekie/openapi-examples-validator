@@ -14,8 +14,21 @@ export default {
     module: {
         preLoaders: [
             { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'eslint' }
+        ],
+        loaders: [
+            { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'babel-loader',
+                query: {
+                    presets: ['es2015'],
+                    plugins: [
+                        'transform-object-rest-spread',
+                        'transform-es2015-parameters',
+                        ['transform-es2015-classes', {
+                            'loose': true
+                        }]
+                    ]
+                }
+            }
         ]
-
     },
     output: {
         path: `${ PROJECT_ROOT }dist/`,
