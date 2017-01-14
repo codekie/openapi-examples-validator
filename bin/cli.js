@@ -4,7 +4,7 @@ const
     VERSION = require('../package.json').version,
     fs = require('fs'),
     program = require('commander'),
-    validate = require('../src/index').default;
+    validate = require('../dist/index').default;
 
 program
     .version(VERSION)
