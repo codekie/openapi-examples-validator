@@ -33,14 +33,21 @@ export default {
     output: {
         path: `${ PROJECT_ROOT }dist/`,
         filename: '[name].js',
-        chunkFilename: '[name].js'
+        chunkFilename: '[name].js',
+        libraryTarget: 'commonjs2'
     },
     plugins: [
         // Only emit files when there are no errors
         new webpack.NoErrorsPlugin(),
-        // Dedupe modules in the output
-        new webpack.optimize.DedupePlugin(),
         // Minify all javascript, switch loaders to minimizing mode
-        new webpack.optimize.UglifyJsPlugin()
-    ]
+        new webpack.optimize.UglifyJsPlugin(),
+        // Dedupe modules in the output
+        new webpack.optimize.DedupePlugin()
+    ],
+    // NodeJS options
+    node: {
+        console: true,
+        __dirname: false,
+        __filename: false,
+    }
 };

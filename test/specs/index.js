@@ -1,5 +1,6 @@
-import { loadTestData } from '../util/setup-tests';
-import validate from '../../src/index';
+const
+    { loadTestData } = require('../util/setup-tests'),
+    validate = require('../../dist/index').default;
 
 describe('Should', () => {
     describe('recognize', () => {
