@@ -1,6 +1,10 @@
 const
-    { loadTestData } = require('../util/setup-tests'),
-    validate = require('../../dist/index').default;
+    {
+        loadTestData,
+        getPathOfTestData
+    } = require('../util/setup-tests'),
+    validate = require('../../src/index').default,
+    { validateFile } = require('../../src/index');
 
 describe('Should', () => {
     describe('recognize', () => {
@@ -57,6 +61,25 @@ describe('Should', () => {
                         schemaPath: '#/properties/versions/items/properties/id/type'
                     }
                 ]
+            });
+        });
+    });
+    describe('be able to validate file', () => {
+        it('without errors', () => {
+            validateFile(getPathOfTestData('valid-single-example')).should.deep.equal({ valid: true });
+        });
+        it('with error', () => {
+            validateFile(getPathOfTestData('invalid-type')).should.deep.equal({
+                valid: false,
+                errors: [{
+                    dataPath: '.versions[0].id',
+                    keyword: 'type',
+                    message: 'should be string',
+                    params: {
+                        type: 'string'
+                    },
+                    schemaPath: '#/properties/versions/items/properties/id/type'
+                }]
             });
         });
     });
