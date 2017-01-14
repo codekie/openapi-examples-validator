@@ -1,6 +1,6 @@
 const
     { loadTestData } = require('../util/setup-tests'),
-    validate = require('../../dist/index').default;
+    validate = require('../../src/index').default;
 
 describe('Should', () => {
     describe('recognize', () => {

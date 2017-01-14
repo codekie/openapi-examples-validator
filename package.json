@@ -4,7 +4,7 @@
   "description": "Validates embedded examples in Swagger-JSONs",
   "main": "dist/index.js",
   "bin": {
-    "validate-swagger-examples": "bin/cli.js"
+    "validate-swagger-examples": "dist/cli.js"
   },
   "scripts": {
     "build": "npm run build:clean && npm run build:webpack",

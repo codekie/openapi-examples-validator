@@ -1,10 +1,11 @@
-#!/usr/bin/env node --harmony
+// Shebang will be added by webpack
+//#!/usr/bin/env node --harmony
 
 const
     VERSION = require('../package.json').version,
     fs = require('fs'),
     program = require('commander'),
-    validate = require('../dist/index').default;
+    validate = require('./index').default;
 
 program
     .version(VERSION)

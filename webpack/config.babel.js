@@ -6,23 +6,11 @@ import {
     EXCLUDE_REGEX
 } from './constants.babel';
 
+// CONSTANTS
 
-const nodeModules = {};
-fs.readdirSync('node_modules')
-    .filter(function(x) {
-        return ['.bin'].indexOf(x) === -1;
-    })
-    .forEach(function(mod) {
-        nodeModules[mod] = 'commonjs ' + mod;
-    });
-
-export default {
-    entry: {
-        index: `${PROJECT_ROOT}/src/index.js`
-    },
+const BASE_CONFIG = {
     target: 'node',
     devtool: 'sourcemap',
-    externals: nodeModules,
     module: {
         preLoaders: [
             { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'eslint' }
@@ -44,7 +32,7 @@ export default {
         ]
     },
     output: {
-        path: `${ PROJECT_ROOT }dist/`,
+        path: 'dist/',
         filename: '[name].js',
         chunkFilename: '[name].js',
         libraryTarget: 'commonjs2'
@@ -61,6 +49,59 @@ export default {
     node: {
         console: true,
         __dirname: false,
-        __filename: false,
+        __filename: false
     }
 };
+
+// PUBLIC API
+
+export default _createConfig();
+
+// IMPLEMENTATION DETAILS
+
+
+// Private
+
+function _createConfig() {
+    return [
+        // Module
+        _createSingleConfig({
+            entry: {
+                index: `${PROJECT_ROOT}/src/index.js`
+            }
+        }),
+        // CLI
+        _createSingleConfig({
+            entry: {
+                cli: `${PROJECT_ROOT}/src/cli.js`
+            },
+            plugins: [
+                new webpack.BannerPlugin('#!/usr/bin/env node', { raw: true })
+            ]
+        })
+    ];
+}
+
+function _createSingleConfig(params) {
+    const config = Object.assign({}, BASE_CONFIG, {
+        entry: params.entry,
+        externals: _getExternals()
+    });
+    if (params.plugins) { config.plugins = config.plugins.concat(...params.plugins); }
+    return config;
+}
+
+function _getExternals() {
+    const nodeModules = {};
+    fs.readdirSync('node_modules')
+        // Exclude the `.bin`-directory
+        .filter(function(dirName) {
+            return ['.bin'].indexOf(dirName) === -1;
+        })
+        // Include all other `node_modules`
+        .forEach(function(mod) {
+            nodeModules[mod] = 'commonjs ' + mod;
+        });
+    return nodeModules;
+}
+
