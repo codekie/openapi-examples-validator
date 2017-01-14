@@ -1,10 +1,14 @@
 const
+    fs = require('fs'),
     jsonPath = require('jsonpath-plus'),
     Ajv = require('ajv');
 
 // PUBLIC API
 
-module.exports.default = validateExamples;
+export default validateExamples;
+export {
+    validateFile
+};
 
 // IMPLEMENTATION DETAILS
 
@@ -18,6 +22,11 @@ const
 function validateExamples(jsonSchema) {
     const pathsExamples = _extractExamplePaths(jsonSchema);
     return _validateExamplesPaths(pathsExamples, jsonSchema);
+}
+
+function validateFile(filePath) {
+    const jsonSchema = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    return validateExamples(jsonSchema);
 }
 
 // Private

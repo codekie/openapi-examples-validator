@@ -3,20 +3,23 @@
 
 const
     VERSION = require('../package.json').version,
-    fs = require('fs'),
     program = require('commander'),
-    validate = require('./index').default;
+    { validateFile } = require('./index');
+
+// DEFINE CLI
 
 program
     .version(VERSION)
     .arguments('<filePath>')
     .description('Validate embedded examples in Swagger-JSONs')
-    .action(filePath => {
-        const
-            jsonSchema = JSON.parse(fs.readFileSync(filePath, 'utf-8')),
-            result = validate(jsonSchema);
-        if (result.valid) { return; }
-        process.stderr.write(JSON.stringify(result.errors, null, '    '));
-        process.exit(1);
-    });
+    .action(filePath => _validateFileAndExit(filePath));
 program.parse(process.argv);
+
+// IMPLEMENTATION DETAILS
+
+function _validateFileAndExit(filePath) {
+    const result = validateFile(filePath);
+    if (result.valid) { process.exit(0); }
+    process.stderr.write(JSON.stringify(result.errors, null, '    '));
+    process.exit(1);
+}
