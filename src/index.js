@@ -41,6 +41,7 @@ function _extractExamplePaths(jsonSchema) {
 
 function _validateExamplesPaths(pathsExamples, jsonSchema) {
     const
+        validator = _createValidator(),
         validationMap = _buildValidationMap(pathsExamples),
         validationResult = {
             valid: true
@@ -49,7 +50,7 @@ function _validateExamplesPaths(pathsExamples, jsonSchema) {
         const
             schema = _getObjectByPath(pathResponseSchema, jsonSchema),
             examples = _getExamples(validationMap[pathResponseSchema], jsonSchema),
-            curErrors = _validateExamples(schema, examples);
+            curErrors = _validateExamples(validator, schema, examples);
         if (!curErrors.length) { return; }
         validationResult.valid = false;
         let errors = validationResult.errors;
@@ -99,19 +100,19 @@ function _buildValidationMap(pathsExamples) {
 
 /**
  * Validates examples against the schema.
+ * @param {Object}          validator   JSON-schema validator
  * @param {Object}          schema      JSON-schema to validate the examples against
  * @param {Array.<Object>}  examples    Examples to validate
  * @returns {Array.<Object>}    Array with errors. Empty array, if examples are valid
  * @private
  */
-function _validateExamples(schema, examples) {
+function _validateExamples(validator, schema, examples) {
     // No schema, no validation
     if (!schema) { return true; }
-    const ajv = new Ajv();
     return examples.reduce((errors, example) => {
-        const valid = ajv.validate(schema, example);
+        const valid = validator.validate(schema, example);
         if (valid) { return errors; }
-        return errors.concat(...ajv.errors);
+        return errors.concat(...validator.errors);
     }, []);
 }
 
@@ -123,4 +124,8 @@ function _getSchemaPathOfExample(pathExample) {
     // Workaround for issue: https://github.com/s3u/JSONPath/issues/78
     pathSegs.length && pathSegs[0] !== '$' && pathSegs.splice(0, 0, '$');
     return jsonPath.toPathString(pathSegs);
+}
+
+function _createValidator() {
+    return new Ajv();
 }
