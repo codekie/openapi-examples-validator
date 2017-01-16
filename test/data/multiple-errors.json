@@ -33,7 +33,7 @@
                     {
                       "status": "EXPERIMENTAL",
                       "updated": "2013-07-23T11:33:21Z",
-                      "id": "v3.0",
+                      "id": 3,
                       "links": [
                         {
                           "href": "http://127.0.0.1:8774/v3/",

@@ -43,22 +43,31 @@ describe('Should', () => {
                 valid: false,
                 errors: [
                     {
-                        dataPath: '.versions[0]',
-                        keyword: 'required',
-                        message: "should have required property 'links'",
-                        params: {
-                            missingProperty: 'links'
-                        },
-                        schemaPath: '#/properties/versions/items/required'
-                    },
-                    {
-                        dataPath: '.versions[0].id',
                         keyword: 'type',
-                        message: 'should be string',
+                        dataPath: '.versions[0].id',
+                        schemaPath: '#/properties/versions/items/properties/id/type',
                         params: {
                             type: 'string'
                         },
-                        schemaPath: '#/properties/versions/items/properties/id/type'
+                        message: 'should be string'
+                    },
+                    {
+                        keyword: 'required',
+                        dataPath: '.versions[0]',
+                        schemaPath: '#/properties/versions/items/required',
+                        params: {
+                            missingProperty: 'links'
+                        },
+                        message: "should have required property 'links'"
+                    },
+                    {
+                        keyword: 'type',
+                        dataPath: '.versions[1].id',
+                        schemaPath: '#/properties/versions/items/properties/id/type',
+                        params: {
+                            type: 'string'
+                        },
+                        message: 'should be string'
                     }
                 ]
             });

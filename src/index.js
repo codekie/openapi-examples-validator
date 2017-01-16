@@ -127,5 +127,7 @@ function _getSchemaPathOfExample(pathExample) {
 }
 
 function _createValidator() {
-    return new Ajv();
+    return new Ajv({
+        allErrors: true
+    });
 }
