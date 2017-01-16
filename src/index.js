@@ -43,14 +43,18 @@ function _validateExamplesPaths(pathsExamples, jsonSchema) {
     const
         validator = _createValidator(),
         validationMap = _buildValidationMap(pathsExamples),
+        schemaPaths = Object.keys(validationMap),
+        statistics = _initStatistics({ schemaPaths }),
         validationResult = {
-            valid: true
+            valid: true,
+            statistics
         };
-    Object.keys(validationMap).forEach(pathResponseSchema => {
+    schemaPaths.forEach(pathResponseSchema => {
         const
             schema = _getObjectByPath(pathResponseSchema, jsonSchema),
             examples = _getExamples(validationMap[pathResponseSchema], jsonSchema),
-            curErrors = _validateExamples(validator, schema, examples);
+            curErrors = _validateExamples({ validator, schema, examples, statistics });
+        statistics.responseExamplesTotal += examples.length;
         if (!curErrors.length) { return; }
         validationResult.valid = false;
         let errors = validationResult.errors;
@@ -61,6 +65,14 @@ function _validateExamplesPaths(pathsExamples, jsonSchema) {
         validationResult.errors.splice(errors.length - 1, 0, ...curErrors);
     });
     return validationResult;
+}
+
+function _initStatistics({ schemaPaths }) {
+    return {
+        responseSchemasWithExamples: schemaPaths.length,
+        responseExamplesTotal: 0,
+        responseExamplesWithoutSchema: 0
+    };
 }
 
 function _getObjectByPath(path, schema) {
@@ -103,17 +115,24 @@ function _buildValidationMap(pathsExamples) {
  * @param {Object}          validator   JSON-schema validator
  * @param {Object}          schema      JSON-schema to validate the examples against
  * @param {Array.<Object>}  examples    Examples to validate
+ * @param {Object}          statistics  Object to contain statistics metrics
  * @returns {Array.<Object>}    Array with errors. Empty array, if examples are valid
  * @private
  */
-function _validateExamples(validator, schema, examples) {
+function _validateExamples({ validator, schema, examples, statistics }) {
+    const errors = [];
     // No schema, no validation
-    if (!schema) { return true; }
+    if (!schema) {
+        // Examples without schema are considered valid
+        statistics.responseSchemasWithExamples--;
+        statistics.responseExamplesWithoutSchema++;
+        return errors;
+    }
     return examples.reduce((errors, example) => {
         const valid = validator.validate(schema, example);
         if (valid) { return errors; }
         return errors.concat(...validator.errors);
-    }, []);
+    }, errors);
 }
 
 function _getSchemaPathOfExample(pathExample) {

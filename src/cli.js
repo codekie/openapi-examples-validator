@@ -19,7 +19,21 @@ program.parse(process.argv);
 
 function _validateFileAndExit(filePath) {
     const result = validateFile(filePath);
-    if (result.valid) { process.exit(0); }
+    _printStatistics(result.statistics);
+    if (result.valid) {
+        process.stdout.write('\nNo errors found.\n\n');
+        process.exit(0);
+    }
+    process.stdout.write('\nErrors found.\n\n');
     process.stderr.write(JSON.stringify(result.errors, null, '    '));
     process.exit(1);
+}
+
+function _printStatistics(statistics) {
+    const strStatistics = [
+        `Response schemas with examples found: ${ statistics.responseSchemasWithExamples }`,
+        `Response examples without schema found: ${ statistics.responseExamplesWithoutSchema }`,
+        `Total examples found: ${ statistics.responseExamplesTotal }`
+    ].join('\n');
+    process.stdout.write(`${ strStatistics }\n`);
 }
