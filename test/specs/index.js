@@ -6,7 +6,7 @@ const
     validate = require('../../src/index').default,
     { validateFile } = require('../../src/index');
 
-describe('Should', () => {
+describe('Main-module should', () => {
     describe('recognize', () => {
         it('valid single example', () => {
             validate(loadTestData('valid-single-example')).valid.should.equal(true);
