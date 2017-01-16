@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.3.2"></a>
+## [0.3.2](https://github.com/codekie/swagger-examples-validator/compare/v0.3.1...v0.3.2) (2017-01-16)
+
+
+### Reverts
+
+* fix: shrinkwrap dependencies ([4f31e08](https://github.com/codekie/swagger-examples-validator/commit/4f31e08))
+
+
+
 <a name="0.3.1"></a>
 ## [0.3.1](https://github.com/codekie/swagger-examples-validator/compare/v0.3.0...v0.3.1) (2017-01-16)
 
