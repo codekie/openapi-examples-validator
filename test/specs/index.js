@@ -34,7 +34,8 @@ describe('Main-module should', () => {
                 params: {
                     type: 'string'
                 },
-                schemaPath: '#/properties/versions/items/properties/id/type'
+                schemaPath: '#/properties/versions/items/properties/id/type',
+                examplePath: '/~1/get/responses/200/examples/application~1json'
             }]);
         });
         it('multiple errors', () => {
@@ -48,7 +49,8 @@ describe('Main-module should', () => {
                     params: {
                         type: 'string'
                     },
-                    message: 'should be string'
+                    message: 'should be string',
+                    examplePath: '/paths/~1/get/responses/200/examples/application~1json/0'
                 },
                 {
                     keyword: 'required',
@@ -57,7 +59,8 @@ describe('Main-module should', () => {
                     params: {
                         missingProperty: 'links'
                     },
-                    message: "should have required property 'links'"
+                    message: "should have required property 'links'",
+                    examplePath: '/~1/get/responses/300/examples/application~1json'
                 },
                 {
                     keyword: 'type',
@@ -66,7 +69,8 @@ describe('Main-module should', () => {
                     params: {
                         type: 'string'
                     },
-                    message: 'should be string'
+                    message: 'should be string',
+                    examplePath: '/paths/~1/get/responses/200/examples/application~1json/0'
                 }
             ]);
         });
@@ -85,7 +89,8 @@ describe('Main-module should', () => {
                 params: {
                     type: 'string'
                 },
-                schemaPath: '#/properties/versions/items/properties/id/type'
+                schemaPath: '#/properties/versions/items/properties/id/type',
+                examplePath: '/~1/get/responses/200/examples/application~1json'
             }]);
         });
     });

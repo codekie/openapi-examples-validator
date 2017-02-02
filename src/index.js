@@ -51,10 +51,9 @@ function _validateExamplesPaths(pathsExamples, jsonSchema) {
         };
     schemaPaths.forEach(pathResponseSchema => {
         const
-            schema = _getObjectByPath(pathResponseSchema, jsonSchema),
-            examples = _getExamples(validationMap[pathResponseSchema], jsonSchema),
-            curErrors = _validateExamples({ validator, schema, examples, statistics });
-        statistics.responseExamplesTotal += examples.length;
+            pathsExamplesForSchema = validationMap[pathResponseSchema],
+            curErrors = _validateExamples({ validator, jsonSchema, pathResponseSchema,
+                pathsExamples: pathsExamplesForSchema, statistics });
         if (!curErrors.length) { return; }
         validationResult.valid = false;
         let errors = validationResult.errors;
@@ -112,15 +111,20 @@ function _buildValidationMap(pathsExamples) {
 
 /**
  * Validates examples against the schema.
- * @param {Object}          validator   JSON-schema validator
- * @param {Object}          schema      JSON-schema to validate the examples against
- * @param {Array.<Object>}  examples    Examples to validate
- * @param {Object}          statistics  Object to contain statistics metrics
+ * @param {Object}          validator           JSON-schema validator
+ * @param {Object}          jsonSchema          Swagger-JSON
+ * @param {String}          pathResponseSchema  Path to the schema of the response
+ * @param {Array.<String>}  pathsExamples       Examples to validate
+ * @param {Object}          statistics          Object to contain statistics metrics
  * @returns {Array.<Object>}    Array with errors. Empty array, if examples are valid
  * @private
  */
-function _validateExamples({ validator, schema, examples, statistics }) {
-    const errors = [];
+function _validateExamples({ validator, jsonSchema, pathResponseSchema, pathsExamples, statistics }) {
+    const
+        errors = [],
+        schema = _getObjectByPath(pathResponseSchema, jsonSchema),
+        examples = _getExamples(pathsExamples, jsonSchema);
+    statistics.responseExamplesTotal += examples.length;
     // No schema, no validation
     if (!schema) {
         // Examples without schema are considered valid
@@ -128,10 +132,16 @@ function _validateExamples({ validator, schema, examples, statistics }) {
         statistics.responseExamplesWithoutSchema++;
         return errors;
     }
-    return examples.reduce((errors, example) => {
+    return examples.reduce((errors, example, idxExample) => {
         const valid = validator.validate(schema, example);
         if (valid) { return errors; }
-        return errors.concat(...validator.errors);
+        return errors.concat(...validator.errors.map((error) => {
+            // Add example-index to path, if necessary
+            const pathExample = pathsExamples + (examples.length > 1 ? `[${ idxExample }]` : '');
+            // Convert path-array to JSON-pointer
+            error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));
+            return error;
+        }));
     }, errors);
 }
 

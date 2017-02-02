@@ -27,7 +27,7 @@ Options:
 ````
 
 The validator will search the Swagger-JSON for response-examples and
-validate them against it's schema.
+validate them against its schema.
 
 Errors will be written to `stderr`.
 
@@ -42,7 +42,8 @@ Sample output of validation errors:
         "params": {
             "type": "string"
         },
-        "message": "should be string"
+        "message": "should be string",
+        "examplePath": "/~1/get/responses/200/examples/application~1json"
     }
 ]
 ```
