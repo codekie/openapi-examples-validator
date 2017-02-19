@@ -7,7 +7,8 @@ node_js:
   - "node"
 
 script:
-  - npm run coverage
+  - npm run test
 
-after_succss:
+after_success:
+  - npm run coverage
   - npm run coveralls
