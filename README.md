@@ -3,6 +3,7 @@ swagger-examples-validator
 
 Validates embedded examples in Swagger-specs (only JSON supported, yet)
 
+[![npm version](https://badge.fury.io/js/swagger-examples-validator.svg)](https://badge.fury.io/js/swagger-examples-validator)
 [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
 [![Build Status](https://travis-ci.org/codekie/swagger-examples-validator.svg?branch=master)](https://travis-ci.org/codekie/swagger-examples-validator)
 [![Coverage Status](https://coveralls.io/repos/github/codekie/swagger-examples-validator/badge.svg?branch=master)](https://coveralls.io/github/codekie/swagger-examples-validator?branch=master)
