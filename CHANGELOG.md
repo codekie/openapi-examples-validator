@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.5.1"></a>
+## [0.5.1](https://github.com/codekie/swagger-examples-validator/compare/v0.5.0...v0.5.1) (2017-02-19)
+
+
+### Bug Fixes
+
+* coveralls - add `coverage`-task in `after_success` as well ([64145c1](https://github.com/codekie/swagger-examples-validator/commit/64145c1))
+
+
+
 <a name="0.5.0"></a>
 # [0.5.0](https://github.com/codekie/swagger-examples-validator/compare/v0.4.0...v0.5.0) (2017-02-19)
 
