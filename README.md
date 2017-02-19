@@ -4,6 +4,7 @@ swagger-examples-validator
 Validates embedded examples in Swagger-specs (only JSON supported, yet)
 
 [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
+[![Build Status](https://travis-ci.org/codekie/swagger-examples-validator.svg?branch=master)](https://travis-ci.org/codekie/swagger-examples-validator)
 
 Install
 -------
