@@ -150,8 +150,6 @@ function _getSchemaPathOfExample(pathExample) {
         pathSegs = jsonPath.toPathArray(pathExample).slice(),
         idxExamples = pathSegs.lastIndexOf(PROP__EXAMPLES);
     pathSegs.splice(idxExamples, pathSegs.length - idxExamples, PROP__SCHEMA);
-    // Workaround for issue: https://github.com/s3u/JSONPath/issues/78
-    pathSegs.length && pathSegs[0] !== '$' && pathSegs.splice(0, 0, '$');
     return jsonPath.toPathString(pathSegs);
 }
 

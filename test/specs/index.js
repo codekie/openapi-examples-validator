@@ -35,7 +35,7 @@ describe('Main-module should', () => {
                     type: 'string'
                 },
                 schemaPath: '#/properties/versions/items/properties/id/type',
-                examplePath: '/~1/get/responses/200/examples/application~1json'
+                examplePath: '/paths/~1/get/responses/200/examples/application~1json'
             }]);
         });
         it('multiple errors', () => {
@@ -60,7 +60,7 @@ describe('Main-module should', () => {
                         missingProperty: 'links'
                     },
                     message: "should have required property 'links'",
-                    examplePath: '/~1/get/responses/300/examples/application~1json'
+                    examplePath: '/paths/~1/get/responses/300/examples/application~1json'
                 },
                 {
                     keyword: 'type',
@@ -90,7 +90,7 @@ describe('Main-module should', () => {
                     type: 'string'
                 },
                 schemaPath: '#/properties/versions/items/properties/id/type',
-                examplePath: '/~1/get/responses/200/examples/application~1json'
+                examplePath: '/paths/~1/get/responses/200/examples/application~1json'
             }]);
         });
     });

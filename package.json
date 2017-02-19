@@ -60,6 +60,6 @@
   "dependencies": {
     "ajv": "4.10.4",
     "commander": "2.9.0",
-    "jsonpath-plus": "0.15.0"
+    "jsonpath-plus": "0.16.0"
   }
 }
