@@ -1,5 +1,7 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import webpack from 'webpack';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import {
     PROJECT_ROOT,
     JS_REGEX,
@@ -12,10 +14,15 @@ const BASE_CONFIG = {
     target: 'node',
     devtool: 'sourcemap',
     module: {
-        preLoaders: [
-            { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'eslint' }
-        ],
-        loaders: [
+        rules: [
+            // Preloaders
+            {
+                enforce: 'pre',
+                test: JS_REGEX,
+                exclude: EXCLUDE_REGEX,
+                loader: 'eslint-loader'
+            },
+            // Regular loaders
             { test: /\.json$/, loader: 'json-loader' },
             { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'babel-loader',
                 query: {
@@ -32,18 +39,16 @@ const BASE_CONFIG = {
         ]
     },
     output: {
-        path: 'dist/',
+        path: path.resolve(PROJECT_ROOT, 'dist'),
         filename: '[name].js',
         chunkFilename: '[name].js',
         libraryTarget: 'commonjs2'
     },
     plugins: [
         // Only emit files when there are no errors
-        new webpack.NoErrorsPlugin(),
+        new webpack.NoEmitOnErrorsPlugin(),
         // Minify all javascript, switch loaders to minimizing mode
-        new webpack.optimize.UglifyJsPlugin(),
-        // Dedupe modules in the output
-        new webpack.optimize.DedupePlugin()
+        new UglifyJsPlugin()
     ],
     // NodeJS options
     node: {
@@ -76,7 +81,7 @@ function _createConfig() {
                 cli: `${PROJECT_ROOT}/src/cli.js`
             },
             plugins: [
-                new webpack.BannerPlugin('#!/usr/bin/env node', { raw: true })
+                new webpack.BannerPlugin({ banner: '#!/usr/bin/env node', raw: true })
             ]
         })
     ];
