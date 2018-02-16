@@ -14,55 +14,38 @@
         ],
         "responses": {
           "200": {
-            "description": "200 300 response",
+            "description": "200 response",
             "examples": {
-              "application/json": [
-                {
-                  "versions": [
-                    {
-                      "status": "CURRENT",
-                      "updated": "2011-01-21T11:33:21Z",
-                      "id": "v2.0",
-                      "links": [
-                        {
-                          "href": "http://127.0.0.1:8774/v2/",
-                          "rel": "self"
-                        }
-                      ]
-                    },
-                    {
-                      "status": "EXPERIMENTAL",
-                      "updated": "2013-07-23T11:33:21Z",
-                      "id": "v3.0",
-                      "links": [
-                        {
-                          "href": "http://127.0.0.1:8774/v3/",
-                          "rel": "self"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "versions": [
-                    {
-                      "status": "CURRENT",
-                      "updated": "2016-01-21T11:33:21Z",
-                      "id": "v1.0",
-                      "links": [
-                        {
-                          "href": "http://127.0.0.1:8774/v1/",
-                          "rel": "self"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
+              "application/json": {
+                "versions": [
+                  {
+                    "status": "CURRENT",
+                    "updated": "2011-01-21T11:33:21Z",
+                    "id": "v2.0",
+                    "links": [
+                      {
+                        "href": "http://127.0.0.1:8774/v2/",
+                        "rel": "self"
+                      }
+                    ]
+                  },
+                  {
+                    "status": "EXPERIMENTAL",
+                    "updated": "2013-07-23T11:33:21Z",
+                    "id": "v3.0",
+                    "links": [
+                      {
+                        "href": "http://127.0.0.1:8774/v3/",
+                        "rel": "self"
+                      }
+                    ]
+                  }
+                ]
+              }
             }
           },
           "300": {
-            "description": "200 300 response",
+            "description": "300 response",
             "examples": {
               "application/json": {
                 "versions": [

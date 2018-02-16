@@ -14,7 +14,7 @@
         ],
         "responses": {
           "200": {
-            "description": "200 300 response",
+            "description": "200 response",
             "examples": {
               "application/json": {
                 "versions": [

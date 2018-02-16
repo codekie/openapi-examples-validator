@@ -1,0 +1,86 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Simple API overview",
+    "version": "v2"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "listVersionsv2",
+        "summary": "List API versions",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "examples": {
+              "application/json": [
+                {
+                  "status": "CURRENT",
+                  "updated": "2011-01-21T11:33:21Z",
+                  "links": [
+                    {
+                      "href": "http://127.0.0.1:8774/v2/",
+                      "rel": "self"
+                    }
+                  ]
+                },
+                {
+                  "status": "EXPERIMENTAL",
+                  "updated": "2013-07-23T11:33:21Z",
+                  "id": "v3.0",
+                  "links": "http://127.0.0.1:8774/v3/"
+                }
+              ]
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "status",
+                  "id",
+                  "links"
+                ],
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  },
+                  "updated": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "links": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "href",
+                        "rel"
+                      ],
+                      "properties": {
+                        "href": {
+                          "type": "string"
+                        },
+                        "rel": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "consumes": [
+    "application/json"
+  ]
+}

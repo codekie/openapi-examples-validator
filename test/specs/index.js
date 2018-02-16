@@ -11,8 +11,11 @@ describe('Main-module should', () => {
         it('valid single example', () => {
             validate(loadTestData('valid-single-example')).valid.should.equal(true);
         });
-        it('valid multiple exmpales', () => {
+        it('valid multiple examples', () => {
             validate(loadTestData('valid-multiple-examples')).valid.should.equal(true);
+        });
+        it('valid array-example', () => {
+            validate(loadTestData('valid-array-response')).valid.should.equal(true);
         });
     });
     describe('ignore', () => {
@@ -50,7 +53,7 @@ describe('Main-module should', () => {
                         type: 'string'
                     },
                     message: 'should be string',
-                    examplePath: '/paths/~1/get/responses/200/examples/application~1json/0'
+                    examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                 },
                 {
                     keyword: 'required',
@@ -70,9 +73,37 @@ describe('Main-module should', () => {
                         type: 'string'
                     },
                     message: 'should be string',
-                    examplePath: '/paths/~1/get/responses/200/examples/application~1json/0'
+                    examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                 }
             ]);
+        });
+        describe('In array-response:', () => {
+            it('multiple errors', () => {
+                const result = validate(loadTestData('invalid-array-response'));
+                result.valid.should.equal(false);
+                result.errors.should.deep.equal([
+                    {
+                        keyword: 'required',
+                        dataPath: '[0]',
+                        schemaPath: '#/items/required',
+                        params: {
+                            missingProperty: 'id'
+                        },
+                        message: "should have required property 'id'",
+                        examplePath: '/paths/~1/get/responses/200/examples/application~1json'
+                    },
+                    {
+                        keyword: 'type',
+                        dataPath: '[1].links',
+                        schemaPath: '#/items/properties/links/type',
+                        params: {
+                            type: 'array'
+                        },
+                        message: 'should be array',
+                        examplePath: '/paths/~1/get/responses/200/examples/application~1json'
+                    }
+                ]);
+            });
         });
     });
     describe('be able to validate file', () => {
@@ -100,7 +131,7 @@ describe('Main-module should', () => {
                 .equal({
                     responseSchemasWithExamples: 1,
                     responseExamplesWithoutSchema: 3,
-                    responseExamplesTotal: 5
+                    responseExamplesTotal: 4
                 });
         });
     });
