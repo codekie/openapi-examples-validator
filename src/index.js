@@ -83,22 +83,23 @@ function _getObjectByPath(path, schema) {
 }
 
 /**
- * Builds a map with the path to the repsonse-schema as key and the paths to the examples, as value
+ * Builds a map with the path to the repsonse-schema as key and the paths to the examples, as value. The path of the
+ * schema is derived from the path to the example and doesn't necessarily mean that the schema actually exists.
  * @param {Array.<String>}  pathsExamples   Paths to the examples
  * @returns {Object.<String, Array.<String>>}   Map with schema-path as key and example-paths as value
  * @private
  */
 function _buildValidationMap(pathsExamples) {
     return pathsExamples.reduce((validationMap, pathExample) => {
-        const
-            pathSchema = _getSchemaPathOfExample(pathExample);
+        const pathSchema = _getSchemaPathOfExample(pathExample);
         validationMap[pathSchema] = pathExample;
         return validationMap;
     }, {});
 }
 
 /**
- * Validates example against the schema.
+ * Validates example against the schema. The precondition for this function to work is that the example exists at the
+ * given path.
  * @param {Object}          validator           JSON-schema validator
  * @param {Object}          jsonSchema          Swagger-JSON
  * @param {String}          pathResponseSchema  Path to the schema of the response
@@ -112,15 +113,14 @@ function _validateExample({ validator, jsonSchema, pathResponseSchema, pathExamp
         errors = [],
         schema = _getObjectByPath(pathResponseSchema, jsonSchema),
         example = _getObjectByPath(pathExample, jsonSchema);
-    if (example) { statistics.responseExamplesTotal++; }
-    // No schema, no validation
+    statistics.responseExamplesTotal++;
+    // No schema, no validation (Examples without schema are considered valid)
     if (!schema) {
-        // Examples without schema are considered valid
         statistics.responseSchemasWithExamples--;
         statistics.responseExamplesWithoutSchema++;
         return errors;
     }
-    if (!example || validator.validate(schema, example)) { return errors; }
+    if (validator.validate(schema, example)) { return errors; }
     return errors.concat(...validator.errors.map((error) => {
         // Convert path-array to JSON-pointer
         error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));

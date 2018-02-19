@@ -134,5 +134,21 @@ describe('Main-module should', () => {
                     responseExamplesTotal: 4
                 });
         });
+        it('without examples', () => {
+            validateFile(getPathOfTestData('valid-without-examples')).statistics.should.deep
+                .equal({
+                    responseSchemasWithExamples: 1,
+                    responseExamplesWithoutSchema: 0,
+                    responseExamplesTotal: 1
+                });
+        });
+        it('without schema', () => {
+            validateFile(getPathOfTestData('valid-without-schema')).statistics.should.deep
+                .equal({
+                    responseSchemasWithExamples: 1,
+                    responseExamplesWithoutSchema: 1,
+                    responseExamplesTotal: 2
+                });
+        });
     });
 });
