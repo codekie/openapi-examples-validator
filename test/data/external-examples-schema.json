@@ -63,6 +63,57 @@
                 }
               }
             }
+          },
+          "300": {
+            "description": "300 response",
+            "schema": {
+              "type": "object",
+              "required": [
+                "versions"
+              ],
+              "properties": {
+                "versions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "status",
+                      "id",
+                      "links"
+                    ],
+                    "properties": {
+                      "status": {
+                        "type": "string"
+                      },
+                      "updated": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "links": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "href",
+                            "rel"
+                          ],
+                          "properties": {
+                            "href": {
+                              "type": "string"
+                            },
+                            "rel": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

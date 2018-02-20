@@ -61,6 +61,7 @@
   "dependencies": {
     "ajv": "^6.1.1",
     "commander": "^2.14.1",
-    "jsonpath-plus": "0.16.0"
+    "jsonpath-plus": "0.16.0",
+    "lodash": "4.17.5"
   }
 }

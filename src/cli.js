@@ -4,17 +4,20 @@
 const
     VERSION = require('../package.json').version,
     program = require('commander'),
-    { validateFile, validateExample } = require('./index');
+    { validateFile, validateExample, validateExamplesByMap } = require('./index');
 
 // DEFINE CLI
 
 program
     .version(VERSION)
-    .arguments('<filePath>')
-    .description('Validate embedded examples in Swagger-JSONs.\nTo validate external examples, use the `-s` and'
-        + ' `-e` option.')
-    .option('-s, --schema-path <json-path>', 'JSON-path to schema, to validate the example file against')
-    .option('-e, --example-filepath <file-path>', 'file path to example file, to be validated')
+    .arguments('<filepath>')
+    .description('Validate embedded examples in Swagger-JSONs.\n'
+        + '  To validate external examples, use the `-s` and `-e` option.\n'
+        + '  To pass a mapping-file, to validate multiple external examples, use the `-m` option.')
+    .option('-s, --schema-jsonpath <schema-jsonpath>', 'JSON-path to schema, to validate the example file against')
+    .option('-e, --example-filepath <example-filepath>', 'file path to example file, to be validated')
+    .option('-m, --map-filepath <map-filepath>', 'file path to map, containing schema-paths as key and the'
+        + ' file-path(s) to examples as value')
     .action(processAction);
 program.on('--help', () => {
     console.log('\n\n  Example for external example-file:\n');
@@ -25,13 +28,18 @@ program.parse(process.argv);
 
 // IMPLEMENTATION DETAILS
 
-function processAction(filePath, options) {
-    const { schemaPath, exampleFilepath } = options;
+function processAction(filepath, options) {
+    const { schemaJsonpath, exampleFilepath, mapFilepath } = options;
     let result = null;
-    if (schemaPath && exampleFilepath) {
-        result = validateExample(filePath, schemaPath, exampleFilepath);
+    if (mapFilepath) {
+        console.log('Validating with mapping file');
+        result = validateExamplesByMap(filepath, mapFilepath);
+    } else if (schemaJsonpath && exampleFilepath) {
+        console.log('Validating single external example');
+        result = validateExample(filepath, schemaJsonpath, exampleFilepath);
     } else {
-        result = validateFile(filePath);
+        console.log('Validating examples');
+        result = validateFile(filepath);
     }
     _handleResult(result);
 }

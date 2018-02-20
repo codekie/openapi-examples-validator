@@ -4,12 +4,13 @@ const path = require('path'),
         getPathOfTestData
     } = require('../util/setup-tests'),
     validate = require('../../src/index').default,
-    { validateFile, validateExample } = require('../../src/index');
+    { validateFile, validateExample, validateExamplesByMap } = require('../../src/index');
 
 const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA = path.join(__dirname, '..', 'data', 'external-examples-schema.json'),
     FILE_PATH__EXTERNAL_EXAMPLE1_VALID = path.join(__dirname, '..', 'data', 'external-examples-valid-example1.json'),
     FILE_PATH__EXTERNAL_EXAMPLE2_VALID = path.join(__dirname, '..', 'data', 'external-examples-valid-example2.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_MAP = path.join(__dirname, '..', 'data', 'map-external-examples.json'),
     FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE = path.join(__dirname, '..', 'data',
         'external-examples-invalid-type.json');
 
@@ -181,6 +182,31 @@ describe('Main-module should', () => {
                     exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE
                 }]);
             });
+        });
+        it('with an example-map', () => {
+            const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, FILE_PATH__EXTERNAL_EXAMPLES_MAP);
+            result.valid.should.equal(false);
+            result.errors.should.deep.equal([
+                {
+                    dataPath: '.versions[0].id',
+                    keyword: 'type',
+                    message: 'should be string',
+                    params: {
+                        type: 'string'
+                    },
+                    schemaPath: '#/properties/versions/items/properties/id/type',
+                    exampleFilePath: 'test/data/external-examples-invalid-type.json'
+                }, {
+                    dataPath: '.versions[0]',
+                    keyword: 'required',
+                    message: "should have required property 'links'",
+                    params: {
+                        missingProperty: 'links'
+                    },
+                    schemaPath: '#/properties/versions/items/required',
+                    exampleFilePath: 'test/data/external-examples-invalid-missing-link.json'
+                }
+            ]);
         });
     });
 });

@@ -20,16 +20,19 @@ Usage
 -----
 
 ```
-swagger-examples-validator [options] <filePath>
+swagger-examples-validator [options] <filepath>
 
-Validate embedded examples in Swagger-JSONs. To validate external examples, use the `-s` and `-e` option.
+Validate embedded examples in Swagger-JSONs.
+To validate external examples, use the `-s` and `-e` option.
+To pass a mapping-file, to validate multiple external examples, use the `-m` option.
 
 Options:
 
-  -V, --version                       output the version number
-  -s, --schema-path <json-path>       JSON-path to schema, to validate the example file against
-  -e, --example-filepath <file-path>  file path to example file, to be validated
-  -h, --help                          output usage information
+  -V, --version                              output the version number
+  -s, --schema-jsonpath <schema-jsonpath>    JSON-path to schema, to validate the example file against
+  -e, --example-filepath <example-filepath>  file path to example file, to be validated
+  -m, --map-filepath <map-filepath>          file path to map, containing schema-paths as key and the file-path(s) to examples as value
+  -h, --help                                 output usage information
 ````
 
 The validator will search the Swagger-JSON for response-examples and validate them against its schema.
@@ -40,6 +43,19 @@ For example:
 
 ```
 $ swagger-examples-validator -s $.paths./.get.responses.200.schema -e example.json swagger.json
+```
+
+To validate multiple external examples, pass a mapping file with a similar structure along with the `-m` option:
+
+```json
+{
+  "$.paths./.get.responses.200.schema": [
+    "test/data/external-examples-valid-example1.json",
+    "test/data/external-examples-valid-example2.json",
+    "test/data/external-examples-invalid-type.json"
+  ],
+  "$.paths./.get.responses.300.schema": "test/data/external-examples-invalid-missing-link.json"
+}
 ```
 
 Errors will be written to `stderr`.

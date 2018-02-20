@@ -1,4 +1,5 @@
 const
+    _ = require('lodash'),
     fs = require('fs'),
     jsonPath = require('jsonpath-plus'),
     Ajv = require('ajv');
@@ -8,7 +9,8 @@ const
 export default validateExamples;
 export {
     validateFile,
-    validateExample
+    validateExample,
+    validateExamplesByMap
 };
 
 // IMPLEMENTATION DETAILS
@@ -28,6 +30,30 @@ function validateExamples(jsonSchema) {
 function validateFile(filePath) {
     const jsonSchema = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     return validateExamples(jsonSchema);
+}
+
+function validateExamplesByMap(filePathSchema, filePathMapExternalExamples) {
+    const mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8')),
+        statistics = _initStatistics({ schemaPaths: Object.keys(mapExternalExamples) }),
+        errors = _(mapExternalExamples)
+            .entries()
+            .flatMap(([pathResponseSchema, filePathsExample]) => _([filePathsExample])
+                .flatten()
+                .flatMap(filePathExample => _validateExample({
+                    validator: _createValidator(),
+                    jsonSchema: JSON.parse(fs.readFileSync(filePathSchema, 'utf-8')),
+                    pathResponseSchema,
+                    filePathExample,
+                    statistics
+                }))
+                .value()
+            )
+            .value();
+    return {
+        valid: !errors.length,
+        statistics,
+        errors
+    };
 }
 
 function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
