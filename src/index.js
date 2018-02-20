@@ -7,7 +7,8 @@ const
 
 export default validateExamples;
 export {
-    validateFile
+    validateFile,
+    validateExample
 };
 
 // IMPLEMENTATION DETAILS
@@ -27,6 +28,22 @@ function validateExamples(jsonSchema) {
 function validateFile(filePath) {
     const jsonSchema = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     return validateExamples(jsonSchema);
+}
+
+function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
+    const statistics = _initStatistics({ schemaPaths: [pathResponseSchema] }),
+        errors = _validateExample({
+            validator: _createValidator(),
+            jsonSchema: JSON.parse(fs.readFileSync(filePathSchema, 'utf-8')),
+            pathResponseSchema,
+            filePathExample,
+            statistics
+        });
+    return {
+        valid: !errors.length,
+        statistics,
+        errors
+    };
 }
 
 // Private
@@ -86,7 +103,7 @@ function _getObjectByPath(path, schema) {
  * Builds a map with the path to the repsonse-schema as key and the paths to the examples, as value. The path of the
  * schema is derived from the path to the example and doesn't necessarily mean that the schema actually exists.
  * @param {Array.<String>}  pathsExamples   Paths to the examples
- * @returns {Object.<String, Array.<String>>}   Map with schema-path as key and example-paths as value
+ * @returns {Object.<String, String>}       Map with schema-path as key and example-paths as value
  * @private
  */
 function _buildValidationMap(pathsExamples) {
@@ -100,19 +117,24 @@ function _buildValidationMap(pathsExamples) {
 /**
  * Validates example against the schema. The precondition for this function to work is that the example exists at the
  * given path.
+ * `pathExample` and `filePathExample` are exclusively mandatory.
+ * itself
  * @param {Object}          validator           JSON-schema validator
  * @param {Object}          jsonSchema          Swagger-JSON
  * @param {String}          pathResponseSchema  Path to the schema of the response
- * @param {Array.<String>}  pathExample         Example to validate
+ * @param {String}          [pathExample]       JsonPath to the example to validate
+ * @param {Object}          [filePathExample]   The file path to the example-file to be validated
  * @param {Object}          statistics          Object to contain statistics metrics
  * @returns {Array.<Object>}    Array with errors. Empty array, if examples are valid
  * @private
  */
-function _validateExample({ validator, jsonSchema, pathResponseSchema, pathExample, statistics }) {
+function _validateExample({ validator, jsonSchema, pathResponseSchema, pathExample, filePathExample, statistics }) {
     const
         errors = [],
         schema = _getObjectByPath(pathResponseSchema, jsonSchema),
-        example = _getObjectByPath(pathExample, jsonSchema);
+        resolvedExample = filePathExample
+            ? JSON.parse(fs.readFileSync(filePathExample, 'utf-8'))
+            : _getObjectByPath(pathExample, jsonSchema);
     statistics.responseExamplesTotal++;
     // No schema, no validation (Examples without schema are considered valid)
     if (!schema) {
@@ -120,10 +142,14 @@ function _validateExample({ validator, jsonSchema, pathResponseSchema, pathExamp
         statistics.responseExamplesWithoutSchema++;
         return errors;
     }
-    if (validator.validate(schema, example)) { return errors; }
+    if (validator.validate(schema, resolvedExample)) { return errors; }
     return errors.concat(...validator.errors.map((error) => {
         // Convert path-array to JSON-pointer
-        error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));
+        if (pathExample) {
+            error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));
+        } else {
+            error.exampleFilePath = filePathExample;
+        }
         return error;
     }));
 }

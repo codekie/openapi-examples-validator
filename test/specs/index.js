@@ -1,10 +1,17 @@
-const
+const path = require('path'),
     {
         loadTestData,
         getPathOfTestData
     } = require('../util/setup-tests'),
     validate = require('../../src/index').default,
-    { validateFile } = require('../../src/index');
+    { validateFile, validateExample } = require('../../src/index');
+
+const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
+    FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA = path.join(__dirname, '..', 'data', 'external-examples-schema.json'),
+    FILE_PATH__EXTERNAL_EXAMPLE1_VALID = path.join(__dirname, '..', 'data', 'external-examples-valid-example1.json'),
+    FILE_PATH__EXTERNAL_EXAMPLE2_VALID = path.join(__dirname, '..', 'data', 'external-examples-valid-example2.json'),
+    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE = path.join(__dirname, '..', 'data',
+        'external-examples-invalid-type.json');
 
 describe('Main-module should', () => {
     describe('recognize', () => {
@@ -149,6 +156,31 @@ describe('Main-module should', () => {
                     responseExamplesWithoutSchema: 1,
                     responseExamplesTotal: 2
                 });
+        });
+    });
+    describe('should be able to validate external examples', () => {
+        it('without errors', () => {
+            validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
+                FILE_PATH__EXTERNAL_EXAMPLE1_VALID).valid.should.equal(true);
+            validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
+                FILE_PATH__EXTERNAL_EXAMPLE2_VALID).valid.should.equal(true);
+        });
+        describe('with errors', () => {
+            it('(type error)', () => {
+                const result = validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
+                    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE);
+                result.valid.should.equal(false);
+                result.errors.should.deep.equal([{
+                    dataPath: '.versions[0].id',
+                    keyword: 'type',
+                    message: 'should be string',
+                    params: {
+                        type: 'string'
+                    },
+                    schemaPath: '#/properties/versions/items/properties/id/type',
+                    exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE
+                }]);
+            });
         });
     });
 });

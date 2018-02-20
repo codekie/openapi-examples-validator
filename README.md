@@ -22,16 +22,25 @@ Usage
 ```
 swagger-examples-validator [options] <filePath>
 
-Validate embedded examples in Swagger-JSONs
+Validate embedded examples in Swagger-JSONs. To validate external examples, use the `-s` and `-e` option.
 
 Options:
 
-  -h, --help     output usage information
-  -V, --version  output the version number
+  -V, --version                       output the version number
+  -s, --schema-path <json-path>       JSON-path to schema, to validate the example file against
+  -e, --example-filepath <file-path>  file path to example file, to be validated
+  -h, --help                          output usage information
 ````
 
-The validator will search the Swagger-JSON for response-examples and
-validate them against its schema.
+The validator will search the Swagger-JSON for response-examples and validate them against its schema.
+
+If an external example has to be verified, the `-s` and `-e` option has to be used.
+
+For example:
+
+```
+$ swagger-examples-validator -s $.paths./.get.responses.200.schema -e example.json swagger.json
+```
 
 Errors will be written to `stderr`.
 
