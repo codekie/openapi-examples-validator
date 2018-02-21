@@ -56,10 +56,15 @@ function _handleResult(result) {
 }
 
 function _printStatistics(statistics) {
-    const strStatistics = [
-        `Response schemas with examples found: ${ statistics.responseSchemasWithExamples }`,
-        `Response examples without schema found: ${ statistics.responseExamplesWithoutSchema }`,
-        `Total examples found: ${ statistics.responseExamplesTotal }`
-    ].join('\n');
+    const {
+            responseSchemasWithExamples = '-',
+            responseExamplesWithoutSchema = '-',
+            responseExamplesTotal = '-'
+        } = statistics,
+        strStatistics = [
+            `Response schemas with examples found: ${ responseSchemasWithExamples }`,
+            `Response examples without schema found: ${ responseExamplesWithoutSchema }`,
+            `Total examples found: ${ responseExamplesTotal }`
+        ].join('\n');
     process.stdout.write(`${ strStatistics }\n`);
 }

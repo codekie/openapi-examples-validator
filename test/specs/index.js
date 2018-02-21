@@ -7,10 +7,16 @@ const path = require('path'),
     { validateFile, validateExample, validateExamplesByMap } = require('../../src/index');
 
 const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
+    PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID = '$.hmm.what.am.i.gonna.get.for.lunch',
     FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA = path.join(__dirname, '..', 'data', 'external-examples-schema.json'),
     FILE_PATH__EXTERNAL_EXAMPLE1_VALID = path.join(__dirname, '..', 'data', 'external-examples-valid-example1.json'),
     FILE_PATH__EXTERNAL_EXAMPLE2_VALID = path.join(__dirname, '..', 'data', 'external-examples-valid-example2.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP = path.join(__dirname, '..', 'data', 'map-external-examples.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH = path.join(__dirname, '..', 'data',
+        'map-external-examples-map-with-wrong-schema-path.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE = path.join(__dirname, '..', 'data',
+        'map-external-examples-map-with-missing-examples.json'),
+    FILE_PATH__NOT_EXISTS = 'there is no spoon',
     FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE = path.join(__dirname, '..', 'data',
         'external-examples-invalid-type.json');
 
@@ -46,6 +52,7 @@ describe('Main-module should', () => {
                     type: 'string'
                 },
                 schemaPath: '#/properties/versions/items/properties/id/type',
+                type: 'Validation',
                 examplePath: '/paths/~1/get/responses/200/examples/application~1json'
             }]);
         });
@@ -61,6 +68,7 @@ describe('Main-module should', () => {
                         type: 'string'
                     },
                     message: 'should be string',
+                    type: 'Validation',
                     examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                 },
                 {
@@ -71,6 +79,7 @@ describe('Main-module should', () => {
                         missingProperty: 'links'
                     },
                     message: "should have required property 'links'",
+                    type: 'Validation',
                     examplePath: '/paths/~1/get/responses/300/examples/application~1json'
                 },
                 {
@@ -81,6 +90,7 @@ describe('Main-module should', () => {
                         type: 'string'
                     },
                     message: 'should be string',
+                    type: 'Validation',
                     examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                 }
             ]);
@@ -98,6 +108,7 @@ describe('Main-module should', () => {
                             missingProperty: 'id'
                         },
                         message: "should have required property 'id'",
+                        type: 'Validation',
                         examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                     },
                     {
@@ -108,6 +119,7 @@ describe('Main-module should', () => {
                             type: 'array'
                         },
                         message: 'should be array',
+                        type: 'Validation',
                         examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                     }
                 ]);
@@ -129,6 +141,7 @@ describe('Main-module should', () => {
                     type: 'string'
                 },
                 schemaPath: '#/properties/versions/items/properties/id/type',
+                type: 'Validation',
                 examplePath: '/paths/~1/get/responses/200/examples/application~1json'
             }]);
         });
@@ -179,6 +192,7 @@ describe('Main-module should', () => {
                         type: 'string'
                     },
                     schemaPath: '#/properties/versions/items/properties/id/type',
+                    type: 'Validation',
                     exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE
                 }]);
             });
@@ -195,6 +209,8 @@ describe('Main-module should', () => {
                         type: 'string'
                     },
                     schemaPath: '#/properties/versions/items/properties/id/type',
+                    type: 'Validation',
+                    mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP,
                     exampleFilePath: 'test/data/external-examples-invalid-type.json'
                 }, {
                     dataPath: '.versions[0]',
@@ -204,9 +220,116 @@ describe('Main-module should', () => {
                         missingProperty: 'links'
                     },
                     schemaPath: '#/properties/versions/items/required',
+                    type: 'Validation',
+                    mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP,
                     exampleFilePath: 'test/data/external-examples-invalid-missing-link.json'
                 }
             ]);
+        });
+    });
+    describe('should throw errors', () => {
+        describe("when files can't be found:", () => {
+            it('the mapping-file', () => {
+                const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                    FILE_PATH__NOT_EXISTS);
+                result.valid.should.equal(false);
+                result.errors.should.deep.equal([
+                    {
+                        message: `ENOENT: no such file or directory, open '${ FILE_PATH__NOT_EXISTS }'`,
+                        params: {
+                            path: FILE_PATH__NOT_EXISTS
+                        },
+                        type: 'ENOENT'
+                    }
+                ]);
+            });
+            it('referenced example-file in the mapping-file', () => {
+                const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                    FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE);
+                result.valid.should.equal(false);
+                result.errors.should.deep.equal([
+                    {
+                        mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE,
+                        message: "ENOENT: no such file or directory, open 'test/data/blegh forgot the sugar in the"
+                            + " coffee'",
+                        params: {
+                            path: 'test/data/blegh forgot the sugar in the coffee'
+                        },
+                        type: 'ENOENT'
+                    }, {
+                        dataPath: '.versions[0]',
+                        keyword: 'required',
+                        message: "should have required property 'links'",
+                        params: {
+                            missingProperty: 'links'
+                        },
+                        schemaPath: '#/properties/versions/items/required',
+                        type: 'Validation',
+                        mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE,
+                        exampleFilePath: 'test/data/external-examples-invalid-missing-link.json'
+                    }
+                ]);
+            });
+            it('the example-file', () => {
+                const result = validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
+                    FILE_PATH__NOT_EXISTS);
+                result.valid.should.equal(false);
+                result.errors.should.deep.equal([
+                    {
+                        message: `ENOENT: no such file or directory, open '${ FILE_PATH__NOT_EXISTS }'`,
+                        params: {
+                            path: FILE_PATH__NOT_EXISTS
+                        },
+                        type: 'ENOENT'
+                    }
+                ]);
+            });
+            it('the schema-file', () => {
+                const result = validateFile(FILE_PATH__NOT_EXISTS);
+                result.valid.should.equal(false);
+                result.errors.should.deep.equal([
+                    {
+                        message: `ENOENT: no such file or directory, open '${ FILE_PATH__NOT_EXISTS }'`,
+                        params: {
+                            path: FILE_PATH__NOT_EXISTS
+                        },
+                        type: 'ENOENT'
+                    }
+                ]);
+            });
+        });
+        describe("when the response-schema can't be found", () => {
+            it('while validating a single external example', () => {
+                const result = validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                    PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID, FILE_PATH__EXTERNAL_EXAMPLE1_VALID);
+                result.valid.should.equal(false);
+                result.errors.should.deep.equal([
+                    {
+                        message: "Path to response-schema can't be found: "
+                            + `'${ PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID }'`,
+                        params: {
+                            path: PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID
+                        },
+                        type: 'JsonPathNotFound'
+                    }
+                ]);
+            });
+            it('while validating a map of external examples', () => {
+                const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                    FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH);
+                result.valid.should.equal(false);
+                result.errors.should.deep.equal([
+                    {
+                        mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH,
+                        message: "Path to response-schema can't be found: "
+                            + `'${ PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID }'`,
+                        params: {
+                            path: PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID
+                        },
+                        type: 'JsonPathNotFound'
+                    }
+                ]);
+            });
         });
     });
 });
