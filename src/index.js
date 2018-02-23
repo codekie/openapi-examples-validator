@@ -128,23 +128,28 @@ function validateFile(filePath) {
  */
 function validateExamplesByMap(filePathSchema, globMapExternalExamples) {
     let matchingFilePathsMapping = 0;
-    const responses = glob.sync(globMapExternalExamples, { nonull: true })
-        .map(filePathMapExternalExamples => {
-            let mapExternalExamples = null,
-                swaggerSpec = null;
-            try {
-                mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
-                swaggerSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
-            } catch (err) {
-                return _createValidationResponse({ errors: [_createAppError(err)] });
-            }
-            matchingFilePathsMapping++;
-            return _validate(
-                Object.keys(mapExternalExamples),
-                statistics => _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics)
-                    .map(error => Object.assign(error, { mapFilePath: filePathMapExternalExamples }))
-            );
-        });
+    const responses = glob.sync(
+        globMapExternalExamples,
+        // Using `nonull`-option to explicitly create an app-error if there's no match for `globMapExternalExamples`
+        { nonull: true }
+    ).map(filePathMapExternalExamples => {
+        let mapExternalExamples = null,
+            swaggerSpec = null;
+        try {
+            mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
+            swaggerSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
+        } catch (err) {
+            return _createValidationResponse({ errors: [_createAppError(err)] });
+        }
+        // Not using `glob`'s response-length, becuse it is `1` if there's no match for `globMapExternalExamples`.
+        // Instead, increment on every match
+        matchingFilePathsMapping++;
+        return _validate(
+            Object.keys(mapExternalExamples),
+            statistics => _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics)
+                .map(error => Object.assign(error, { mapFilePath: filePathMapExternalExamples }))
+        );
+    });
     return _.merge(
         responses.reduce((res, response) => {
             if (!res) { return response; }
@@ -411,10 +416,10 @@ function _buildValidationMap(pathsExamples) {
  * given path.
  * `pathExample` and `filePathExample` are exclusively mandatory.
  * itself
- * @param {ajv}             validator           JSON-schema validator
- * @param {Object}          responseSchema      JSON-schema for the response
- * @param {String}          example             Example to validate
- * @param {Object}          statistics          Object to contain statistics metrics
+ * @param {ajv}     validator       JSON-schema validator
+ * @param {Object}  responseSchema  JSON-schema for the response
+ * @param {String}  example         Example to validate
+ * @param {Object}  statistics      Object to contain statistics metrics
  * @returns {Array.<Object>} Array with errors. Empty array, if examples are valid
  * @private
  */
