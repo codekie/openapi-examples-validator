@@ -11,14 +11,20 @@ const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA = path.join(__dirname, '..', 'data', 'external-examples-schema.json'),
     FILE_PATH__EXTERNAL_EXAMPLE1_VALID = path.join(__dirname, '..', 'data', 'external-examples-valid-example1.json'),
     FILE_PATH__EXTERNAL_EXAMPLE2_VALID = path.join(__dirname, '..', 'data', 'external-examples-valid-example2.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_GLOB = path.join(__dirname, '..', 'data', 'map-external-examples-glob-invalid*.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID1 = path.join(__dirname, '..',
+        'data', 'map-external-examples-glob-invalid1.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID2 = path.join(__dirname, '..',
+        'data', 'map-external-examples-glob-invalid2.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP = path.join(__dirname, '..', 'data', 'map-external-examples.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH = path.join(__dirname, '..', 'data',
         'map-external-examples-map-with-wrong-schema-path.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE = path.join(__dirname, '..', 'data',
         'map-external-examples-map-with-missing-examples.json'),
     FILE_PATH__NOT_EXISTS = 'there is no spoon',
-    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE = path.join(__dirname, '..', 'data',
-        'external-examples-invalid-type.json');
+    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE = path.join('test', 'data', 'external-examples-invalid-type.json'),
+    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK = path.join('test', 'data',
+        'external-examples-invalid-missing-link.json');
 
 describe('Main-module should', () => {
     describe('recognize', () => {
@@ -222,7 +228,7 @@ describe('Main-module should', () => {
                     schemaPath: '#/properties/versions/items/required',
                     type: 'Validation',
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP,
-                    exampleFilePath: 'test/data/external-examples-invalid-missing-link.json'
+                    exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK
                 }
             ]);
         });
@@ -266,7 +272,7 @@ describe('Main-module should', () => {
                         schemaPath: '#/properties/versions/items/required',
                         type: 'Validation',
                         mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE,
-                        exampleFilePath: 'test/data/external-examples-invalid-missing-link.json'
+                        exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK
                     }
                 ]);
             });
@@ -330,6 +336,60 @@ describe('Main-module should', () => {
                     }
                 ]);
             });
+        });
+    });
+    describe('should be able to resolve globs for mapping-files', () => {
+        it('and collect the errors for all mapping-files', () => {
+            const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                FILE_PATH__EXTERNAL_EXAMPLES_GLOB);
+            result.valid.should.equal(false);
+            result.errors.should.deep.equal([
+                {
+                    type: 'Validation',
+                    message: "should have required property 'links'",
+                    keyword: 'required',
+                    dataPath: '.versions[0]',
+                    schemaPath: '#/properties/versions/items/required',
+                    params: {
+                        missingProperty: 'links'
+                    },
+                    exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK,
+                    mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID1
+                },
+                {
+                    type: 'Validation',
+                    message: 'should be string',
+                    keyword: 'type',
+                    dataPath: '.versions[0].id',
+                    schemaPath: '#/properties/versions/items/properties/id/type',
+                    params: {
+                        type: 'string'
+                    },
+                    exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE,
+                    mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID1
+                },
+                {
+                    type: 'Validation',
+                    message: "should have required property 'links'",
+                    keyword: 'required',
+                    dataPath: '.versions[0]',
+                    schemaPath: '#/properties/versions/items/required',
+                    params: {
+                        missingProperty: 'links'
+                    },
+                    exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK,
+                    mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID2
+                }
+            ]);
+        });
+        it('should collect the statistics over all mapping-files', () => {
+            validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, FILE_PATH__EXTERNAL_EXAMPLES_GLOB)
+                .statistics.should.deep.equal({
+                    responseSchemasWithExamples: 4,
+                    responseExamplesWithoutSchema: 0,
+                    responseExamplesTotal: 7,
+                    matchingFilePathsMapping: 2
+                });
         });
     });
 });

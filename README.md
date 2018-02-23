@@ -31,7 +31,9 @@ Options:
   -V, --version                              output the version number
   -s, --schema-jsonpath <schema-jsonpath>    JSON-path to schema, to validate the example file against
   -e, --example-filepath <example-filepath>  file path to example file, to be validated
-  -m, --map-filepath <map-filepath>          file path to map, containing schema-paths as key and the file-path(s) to examples as value
+  -m, --map-filepath <map-filepath>          file path to map, containing schema-paths as key and the file-path(s) to
+                                             examples as value. If wildcards are used, the parameter has to be put in
+                                             quotes.
   -h, --help                                 output usage information
 ````
 

@@ -16,8 +16,8 @@ program
         + '  To pass a mapping-file, to validate multiple external examples, use the `-m` option.')
     .option('-s, --schema-jsonpath <schema-jsonpath>', 'JSON-path to schema, to validate the example file against')
     .option('-e, --example-filepath <example-filepath>', 'file path to example file, to be validated')
-    .option('-m, --map-filepath <map-filepath>', 'file path to map, containing schema-paths as key and the'
-        + ' file-path(s) to examples as value')
+    .option('-m, --map-filepath <map-filepath>', 'file path to map, containing schema-paths as key and the file-path(s)'
+        + ' to examples as value. If wildcards are used, the parameter has to be put in quotes.')
     .action(processAction);
 program.on('--help', () => {
     console.log('\n\n  Example for external example-file:\n');
@@ -59,12 +59,16 @@ function _printStatistics(statistics) {
     const {
             responseSchemasWithExamples = '-',
             responseExamplesWithoutSchema = '-',
-            responseExamplesTotal = '-'
+            responseExamplesTotal = '-',
+            matchingFilePathsMapping
         } = statistics,
         strStatistics = [
             `Response schemas with examples found: ${ responseSchemasWithExamples }`,
             `Response examples without schema found: ${ responseExamplesWithoutSchema }`,
             `Total examples found: ${ responseExamplesTotal }`
-        ].join('\n');
-    process.stdout.write(`${ strStatistics }\n`);
+        ];
+    if (matchingFilePathsMapping != null) {
+        strStatistics.push(`Matching mapping files found: ${ matchingFilePathsMapping }`);
+    }
+    process.stdout.write(`${ strStatistics.join('\n') }\n`);
 }

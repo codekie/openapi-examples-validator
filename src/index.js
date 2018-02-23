@@ -1,6 +1,7 @@
 const
     _ = require('lodash'),
     fs = require('fs'),
+    glob = require('glob'),
     jsonPath = require('jsonpath-plus'),
     Ajv = require('ajv'),
     { createError } = require('errno').custom;
@@ -68,9 +69,10 @@ module.exports = {
 /**
  * ValidationStatistics
  * @typedef {{
- *      responseSchemasWithExamples: (number|'-'),
- *      responseExamplesTotal: (number|'-'),
- *      responseExamplesWithoutSchema: (number|'-')
+ *      responseSchemasWithExamples: number,
+ *      responseExamplesTotal: number,
+ *      responseExamplesWithoutSchema: number,
+ *      [matchingFilePathsMapping]: number
  * }} ValidationStatistics
  */
 
@@ -81,6 +83,12 @@ module.exports = {
  *      statistics: ValidationStatistics,
  *      errors: Array.<ApplicationError>
  * }} ValidationResponse
+ */
+
+/**
+ * @callback ValidationHandler
+ * @param {ValidationStatistics}    statistics
+ * @returns {Array.<ApplicationError>}
  */
 
 // Public
@@ -97,7 +105,7 @@ function validateExamples(swaggerSpec) {
 
 /**
  * Validates Swagger-spec with embedded examples.
- * @param {String}  filePath    File-path to the swagger-spec
+ * @param {string}  filePath    File-path to the swagger-spec
  * @returns {ValidationResponse}
  */
 function validateFile(filePath) {
@@ -111,57 +119,38 @@ function validateFile(filePath) {
 }
 
 /**
- * Validates examples by a mapping-file.
- * @param {String}  filePathSchema              File-path to the Swagger-spec
- * @param {String}  filePathMapExternalExamples File-path the mapping-file containing JSON-paths to response-schemas as
- *                                              key and a single file-path or Array of file-paths to external examples
+ * Validates examples by mapping-files.
+ * @param {string}  filePathSchema          File-path to the Swagger-spec
+ * @param {string}  globMapExternalExamples File-path (globs are supported) to the mapping-file containing JSON-paths to
+ *                                          response-schemas as key and a single file-path or Array of file-paths to
+ *                                          external examples
  * @returns {ValidationResponse}
  */
-function validateExamplesByMap(filePathSchema, filePathMapExternalExamples) {
-    let mapExternalExamples = null,
-        swaggerSpec = null;
-    try {
-        mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
-        swaggerSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
-    } catch (err) {
-        return _createValidationResponse({ errors: [_createAppError(err)] });
-    }
-    return _validate(
-        Object.keys(mapExternalExamples),
-        statistics => _(mapExternalExamples)
-            .entries()
-            .flatMap(([pathResponseSchema, filePathsExample]) => {
-                let responseSchema = null;
-                try {
-                    responseSchema = _extractResponseSchema(pathResponseSchema, swaggerSpec);
-                } catch (/** @type ErrorJsonPathNotFound */ err) {
-                    // If the response-schema can't be found, don't even attempt to process the examples
-                    err.cause.mapFilePath = filePathMapExternalExamples;
-                    return _createAppError(err);
-                }
-                return _([filePathsExample])
-                    .flatten()
-                    .flatMap(filePathExample => {
-                        let example = null;
-                        try {
-                            example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
-                        } catch (err) {
-                            return _createAppError(err);
-                        }
-                        return _validateExample({
-                            validator: _createValidator(),
-                            responseSchema,
-                            example,
-                            statistics
-                        }).map(error => {
-                            error.exampleFilePath = filePathExample;
-                            return error;
-                        });
-                    })
-                    .toArray()
-                    .forEach(error => Object.assign(error, { mapFilePath: filePathMapExternalExamples }));
-            })
-            .value()
+function validateExamplesByMap(filePathSchema, globMapExternalExamples) {
+    let matchingFilePathsMapping = 0;
+    const responses = glob.sync(globMapExternalExamples, { nonull: true })
+        .map(filePathMapExternalExamples => {
+            let mapExternalExamples = null,
+                swaggerSpec = null;
+            try {
+                mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
+                swaggerSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
+            } catch (err) {
+                return _createValidationResponse({ errors: [_createAppError(err)] });
+            }
+            matchingFilePathsMapping++;
+            return _validate(
+                Object.keys(mapExternalExamples),
+                statistics => _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics)
+                    .map(error => Object.assign(error, { mapFilePath: filePathMapExternalExamples }))
+            );
+        });
+    return _.merge(
+        responses.reduce((res, response) => {
+            if (!res) { return response; }
+            return _mergeValidationResponses(res, response);
+        }, null),
+        { statistics: { matchingFilePathsMapping } }
     );
 }
 
@@ -202,10 +191,10 @@ function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
 /**
  * Top-level validator. Prepares common values, required for the validation, then calles the validator and prepares
  * the result for the output.
- * @param {Array.<String>}  pathsResponseSchema     JSON-paths to the schemas of the responses
- * @param {Function}        validationHandler       The handler which performs the validation. It will receive the
- *                                                  statistics-object as argument and has to return an Array of errors
- *                                                  (or an empty Array, when all examples are valid)
+ * @param {Array.<String>}      pathsResponseSchema     JSON-paths to the schemas of the responses
+ * @param {ValidationHandler}   validationHandler       The handler which performs the validation. It will receive the
+ *                                                      statistics-object as argument and has to return an Array of
+ *                                                      errors (or an empty Array, when all examples are valid)
  * @returns {ValidationResponse}
  * @private
  */
@@ -213,6 +202,50 @@ function _validate(pathsResponseSchema, validationHandler) {
     const statistics = _initStatistics({ schemaPaths: pathsResponseSchema }),
         errors = validationHandler(statistics);
     return _createValidationResponse({ errors, statistics });
+}
+
+/**
+ * Validates examples by a mapping-file.
+ * @param {Object}                  swaggerSpec         Swagger-spec
+ * @param {string}                  mapExternalExamples Mapping-file containing JSON-paths to response-schemas as key
+ *                                                      and a single file-path or Array of file-paths to
+ * @param {ValidationStatistics}    statistics
+ * @returns {Array.<ApplicationError>}
+ * @private
+ */
+function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics) {
+    return _(mapExternalExamples)
+        .entries()
+        .flatMap(([pathResponseSchema, filePathsExample]) => {
+            let responseSchema = null;
+            try {
+                responseSchema = _extractResponseSchema(pathResponseSchema, swaggerSpec);
+            } catch (/** @type ErrorJsonPathNotFound */ err) {
+                // If the response-schema can't be found, don't even attempt to process the examples
+                return _createAppError(err);
+            }
+            return _([filePathsExample])
+                .flatten()
+                .flatMap(filePathExample => {
+                    let example = null;
+                    try {
+                        example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
+                    } catch (err) {
+                        return _createAppError(err);
+                    }
+                    return _validateExample({
+                        validator: _createValidator(),
+                        responseSchema,
+                        example,
+                        statistics
+                    }).map(error => {
+                        error.exampleFilePath = filePathExample;
+                        return error;
+                    });
+                })
+                .value();
+        })
+        .value();
 }
 
 /**
@@ -251,6 +284,25 @@ function _createValidationResponse({ errors, statistics = {} }) {
         statistics,
         errors
     };
+}
+
+/**
+ * Merges two `ValidationResponses` together and returns the merged result. The passed `ValidationResponse`s won't be
+ * modified.
+ * @param {ValidationResponse} response1
+ * @param {ValidationResponse} response2
+ * @returns {ValidationResponse}
+ * @private
+ */
+function _mergeValidationResponses(response1, response2) {
+    return _createValidationResponse({
+        errors: response1.errors.concat(response2.errors),
+        statistics: _.entries(response1.statistics)
+            .reduce((res, [key, val]) => {
+                res[key] = val + response2.statistics[key];
+                return res;
+            }, {})
+    });
 }
 
 /**
