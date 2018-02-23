@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.8.0"></a>
+# [0.8.0](https://github.com/codekie/swagger-examples-validator/compare/v0.7.0...v0.8.0) (2018-02-23)
+
+
+### Features
+
+* support wildcards, when using mapping-files ([46d7028](https://github.com/codekie/swagger-examples-validator/commit/46d7028))
+
+
+
 <a name="0.7.0"></a>
 # [0.7.0](https://github.com/codekie/swagger-examples-validator/compare/v0.6.0...v0.7.0) (2018-02-22)
 
