@@ -16,8 +16,10 @@ program
         + '  To pass a mapping-file, to validate multiple external examples, use the `-m` option.')
     .option('-s, --schema-jsonpath <schema-jsonpath>', 'JSON-path to schema, to validate the example file against')
     .option('-e, --example-filepath <example-filepath>', 'file path to example file, to be validated')
-    .option('-m, --map-filepath <map-filepath>', 'file path to map, containing schema-paths as key and the file-path(s)'
-        + ' to examples as value. If wildcards are used, the parameter has to be put in quotes.')
+    .option('-m, --mapping-filepath <mapping-filepath>', 'file path to map, containing schema-paths as key and the'
+        + ' file-path(s) to examples as value. If wildcards are used, the parameter has to be put in quotes.')
+    .option('-c, --cwd-to-mapping-file', "changes to the directory of the mapping-file, before resolving the example's"
+        + ' paths. Use this option, if your mapping-files use relative paths for the examples')
     .action(processAction);
 program.on('--help', () => {
     console.log('\n\n  Example for external example-file:\n');
@@ -29,11 +31,11 @@ program.parse(process.argv);
 // IMPLEMENTATION DETAILS
 
 function processAction(filepath, options) {
-    const { schemaJsonpath, exampleFilepath, mapFilepath } = options;
+    const { schemaJsonpath, exampleFilepath, mappingFilepath, cwdToMappingFile } = options;
     let result = null;
-    if (mapFilepath) {
+    if (mappingFilepath) {
         console.log('Validating with mapping file');
-        result = validateExamplesByMap(filepath, mapFilepath);
+        result = validateExamplesByMap(filepath, mappingFilepath, { cwdToMappingFile });
     } else if (schemaJsonpath && exampleFilepath) {
         console.log('Validating single external example');
         result = validateExample(filepath, schemaJsonpath, exampleFilepath);

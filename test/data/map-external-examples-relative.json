@@ -1,0 +1,7 @@
+{
+  "$.paths./.get.responses.200.schema": [
+    "external-examples-valid-example1.json",
+    "external-examples-valid-example2.json"
+  ],
+  "$.paths./.get.responses.300.schema": "./external-examples-valid-example1.json"
+}

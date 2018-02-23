@@ -19,6 +19,8 @@ const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID2 = path.join(__dirname, '..',
         'data', 'map-external-examples-glob-invalid2.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP = path.join(__dirname, '..', 'data', 'map-external-examples.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_MAP__RELATIVE = path.join(__dirname, '..', 'data',
+        'map-external-examples-relative.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH = path.join(__dirname, '..', 'data',
         'map-external-examples-map-with-wrong-schema-path.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE = path.join(__dirname, '..', 'data',
@@ -375,6 +377,19 @@ describe('Main-module should', () => {
                     responseExamplesTotal: 7,
                     matchingFilePathsMapping: 2
                 });
+        });
+    });
+    describe('with set `cwd-to-mapping-file`-flag', () => {
+        it('resolve the relative paths in the mapping-files', () => {
+            const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                FILE_PATH__EXTERNAL_EXAMPLES_MAP__RELATIVE, { cwdToMappingFile: true });
+            result.valid.should.equal(true);
+            result.statistics.should.deep.equal({
+                responseSchemasWithExamples: 2,
+                responseExamplesWithoutSchema: 0,
+                responseExamplesTotal: 3,
+                matchingFilePathsMapping: 1
+            });
         });
     });
 });

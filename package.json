@@ -7,6 +7,7 @@
     "swagger-examples-validator": "dist/cli.js"
   },
   "scripts": {
+    "start-dev": "babel-node src/cli",
     "build": "npm run build:clean && npm run build:webpack",
     "build:clean": "rimraf dist",
     "build:webpack": "webpack --bail --progress --profile --config ./webpack/config.babel.js",

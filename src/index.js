@@ -1,6 +1,7 @@
 const
     _ = require('lodash'),
     fs = require('fs'),
+    path = require('path'),
     glob = require('glob'),
     jsonPath = require('jsonpath-plus'),
     Ajv = require('ajv'),
@@ -103,13 +104,15 @@ function validateFile(filePath) {
 
 /**
  * Validates examples by mapping-files.
- * @param {string}  filePathSchema          File-path to the Swagger-spec
- * @param {string}  globMapExternalExamples File-path (globs are supported) to the mapping-file containing JSON-paths to
- *                                          response-schemas as key and a single file-path or Array of file-paths to
- *                                          external examples
+ * @param {string}  filePathSchema              File-path to the Swagger-spec
+ * @param {string}  globMapExternalExamples     File-path (globs are supported) to the mapping-file containing JSON-
+ *                                              paths to response-schemas as key and a single file-path or Array of
+ *                                              file-paths to external examples
+ * @param {boolean} [cwdToMappingFile=false]    Change working directory for resolving the example-paths (relative to
+ *                                              the mapping-file)
  * @returns {ValidationResponse}
  */
-function validateExamplesByMap(filePathSchema, globMapExternalExamples) {
+function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToMappingFile } = {}) {
     let matchingFilePathsMapping = 0;
     const responses = glob.sync(
         globMapExternalExamples,
@@ -129,10 +132,12 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples) {
         matchingFilePathsMapping++;
         return _validate(
             Object.keys(mapExternalExamples),
-            statistics => _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics)
-                .map((/** @type ApplicationError */ error) => Object.assign(error, {
-                    mapFilePath: filePathMapExternalExamples
-                }))
+            statistics => _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics, {
+                cwdToMappingFile,
+                dirPathMapExternalExamples: path.dirname(filePathMapExternalExamples)
+            }).map((/** @type ApplicationError */ error) => Object.assign(error, {
+                mapFilePath: filePathMapExternalExamples
+            }))
         );
     });
     return _.merge(
@@ -196,14 +201,20 @@ function _validate(pathsResponseSchema, validationHandler) {
 
 /**
  * Validates examples by a mapping-file.
- * @param {Object}                  swaggerSpec         Swagger-spec
- * @param {string}                  mapExternalExamples Mapping-file containing JSON-paths to response-schemas as key
- *                                                      and a single file-path or Array of file-paths to
- * @param {ValidationStatistics}    statistics
+ * @param {Object}                  swaggerSpec                     Swagger-spec
+ * @param {string}                  mapExternalExamples             Mapping-file containing JSON-paths to response-
+ *                                                                  schemas as key and a single file-path or Array of
+ *                                                                  file-paths to
+ * @param {ValidationStatistics}    statistics                      Validation-statistics
+ * @param {boolean}                 [cwdToMappingFile=false]        Change working directory for resolving the example-
+ *                                                                  paths (relative to the mapping-file)
+ * @param {string}                  [dirPathMapExternalExamples]    The directory-path of the mapping-file
  * @returns {Array.<ApplicationError>}
  * @private
  */
-function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics) {
+function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics,
+    { cwdToMappingFile = false, dirPathMapExternalExamples }
+) {
     return _(mapExternalExamples)
         .entries()
         .flatMap(([pathResponseSchema, filePathsExample]) => {
@@ -219,7 +230,10 @@ function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statis
                 .flatMap(filePathExample => {
                     let example = null;
                     try {
-                        example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
+                        const resolvedFilePathExample = cwdToMappingFile
+                            ? path.join(dirPathMapExternalExamples, filePathExample)
+                            : filePathExample;
+                        example = JSON.parse(fs.readFileSync(resolvedFilePathExample, 'utf-8'));
                     } catch (err) {
                         return ApplicationError.create(err);
                     }
@@ -268,7 +282,7 @@ function _mergeValidationResponses(response1, response2) {
             .reduce((res, [key, val]) => {
                 res[key] = val + response2.statistics[key];
                 return res;
-            }, {})
+            }, _initStatistics({ schemaPaths: [] }))
     });
 }
 
@@ -380,7 +394,7 @@ function _buildValidationMap(pathsExamples) {
  * itself
  * @param {ajv}     validator       JSON-schema validator
  * @param {Object}  responseSchema  JSON-schema for the response
- * @param {String}  example         Example to validate
+ * @param {Object}  example         Example to validate
  * @param {Object}  statistics      Object to contain statistics metrics
  * @returns {Array.<Object>} Array with errors. Empty array, if examples are valid
  * @private
