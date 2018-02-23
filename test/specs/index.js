@@ -4,7 +4,9 @@ const path = require('path'),
         getPathOfTestData
     } = require('../util/setup-tests'),
     validate = require('../../src/index').default,
-    { validateFile, validateExample, validateExamplesByMap } = require('../../src/index');
+    { validateFile, validateExample, validateExamplesByMap } = require('../../src/index'),
+    ApplicationError = require('../../src/application-error'),
+    { ERR_TYPE__JS_ENOENT, ERR_TYPE__JSON_PATH_NOT_FOUND, ERR_TYPE__VALIDATION } = ApplicationError;
 
 const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID = '$.hmm.what.am.i.gonna.get.for.lunch',
@@ -50,7 +52,7 @@ describe('Main-module should', () => {
         it('invalid type', () => {
             const result = validate(loadTestData('invalid-type'));
             result.valid.should.equal(false);
-            result.errors.should.deep.equal([{
+            result.errors.should.deep.equal([new ApplicationError(ERR_TYPE__VALIDATION, {
                 dataPath: '.versions[0].id',
                 keyword: 'type',
                 message: 'should be string',
@@ -58,15 +60,14 @@ describe('Main-module should', () => {
                     type: 'string'
                 },
                 schemaPath: '#/properties/versions/items/properties/id/type',
-                type: 'Validation',
                 examplePath: '/paths/~1/get/responses/200/examples/application~1json'
-            }]);
+            })]);
         });
         it('multiple errors', () => {
             const result = validate(loadTestData('multiple-errors'));
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
-                {
+                new ApplicationError(ERR_TYPE__VALIDATION, {
                     keyword: 'type',
                     dataPath: '.versions[0].id',
                     schemaPath: '#/properties/versions/items/properties/id/type',
@@ -74,10 +75,9 @@ describe('Main-module should', () => {
                         type: 'string'
                     },
                     message: 'should be string',
-                    type: 'Validation',
                     examplePath: '/paths/~1/get/responses/200/examples/application~1json'
-                },
-                {
+                }),
+                new ApplicationError(ERR_TYPE__VALIDATION, {
                     keyword: 'required',
                     dataPath: '.versions[0]',
                     schemaPath: '#/properties/versions/items/required',
@@ -85,10 +85,9 @@ describe('Main-module should', () => {
                         missingProperty: 'links'
                     },
                     message: "should have required property 'links'",
-                    type: 'Validation',
                     examplePath: '/paths/~1/get/responses/300/examples/application~1json'
-                },
-                {
+                }),
+                new ApplicationError(ERR_TYPE__VALIDATION, {
                     keyword: 'type',
                     dataPath: '.versions[1].id',
                     schemaPath: '#/properties/versions/items/properties/id/type',
@@ -96,9 +95,8 @@ describe('Main-module should', () => {
                         type: 'string'
                     },
                     message: 'should be string',
-                    type: 'Validation',
                     examplePath: '/paths/~1/get/responses/200/examples/application~1json'
-                }
+                })
             ]);
         });
         describe('In array-response:', () => {
@@ -106,7 +104,7 @@ describe('Main-module should', () => {
                 const result = validate(loadTestData('invalid-array-response'));
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    {
+                    new ApplicationError(ERR_TYPE__VALIDATION, {
                         keyword: 'required',
                         dataPath: '[0]',
                         schemaPath: '#/items/required',
@@ -114,10 +112,9 @@ describe('Main-module should', () => {
                             missingProperty: 'id'
                         },
                         message: "should have required property 'id'",
-                        type: 'Validation',
                         examplePath: '/paths/~1/get/responses/200/examples/application~1json'
-                    },
-                    {
+                    }),
+                    new ApplicationError(ERR_TYPE__VALIDATION, {
                         keyword: 'type',
                         dataPath: '[1].links',
                         schemaPath: '#/items/properties/links/type',
@@ -125,9 +122,8 @@ describe('Main-module should', () => {
                             type: 'array'
                         },
                         message: 'should be array',
-                        type: 'Validation',
                         examplePath: '/paths/~1/get/responses/200/examples/application~1json'
-                    }
+                    })
                 ]);
             });
         });
@@ -139,7 +135,7 @@ describe('Main-module should', () => {
         it('with error', () => {
             const result = validateFile(getPathOfTestData('invalid-type'));
             result.valid.should.equal(false);
-            result.errors.should.deep.equal([{
+            result.errors.should.deep.equal([new ApplicationError(ERR_TYPE__VALIDATION, {
                 dataPath: '.versions[0].id',
                 keyword: 'type',
                 message: 'should be string',
@@ -147,9 +143,8 @@ describe('Main-module should', () => {
                     type: 'string'
                 },
                 schemaPath: '#/properties/versions/items/properties/id/type',
-                type: 'Validation',
                 examplePath: '/paths/~1/get/responses/200/examples/application~1json'
-            }]);
+            })]);
         });
     });
     describe('collect statistics', () => {
@@ -190,7 +185,7 @@ describe('Main-module should', () => {
                 const result = validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
                     FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE);
                 result.valid.should.equal(false);
-                result.errors.should.deep.equal([{
+                result.errors.should.deep.equal([new ApplicationError(ERR_TYPE__VALIDATION, {
                     dataPath: '.versions[0].id',
                     keyword: 'type',
                     message: 'should be string',
@@ -198,16 +193,15 @@ describe('Main-module should', () => {
                         type: 'string'
                     },
                     schemaPath: '#/properties/versions/items/properties/id/type',
-                    type: 'Validation',
                     exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE
-                }]);
+                })]);
             });
         });
         it('with an example-map', () => {
             const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, FILE_PATH__EXTERNAL_EXAMPLES_MAP);
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
-                {
+                new ApplicationError(ERR_TYPE__VALIDATION, {
                     dataPath: '.versions[0].id',
                     keyword: 'type',
                     message: 'should be string',
@@ -215,10 +209,10 @@ describe('Main-module should', () => {
                         type: 'string'
                     },
                     schemaPath: '#/properties/versions/items/properties/id/type',
-                    type: 'Validation',
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP,
                     exampleFilePath: 'test/data/external-examples-invalid-type.json'
-                }, {
+                }),
+                new ApplicationError(ERR_TYPE__VALIDATION, {
                     dataPath: '.versions[0]',
                     keyword: 'required',
                     message: "should have required property 'links'",
@@ -226,10 +220,9 @@ describe('Main-module should', () => {
                         missingProperty: 'links'
                     },
                     schemaPath: '#/properties/versions/items/required',
-                    type: 'Validation',
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP,
                     exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK
-                }
+                })
             ]);
         });
     });
@@ -240,13 +233,12 @@ describe('Main-module should', () => {
                     FILE_PATH__NOT_EXISTS);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    {
+                    new ApplicationError(ERR_TYPE__JS_ENOENT, {
                         message: `ENOENT: no such file or directory, open '${ FILE_PATH__NOT_EXISTS }'`,
                         params: {
                             path: FILE_PATH__NOT_EXISTS
-                        },
-                        type: 'ENOENT'
-                    }
+                        }
+                    })
                 ]);
             });
             it('referenced example-file in the mapping-file', () => {
@@ -254,15 +246,15 @@ describe('Main-module should', () => {
                     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    {
+                    new ApplicationError(ERR_TYPE__JS_ENOENT, {
                         mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE,
                         message: "ENOENT: no such file or directory, open 'test/data/blegh forgot the sugar in the"
                             + " coffee'",
                         params: {
                             path: 'test/data/blegh forgot the sugar in the coffee'
-                        },
-                        type: 'ENOENT'
-                    }, {
+                        }
+                    }),
+                    new ApplicationError(ERR_TYPE__VALIDATION, {
                         dataPath: '.versions[0]',
                         keyword: 'required',
                         message: "should have required property 'links'",
@@ -270,10 +262,9 @@ describe('Main-module should', () => {
                             missingProperty: 'links'
                         },
                         schemaPath: '#/properties/versions/items/required',
-                        type: 'Validation',
                         mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE,
                         exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK
-                    }
+                    })
                 ]);
             });
             it('the example-file', () => {
@@ -281,26 +272,24 @@ describe('Main-module should', () => {
                     FILE_PATH__NOT_EXISTS);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    {
+                    new ApplicationError(ERR_TYPE__JS_ENOENT, {
                         message: `ENOENT: no such file or directory, open '${ FILE_PATH__NOT_EXISTS }'`,
                         params: {
                             path: FILE_PATH__NOT_EXISTS
-                        },
-                        type: 'ENOENT'
-                    }
+                        }
+                    })
                 ]);
             });
             it('the schema-file', () => {
                 const result = validateFile(FILE_PATH__NOT_EXISTS);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    {
+                    new ApplicationError(ERR_TYPE__JS_ENOENT, {
                         message: `ENOENT: no such file or directory, open '${ FILE_PATH__NOT_EXISTS }'`,
                         params: {
                             path: FILE_PATH__NOT_EXISTS
-                        },
-                        type: 'ENOENT'
-                    }
+                        }
+                    })
                 ]);
             });
         });
@@ -310,14 +299,14 @@ describe('Main-module should', () => {
                     PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID, FILE_PATH__EXTERNAL_EXAMPLE1_VALID);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    {
+                    new ApplicationError(ERR_TYPE__JSON_PATH_NOT_FOUND, {
                         message: "Path to response-schema can't be found: "
                             + `'${ PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID }'`,
                         params: {
                             path: PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID
                         },
                         type: 'JsonPathNotFound'
-                    }
+                    })
                 ]);
             });
             it('while validating a map of external examples', () => {
@@ -325,15 +314,14 @@ describe('Main-module should', () => {
                     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    {
+                    new ApplicationError(ERR_TYPE__JSON_PATH_NOT_FOUND, {
                         mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH,
                         message: "Path to response-schema can't be found: "
                             + `'${ PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID }'`,
                         params: {
                             path: PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID
-                        },
-                        type: 'JsonPathNotFound'
-                    }
+                        }
+                    })
                 ]);
             });
         });
@@ -344,8 +332,7 @@ describe('Main-module should', () => {
                 FILE_PATH__EXTERNAL_EXAMPLES_GLOB);
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
-                {
-                    type: 'Validation',
+                new ApplicationError(ERR_TYPE__VALIDATION, {
                     message: "should have required property 'links'",
                     keyword: 'required',
                     dataPath: '.versions[0]',
@@ -355,9 +342,8 @@ describe('Main-module should', () => {
                     },
                     exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK,
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID1
-                },
-                {
-                    type: 'Validation',
+                }),
+                new ApplicationError(ERR_TYPE__VALIDATION, {
                     message: 'should be string',
                     keyword: 'type',
                     dataPath: '.versions[0].id',
@@ -367,9 +353,8 @@ describe('Main-module should', () => {
                     },
                     exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE,
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID1
-                },
-                {
-                    type: 'Validation',
+                }),
+                new ApplicationError(ERR_TYPE__VALIDATION, {
                     message: "should have required property 'links'",
                     keyword: 'required',
                     dataPath: '.versions[0]',
@@ -379,7 +364,7 @@ describe('Main-module should', () => {
                     },
                     exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK,
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID2
-                }
+                })
             ]);
         });
         it('should collect the statistics over all mapping-files', () => {

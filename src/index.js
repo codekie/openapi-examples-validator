@@ -4,33 +4,35 @@ const
     glob = require('glob'),
     jsonPath = require('jsonpath-plus'),
     Ajv = require('ajv'),
-    { createError } = require('errno').custom;
+    { createError } = require('errno').custom,
+    ApplicationError = require('./application-error'),
+    { ERR_TYPE__JSON_PATH_NOT_FOUND } = ApplicationError;
 
 // CONSTANTS
 
 const
     PROP__SCHEMA = 'schema',
     PROP__EXAMPLES = 'examples',
-    PATH__EXAMPLES = `$..${ PROP__EXAMPLES }.application/json`,
-    ERR_TYPE__JSON_PATH_NOT_FOUND = 'JsonPathNotFound',
-    ERR_TYPE__VALIDATION = 'Validation';
+    PATH__EXAMPLES = `$..${ PROP__EXAMPLES }.application/json`;
 
 // STATICS
 
 /**
- * @typedef {{}} CustomError
- */
-
-/**
- * @constructor
- * @augments CustomError
- * @returns {{
+ * ErrorJsonPathNotFound
+ * @typedef {{
  *      cause: {
  *          [params]: {
  *              [path]: string
  *          }
  *      }
- * }}
+ * }} ErrorJsonPathNotFound
+ * @augments CustomError
+ */
+
+/**
+ * @constructor
+ * @augments CustomError
+ * @returns {ErrorJsonPathNotFound}
  */
 const ErrorJsonPathNotFound = createError(ERR_TYPE__JSON_PATH_NOT_FOUND);
 
@@ -46,25 +48,6 @@ module.exports = {
 // IMPLEMENTATION DETAILS
 
 // Type definitions
-
-/**
- * ApplicationError
- * @typedef {{
- *      type: string,
- *      message: string,
- *      [dataPath]: string,
- *      [examplePath]: string,
- *      [exampleFilePath]: string,
- *      [keyword]: string,
- *      [mapFilePath]: string,
- *      [params]: {
- *          [path]: string,
- *          [missingProperty]: string,
- *          [type]: string
- *      },
- *      [schemaPath]: string
- * }} ApplicationError
- */
 
 /**
  * ValidationStatistics
@@ -113,7 +96,7 @@ function validateFile(filePath) {
     try {
         swaggerSpec = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     } catch (err) {
-        return _createValidationResponse({ errors: [_createAppError(err)] });
+        return _createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
     return validateExamples(swaggerSpec);
 }
@@ -139,7 +122,7 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples) {
             mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
             swaggerSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
         } catch (err) {
-            return _createValidationResponse({ errors: [_createAppError(err)] });
+            return _createValidationResponse({ errors: [ApplicationError.create(err)] });
         }
         // Not using `glob`'s response-length, becuse it is `1` if there's no match for `globMapExternalExamples`.
         // Instead, increment on every match
@@ -147,7 +130,9 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples) {
         return _validate(
             Object.keys(mapExternalExamples),
             statistics => _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics)
-                .map(error => Object.assign(error, { mapFilePath: filePathMapExternalExamples }))
+                .map((/** @type ApplicationError */ error) => Object.assign(error, {
+                    mapFilePath: filePathMapExternalExamples
+                }))
         );
     });
     return _.merge(
@@ -175,7 +160,7 @@ function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
         swaggerSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
         responseSchema = _extractResponseSchema(pathResponseSchema, swaggerSpec);
     } catch (err) {
-        return _createValidationResponse({ errors: [_createAppError(err)] });
+        return _createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
     return _validate(
         [pathResponseSchema],
@@ -227,7 +212,7 @@ function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statis
                 responseSchema = _extractResponseSchema(pathResponseSchema, swaggerSpec);
             } catch (/** @type ErrorJsonPathNotFound */ err) {
                 // If the response-schema can't be found, don't even attempt to process the examples
-                return _createAppError(err);
+                return ApplicationError.create(err);
             }
             return _([filePathsExample])
                 .flatten()
@@ -236,7 +221,7 @@ function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statis
                     try {
                         example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
                     } catch (err) {
-                        return _createAppError(err);
+                        return ApplicationError.create(err);
                     }
                     return _validateExample({
                         validator: _createValidator(),
@@ -251,29 +236,6 @@ function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statis
                 .value();
         })
         .value();
-}
-
-/**
- * Creates a unified application error, which is able to consume validation-errors and JS-errors.
- * If a validation error is passed, all properties will be adopted.
- * @param {Error|CustomError}   err     Javascript-, validation- or custom-error
- * @returns {ApplicationError} Unified application-error
- * @private
- */
-function _createAppError(err) {
-    const
-        { code, message, path, cause } = err,               // Certain properties of Javascript-errors
-        type = code || err.type || ERR_TYPE__VALIDATION,    // If `code` is available then it's a Javascript-error
-        errorApp = { type, message };
-    if (ERR_TYPE__VALIDATION === type) {
-        // If it's an validation-error, copy all properties
-        _.merge(errorApp, err);
-    } else {
-        // Copy certain properties of Javascript-error (but only if available)
-        path && _.merge(errorApp, { params: { path } });
-        cause && _.merge(errorApp, cause);
-    }
-    return errorApp;
 }
 
 /**
@@ -434,7 +396,7 @@ function _validateExample({ validator, responseSchema, example, statistics }) {
         return errors;
     }
     if (validator.validate(responseSchema, example)) { return errors; }
-    return errors.concat(...validator.errors.map(_createAppError));
+    return errors.concat(...validator.errors.map(ApplicationError.create));
 }
 
 /**
