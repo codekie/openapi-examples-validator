@@ -202,7 +202,7 @@ function _validate(pathsResponseSchema, validationHandler) {
 /**
  * Validates examples by a mapping-file.
  * @param {Object}                  swaggerSpec                     Swagger-spec
- * @param {string}                  mapExternalExamples             Mapping-file containing JSON-paths to response-
+ * @param {Object}                  mapExternalExamples             Mapping-file containing JSON-paths to response-
  *                                                                  schemas as key and a single file-path or Array of
  *                                                                  file-paths to
  * @param {ValidationStatistics}    statistics                      Validation-statistics
