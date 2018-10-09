@@ -23,17 +23,10 @@ const BASE_CONFIG = {
                 loader: 'eslint-loader'
             },
             // Regular loaders
-            { test: /\.json$/, loader: 'json-loader' },
+            { test: /\.json$/, loader: 'json-loader', type: 'javascript/auto' },
             { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'babel-loader',
                 query: {
-                    presets: ['es2015'],
-                    plugins: [
-                        'transform-object-rest-spread',
-                        'transform-es2015-parameters',
-                        ['transform-es2015-classes', {
-                            'loose': true
-                        }]
-                    ]
+                    presets: ['@babel/preset-env']
                 }
             }
         ]
@@ -45,10 +38,6 @@ const BASE_CONFIG = {
         libraryTarget: 'commonjs2'
     },
     plugins: [
-        // Only emit files when there are no errors
-        new webpack.NoEmitOnErrorsPlugin(),
-        // Minify all javascript, switch loaders to minimizing mode
-        new UglifyJsPlugin()
     ],
     // NodeJS options
     node: {
