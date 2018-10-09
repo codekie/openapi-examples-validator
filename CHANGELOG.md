@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.9.1"></a>
+## [0.9.1](https://github.com/codekie/swagger-examples-validator/compare/v0.9.0...v0.9.1) (2018-10-09)
+
+
+### Bug Fixes
+
+* fix wrong type of parameter ([9116238](https://github.com/codekie/swagger-examples-validator/commit/9116238))
+* upgrade dependencies ([0103a7b](https://github.com/codekie/swagger-examples-validator/commit/0103a7b))
+
+
+
 <a name="0.9.0"></a>
 # [0.9.0](https://github.com/codekie/swagger-examples-validator/compare/v0.8.0...v0.9.0) (2018-02-26)
 
