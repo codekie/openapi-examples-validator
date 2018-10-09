@@ -1,6 +1,6 @@
 {
   "name": "swagger-examples-validator",
-  "version": "0.9.2",
+  "version": "1.0.0",
   "description": "Validates embedded examples in Swagger-JSONs",
   "main": "dist/index.js",
   "engines": {
