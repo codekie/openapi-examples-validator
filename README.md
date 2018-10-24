@@ -8,6 +8,7 @@ Validates embedded examples in Swagger-specs (only JSON supported, yet)
 [![Build Status](https://travis-ci.org/codekie/swagger-examples-validator.svg?branch=master)](https://travis-ci.org/codekie/swagger-examples-validator)
 [![Coverage Status](https://coveralls.io/repos/github/codekie/swagger-examples-validator/badge.svg?branch=master)](https://coveralls.io/github/codekie/swagger-examples-validator?branch=master)
 [![dependencies Status](https://david-dm.org/codekie/swagger-examples-validator/status.svg)](https://david-dm.org/codekie/swagger-examples-validator)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ef493da6c9355a144a29/maintainability)](https://codeclimate.com/github/codekie/swagger-examples-validator/maintainability)
 
 Install
 -------
