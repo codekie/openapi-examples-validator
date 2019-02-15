@@ -3,7 +3,7 @@ const
     fs = require('fs'),
     path = require('path'),
     glob = require('glob'),
-    jsonPath = require('jsonpath-plus'),
+    { JSONPath: jsonPath } = require('jsonpath-plus'),
     Ajv = require('ajv'),
     { createError } = require('errno').custom,
     ApplicationError = require('./application-error'),
