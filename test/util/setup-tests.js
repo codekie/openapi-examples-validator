@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import _ from 'lodash';
-import 'mocha';
-import chai from 'chai';
+const fs = require('fs'),
+    path = require('path'),
+    _ = require('lodash'),
+    chai = require('chai');
 
 // Environment setup (may be used by Babel as well in .babelrc)
 process.env.NODE_ENV = 'test';
@@ -10,7 +10,7 @@ const should = chai.should();
 
 // PUBLIC API
 
-export {
+module.exports = {
     should,
     getPathOfTestData,
     loadTestData
@@ -20,7 +20,7 @@ export {
 
 const
     BASE_PATH__TEST_DATA = '../data/',
-    BASE_PATH__TEST_DATA_STRING = './test/data/',
+    BASE_PATH__TEST_DATA_STRING = path.join(__dirname, '../data/'),
     SUFFIX__JSON = '.json';
 
 // Public

@@ -6,15 +6,16 @@ const
     { JSONPath: jsonPath } = require('jsonpath-plus'),
     Ajv = require('ajv'),
     { createError } = require('errno').custom,
+    Determiner = require('./impl'),
     ApplicationError = require('./application-error'),
-    { ERR_TYPE__JSON_PATH_NOT_FOUND } = ApplicationError;
+    { ERR_TYPE__JSON_PATH_NOT_FOUND } = ApplicationError,
+    { createValidationResponse } = require('./utils');
 
 // CONSTANTS
 
 const
     PROP__SCHEMA = 'schema',
-    PROP__EXAMPLES = 'examples',
-    PATH__EXAMPLES = `$..${ PROP__EXAMPLES }.application/json`;
+    PROP__EXAMPLES = 'examples';
 
 // STATICS
 
@@ -79,11 +80,12 @@ module.exports = {
 
 /**
  * Validates Swagger-spec with embedded examples.
- * @param {Object}  swaggerSpec Swagger-spec
+ * @param {Object}  swaggerSpec         Swagger-spec
  * @returns {ValidationResponse}
  */
 function validateExamples(swaggerSpec) {
-    const pathsExamples = _extractExamplePaths(swaggerSpec);
+    const jsonPathToExamples = Determiner.getImplementation(swaggerSpec).getJsonPathToExamples(),
+        pathsExamples = _extractExamplePaths(swaggerSpec, jsonPathToExamples);
     return _validateExamplesPaths(pathsExamples, swaggerSpec);
 }
 
@@ -97,7 +99,7 @@ function validateFile(filePath) {
     try {
         swaggerSpec = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     } catch (err) {
-        return _createValidationResponse({ errors: [ApplicationError.create(err)] });
+        return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
     return validateExamples(swaggerSpec);
 }
@@ -125,7 +127,7 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToM
             mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
             swaggerSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
         } catch (err) {
-            return _createValidationResponse({ errors: [ApplicationError.create(err)] });
+            return createValidationResponse({ errors: [ApplicationError.create(err)] });
         }
         // Not using `glob`'s response-length, becuse it is `1` if there's no match for `globMapExternalExamples`.
         // Instead, increment on every match
@@ -165,7 +167,7 @@ function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
         swaggerSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
         responseSchema = _extractResponseSchema(pathResponseSchema, swaggerSpec);
     } catch (err) {
-        return _createValidationResponse({ errors: [ApplicationError.create(err)] });
+        return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
     return _validate(
         [pathResponseSchema],
@@ -196,7 +198,7 @@ function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
 function _validate(pathsResponseSchema, validationHandler) {
     const statistics = _initStatistics({ schemaPaths: pathsResponseSchema }),
         errors = validationHandler(statistics);
-    return _createValidationResponse({ errors, statistics });
+    return createValidationResponse({ errors, statistics });
 }
 
 /**
@@ -253,21 +255,6 @@ function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statis
 }
 
 /**
- * Creates a unified response for the validation-result
- * @param {Array.<ApplicationError>}    errors
- * @param {ValidationStatistics}        statistics
- * @returns {ValidationResponse}
- * @private
- */
-function _createValidationResponse({ errors, statistics = {} }) {
-    return {
-        valid: !errors.length,
-        statistics,
-        errors
-    };
-}
-
-/**
  * Merges two `ValidationResponses` together and returns the merged result. The passed `ValidationResponse`s won't be
  * modified.
  * @param {ValidationResponse} response1
@@ -276,7 +263,7 @@ function _createValidationResponse({ errors, statistics = {} }) {
  * @private
  */
 function _mergeValidationResponses(response1, response2) {
-    return _createValidationResponse({
+    return createValidationResponse({
         errors: response1.errors.concat(response2.errors),
         statistics: _.entries(response1.statistics)
             .reduce((res, [key, val]) => {
@@ -288,14 +275,15 @@ function _mergeValidationResponses(response1, response2) {
 
 /**
  * Extracts all JSON-paths to examples from a Swagger-spec
- * @param {Object}  swaggerSpec Swagger-spec
+ * @param {Object}  swaggerSpec         Swagger-spec
+ * @param {String}  jsonPathToExamples  JSON-path to the examples, in the Swagger-Spec
  * @returns {Array.<String>} JSON-paths to examples
  * @private
  */
-function _extractExamplePaths(swaggerSpec) {
+function _extractExamplePaths(swaggerSpec, jsonPathToExamples) {
     return jsonPath({
         json: swaggerSpec,
-        path: PATH__EXAMPLES,
+        path: jsonPathToExamples,
         resultType: 'path'
     });
 }
@@ -452,7 +440,7 @@ function _createValidator() {
 function _extractResponseSchema(pathResponseSchema, swaggerSpec, suppressErrorIfNotFound = false) {
     const schema = _getObjectByPath(pathResponseSchema, swaggerSpec);
     if (!suppressErrorIfNotFound && !schema) {
-        throw new ErrorJsonPathNotFound(`Path to response-schema can't be found: '${ pathResponseSchema }'`, {
+        throw new ErrorJsonPathNotFound(`Path to response-schema can't be found: '${pathResponseSchema}'`, {
             params: {
                 path: pathResponseSchema
             }
