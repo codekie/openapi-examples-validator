@@ -8,4 +8,8 @@ module.exports = {
 
 // IMPLEMENTATION DETAILS
 
+/**
+ * Get the JSONPath to the examples
+ * @returns {string}    JSONPath
+ */
 function getJsonPathToExamples() { return PATH__EXAMPLES; }

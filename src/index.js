@@ -4,8 +4,8 @@ const
     path = require('path'),
     glob = require('glob'),
     { JSONPath: jsonPath } = require('jsonpath-plus'),
-    Ajv = require('ajv'),
     { createError } = require('errno').custom,
+    { getValidatorFactory, compileValidate } = require('./validator'),
     Determiner = require('./impl'),
     ApplicationError = require('./application-error'),
     { ERR_TYPE__JSON_PATH_NOT_FOUND } = ApplicationError,
@@ -172,7 +172,7 @@ function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
     return _validate(
         [pathResponseSchema],
         statistics => _validateExample({
-            validator: _createValidator(),
+            createValidator: _initValidatorFactory(swaggerSpec),
             responseSchema,
             example,
             statistics
@@ -240,7 +240,7 @@ function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statis
                         return ApplicationError.create(err);
                     }
                     return _validateExample({
-                        validator: _createValidator(),
+                        createValidator: _initValidatorFactory(swaggerSpec),
                         responseSchema,
                         example,
                         statistics
@@ -297,7 +297,7 @@ function _extractExamplePaths(swaggerSpec, jsonPathToExamples) {
  */
 function _validateExamplesPaths(pathsExamples, swaggerSpec) {
     const
-        validator = _createValidator(),
+        createValidator = _initValidatorFactory(swaggerSpec),
         validationMap = _buildValidationMap(pathsExamples),
         schemaPaths = Object.keys(validationMap),
         statistics = _initStatistics({ schemaPaths }),
@@ -314,7 +314,7 @@ function _validateExamplesPaths(pathsExamples, swaggerSpec) {
             // Missing response-schemas may occur and are considered valid
             responseSchema = _extractResponseSchema(pathResponseSchema, swaggerSpec, true),
             curErrors = _validateExample({
-                validator,
+                createValidator,
                 responseSchema,
                 example,
                 statistics
@@ -380,14 +380,14 @@ function _buildValidationMap(pathsExamples) {
  * given path.
  * `pathExample` and `filePathExample` are exclusively mandatory.
  * itself
- * @param {ajv}     validator       JSON-schema validator
- * @param {Object}  responseSchema  JSON-schema for the response
- * @param {Object}  example         Example to validate
- * @param {Object}  statistics      Object to contain statistics metrics
+ * @param {Function}    createValidator Factory, to create JSON-schema validator
+ * @param {Object}      responseSchema  JSON-schema for the response
+ * @param {Object}      example         Example to validate
+ * @param {Object}      statistics      Object to contain statistics metrics
  * @returns {Array.<Object>} Array with errors. Empty array, if examples are valid
  * @private
  */
-function _validateExample({ validator, responseSchema, example, statistics }) {
+function _validateExample({ createValidator, responseSchema, example, statistics }) {
     const
         errors = [];
     statistics.responseExamplesTotal++;
@@ -397,8 +397,9 @@ function _validateExample({ validator, responseSchema, example, statistics }) {
         statistics.responseExamplesWithoutSchema++;
         return errors;
     }
-    if (validator.validate(responseSchema, example)) { return errors; }
-    return errors.concat(...validator.errors.map(ApplicationError.create));
+    const validate = compileValidate(createValidator(), responseSchema);
+    if (validate(example)) { return errors; }
+    return errors.concat(...validate.errors.map(ApplicationError.create));
 }
 
 /**
@@ -420,8 +421,8 @@ function _getSchemaPathOfExample(pathExample) {
  * @returns {ajv}
  * @private
  */
-function _createValidator() {
-    return new Ajv({
+function _initValidatorFactory(specSchema) {
+    return getValidatorFactory(specSchema, {
         allErrors: true
     });
 }

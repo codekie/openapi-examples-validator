@@ -7,6 +7,11 @@ module.exports = {
     getImplementation
 };
 
+/**
+ * Get the version-specific implementation for the Swagger-spec. Currently v2 and v3 are supported
+ * @param {Object}  swaggerSpec Swagger-spec
+ * @returns {Object|null}
+ */
 function getImplementation(swaggerSpec) {
     if (typeof swaggerSpec.swagger === 'string') {
         return implV2;
