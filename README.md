@@ -1,7 +1,7 @@
 swagger-examples-validator
 ==========================
 
-Validates embedded examples in Swagger-specs (only JSON supported, yet)
+Validates embedded JSON-examples in Swagger-specs (only JSON supported, yet)
 
 [![npm version](https://badge.fury.io/js/swagger-examples-validator.svg)](https://badge.fury.io/js/swagger-examples-validator)
 [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
