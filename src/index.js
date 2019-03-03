@@ -175,10 +175,8 @@ function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
             createValidator: _initValidatorFactory(swaggerSpec),
             responseSchema,
             example,
-            statistics
-        }).map(error => {
-            error.exampleFilePath = filePathExample;
-            return error;
+            statistics,
+            filePathExample
         })
     );
 }
@@ -243,10 +241,8 @@ function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statis
                         createValidator: _initValidatorFactory(swaggerSpec),
                         responseSchema,
                         example,
-                        statistics
-                    }).map(error => {
-                        error.exampleFilePath = filePathExample;
-                        return error;
+                        statistics,
+                        filePathExample
                     });
                 })
                 .value();
@@ -380,14 +376,15 @@ function _buildValidationMap(pathsExamples) {
  * given path.
  * `pathExample` and `filePathExample` are exclusively mandatory.
  * itself
- * @param {Function}    createValidator Factory, to create JSON-schema validator
- * @param {Object}      responseSchema  JSON-schema for the response
- * @param {Object}      example         Example to validate
- * @param {Object}      statistics      Object to contain statistics metrics
+ * @param {Function}    createValidator     Factory, to create JSON-schema validator
+ * @param {Object}      responseSchema      JSON-schema for the response
+ * @param {Object}      example             Example to validate
+ * @param {Object}      statistics          Object to contain statistics metrics
+ * @param {String}      [filePathExample]   File-path to the example file
  * @returns {Array.<Object>} Array with errors. Empty array, if examples are valid
  * @private
  */
-function _validateExample({ createValidator, responseSchema, example, statistics }) {
+function _validateExample({ createValidator, responseSchema, example, statistics, filePathExample }) {
     const
         errors = [];
     statistics.responseExamplesTotal++;
@@ -399,7 +396,12 @@ function _validateExample({ createValidator, responseSchema, example, statistics
     }
     const validate = compileValidate(createValidator(), responseSchema);
     if (validate(example)) { return errors; }
-    return errors.concat(...validate.errors.map(ApplicationError.create));
+    return errors.concat(...validate.errors.map(ApplicationError.create))
+        .map(error => {
+            if (!filePathExample) { return error; }
+            error.exampleFilePath = filePathExample;
+            return error;
+        });
 }
 
 /**
