@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/codekie/swagger-examples-validator/compare/v1.0.0...v1.1.0) (2019-03-03)
+
+
+### Features
+
+* add codeclimate-badge ([402e9c3](https://github.com/codekie/swagger-examples-validator/commit/402e9c3))
+* submit code coverage to codeclimate ([962657b](https://github.com/codekie/swagger-examples-validator/commit/962657b))
+* support internal references ([2b9f626](https://github.com/codekie/swagger-examples-validator/commit/2b9f626))
+* support OpenAPI v3 ([de0ea5e](https://github.com/codekie/swagger-examples-validator/commit/de0ea5e))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/codekie/swagger-examples-validator/compare/v0.9.2...v1.0.0) (2018-10-09)
 
