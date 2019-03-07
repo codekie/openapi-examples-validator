@@ -303,26 +303,42 @@ function _validateExamplesPaths(pathsExamples, openapiSpec) {
             errors: []
         };
     schemaPaths.forEach(pathResponseSchema => {
-        const
-            errors = validationResult.errors,
-            pathExample = validationMap[pathResponseSchema],
-            example = _getObjectByPath(pathExample, openapiSpec),
-            // Missing response-schemas may occur and are considered valid
-            responseSchema = _extractResponseSchema(pathResponseSchema, openapiSpec, true),
-            curErrors = _validateExample({
-                createValidator,
-                responseSchema,
-                example,
-                statistics
-            }).map(error => {
-                error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));
-                return error;
-            });
-        if (!curErrors.length) { return; }
-        validationResult.valid = false;
-        errors.splice(errors.length - 1, 0, ...curErrors);
+        _validateResponseSchema({ openapiSpec, createValidator, pathResponseSchema, validationMap, statistics,
+            validationResult });
     });
     return validationResult;
+}
+
+/**
+ * Validates a single response-schema.
+ * @param {Object}                  openapiSpec         OpenAPI-spec
+ * @param {ajv}                     createValidator     Factory, to create JSON-schema validator
+ * @param {string}                  pathResponseSchema  JSON-path to response-schema
+ * @param {Object.<String, String>} validationMap Map with schema-path as key and example-paths as value
+ * @param {Object}                  statistics          Object to contain statistics metrics
+ * @param {Object}                  validationResult    Container, for the validation-results
+ * @private
+ */
+function _validateResponseSchema({ openapiSpec, createValidator, pathResponseSchema, validationMap, statistics,
+    validationResult }) {
+    const
+        errors = validationResult.errors,
+        pathExample = validationMap[pathResponseSchema],
+        example = _getObjectByPath(pathExample, openapiSpec),
+        // Missing response-schemas may occur and are considered valid
+        responseSchema = _extractResponseSchema(pathResponseSchema, openapiSpec, true),
+        curErrors = _validateExample({
+            createValidator,
+            responseSchema,
+            example,
+            statistics
+        }).map(error => {
+            error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));
+            return error;
+        });
+    if (!curErrors.length) { return; }
+    validationResult.valid = false;
+    errors.splice(errors.length - 1, 0, ...curErrors);
 }
 
 /**
