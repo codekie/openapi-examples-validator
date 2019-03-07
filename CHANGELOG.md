@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.1"></a>
+## [1.1.1](https://github.com/codekie/openapi-examples-validator/compare/v1.1.0...v1.1.1) (2019-03-07)
+
+
+### Bug Fixes
+
+* rename project to `openapi-examples-validator` ([6dc84d1](https://github.com/codekie/openapi-examples-validator/commit/6dc84d1))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/codekie/openapi-examples-validator/compare/v1.0.0...v1.1.0) (2019-03-03)
 
