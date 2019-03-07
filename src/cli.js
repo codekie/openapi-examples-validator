@@ -11,7 +11,7 @@ const
 program
     .version(VERSION)
     .arguments('<filepath>')
-    .description('Validate embedded examples in Swagger-JSONs.\n'
+    .description('Validate embedded examples in OpenAPI-JSONs.\n'
         + '  To validate external examples, use the `-s` and `-e` option.\n'
         + '  To pass a mapping-file, to validate multiple external examples, use the `-m` option.')
     .option('-s, --schema-jsonpath <schema-jsonpath>', 'JSON-path to schema, to validate the example file against')
@@ -23,8 +23,8 @@ program
     .action(processAction);
 program.on('--help', () => {
     console.log('\n\n  Example for external example-file:\n');
-    console.log('    $ swagger-examples-validator -s $.paths./.get.responses.200.schema -e example.json'
-        + ' swagger.json\n\n');
+    console.log('    $ openapi-examples-validator -s $.paths./.get.responses.200.schema -e example.json'
+        + ' openapi-spec.json\n\n');
 });
 program.parse(process.argv);
 

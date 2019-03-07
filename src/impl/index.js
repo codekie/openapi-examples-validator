@@ -8,15 +8,15 @@ module.exports = {
 };
 
 /**
- * Get the version-specific implementation for the Swagger-spec. Currently v2 and v3 are supported
- * @param {Object}  swaggerSpec Swagger-spec
+ * Get the version-specific implementation for the OpenAPI-spec. Currently v2 and v3 are supported
+ * @param {Object}  openapiSpec OpenAPI-spec
  * @returns {Object|null}
  */
-function getImplementation(swaggerSpec) {
-    if (typeof swaggerSpec.swagger === 'string') {
+function getImplementation(openapiSpec) {
+    if (typeof openapiSpec.swagger === 'string') {
         return implV2;
     }
-    if (swaggerSpec.openapi && swaggerSpec.openapi.match(REGEX__OPEN_API)) {
+    if (openapiSpec.openapi && openapiSpec.openapi.match(REGEX__OPEN_API)) {
         return implV3;
     }
     return null;

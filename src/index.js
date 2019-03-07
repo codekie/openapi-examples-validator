@@ -79,34 +79,34 @@ module.exports = {
 // Public
 
 /**
- * Validates Swagger-spec with embedded examples.
- * @param {Object}  swaggerSpec         Swagger-spec
+ * Validates OpenAPI-spec with embedded examples.
+ * @param {Object}  openapiSpec OpenAPI-spec
  * @returns {ValidationResponse}
  */
-function validateExamples(swaggerSpec) {
-    const jsonPathToExamples = Determiner.getImplementation(swaggerSpec).getJsonPathToExamples(),
-        pathsExamples = _extractExamplePaths(swaggerSpec, jsonPathToExamples);
-    return _validateExamplesPaths(pathsExamples, swaggerSpec);
+function validateExamples(openapiSpec) {
+    const jsonPathToExamples = Determiner.getImplementation(openapiSpec).getJsonPathToExamples(),
+        pathsExamples = _extractExamplePaths(openapiSpec, jsonPathToExamples);
+    return _validateExamplesPaths(pathsExamples, openapiSpec);
 }
 
 /**
- * Validates Swagger-spec with embedded examples.
- * @param {string}  filePath    File-path to the swagger-spec
+ * Validates OpenAPI-spec with embedded examples.
+ * @param {string}  filePath    File-path to the OpenAPI-spec
  * @returns {ValidationResponse}
  */
 function validateFile(filePath) {
-    let swaggerSpec = null;
+    let openapiSpec = null;
     try {
-        swaggerSpec = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        openapiSpec = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
-    return validateExamples(swaggerSpec);
+    return validateExamples(openapiSpec);
 }
 
 /**
  * Validates examples by mapping-files.
- * @param {string}  filePathSchema              File-path to the Swagger-spec
+ * @param {string}  filePathSchema              File-path to the OpenAPI-spec
  * @param {string}  globMapExternalExamples     File-path (globs are supported) to the mapping-file containing JSON-
  *                                              paths to response-schemas as key and a single file-path or Array of
  *                                              file-paths to external examples
@@ -122,10 +122,10 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToM
         { nonull: true }
     ).map(filePathMapExternalExamples => {
         let mapExternalExamples = null,
-            swaggerSpec = null;
+            openapiSpec = null;
         try {
             mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
-            swaggerSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
+            openapiSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
         } catch (err) {
             return createValidationResponse({ errors: [ApplicationError.create(err)] });
         }
@@ -134,7 +134,7 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToM
         matchingFilePathsMapping++;
         return _validate(
             Object.keys(mapExternalExamples),
-            statistics => _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics, {
+            statistics => _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statistics, {
                 cwdToMappingFile,
                 dirPathMapExternalExamples: path.dirname(filePathMapExternalExamples)
             }).map((/** @type ApplicationError */ error) => Object.assign(error, {
@@ -153,7 +153,7 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToM
 
 /**
  * Validates a single external example.
- * @param {String}  filePathSchema      File-path to the Swagger-spec
+ * @param {String}  filePathSchema      File-path to the OpenAPI-spec
  * @param {String}  pathResponseSchema  JSON-path to the response-schema
  * @param {String}  filePathExample     File-path to the external example-file
  * @returns {ValidationResponse}
@@ -161,18 +161,18 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToM
 function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
     let example = null,
         responseSchema = null,
-        swaggerSpec = null;
+        openapiSpec = null;
     try {
         example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
-        swaggerSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
-        responseSchema = _extractResponseSchema(pathResponseSchema, swaggerSpec);
+        openapiSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
+        responseSchema = _extractResponseSchema(pathResponseSchema, openapiSpec);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
     return _validate(
         [pathResponseSchema],
         statistics => _validateExample({
-            createValidator: _initValidatorFactory(swaggerSpec),
+            createValidator: _initValidatorFactory(openapiSpec),
             responseSchema,
             example,
             statistics,
@@ -201,7 +201,7 @@ function _validate(pathsResponseSchema, validationHandler) {
 
 /**
  * Validates examples by a mapping-file.
- * @param {Object}                  swaggerSpec                     Swagger-spec
+ * @param {Object}                  openapiSpec                     OpenAPI-spec
  * @param {Object}                  mapExternalExamples             Mapping-file containing JSON-paths to response-
  *                                                                  schemas as key and a single file-path or Array of
  *                                                                  file-paths to
@@ -212,7 +212,7 @@ function _validate(pathsResponseSchema, validationHandler) {
  * @returns {Array.<ApplicationError>}
  * @private
  */
-function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statistics,
+function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statistics,
     { cwdToMappingFile = false, dirPathMapExternalExamples }
 ) {
     return _(mapExternalExamples)
@@ -220,7 +220,7 @@ function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statis
         .flatMap(([pathResponseSchema, filePathsExample]) => {
             let responseSchema = null;
             try {
-                responseSchema = _extractResponseSchema(pathResponseSchema, swaggerSpec);
+                responseSchema = _extractResponseSchema(pathResponseSchema, openapiSpec);
             } catch (/** @type ErrorJsonPathNotFound */ err) {
                 // If the response-schema can't be found, don't even attempt to process the examples
                 return ApplicationError.create(err);
@@ -238,7 +238,7 @@ function _handleExamplesByMapValidation(swaggerSpec, mapExternalExamples, statis
                         return ApplicationError.create(err);
                     }
                     return _validateExample({
-                        createValidator: _initValidatorFactory(swaggerSpec),
+                        createValidator: _initValidatorFactory(openapiSpec),
                         responseSchema,
                         example,
                         statistics,
@@ -270,30 +270,30 @@ function _mergeValidationResponses(response1, response2) {
 }
 
 /**
- * Extracts all JSON-paths to examples from a Swagger-spec
- * @param {Object}  swaggerSpec         Swagger-spec
- * @param {String}  jsonPathToExamples  JSON-path to the examples, in the Swagger-Spec
+ * Extracts all JSON-paths to examples from a OpenAPI-spec
+ * @param {Object}  openapiSpec         OpenAPI-spec
+ * @param {String}  jsonPathToExamples  JSON-path to the examples, in the OpenAPI-Spec
  * @returns {Array.<String>} JSON-paths to examples
  * @private
  */
-function _extractExamplePaths(swaggerSpec, jsonPathToExamples) {
+function _extractExamplePaths(openapiSpec, jsonPathToExamples) {
     return jsonPath({
-        json: swaggerSpec,
+        json: openapiSpec,
         path: jsonPathToExamples,
         resultType: 'path'
     });
 }
 
 /**
- * Validates examples at the given paths in the Swagger-spec.
+ * Validates examples at the given paths in the OpenAPI-spec.
  * @param {Array.<String>}  pathsExamples   JSON-paths to examples
- * @param {Object}          swaggerSpec     Swagger-spec
+ * @param {Object}          openapiSpec     OpenAPI-spec
  * @returns {ValidationResponse}
  * @private
  */
-function _validateExamplesPaths(pathsExamples, swaggerSpec) {
+function _validateExamplesPaths(pathsExamples, openapiSpec) {
     const
-        createValidator = _initValidatorFactory(swaggerSpec),
+        createValidator = _initValidatorFactory(openapiSpec),
         validationMap = _buildValidationMap(pathsExamples),
         schemaPaths = Object.keys(validationMap),
         statistics = _initStatistics({ schemaPaths }),
@@ -306,9 +306,9 @@ function _validateExamplesPaths(pathsExamples, swaggerSpec) {
         const
             errors = validationResult.errors,
             pathExample = validationMap[pathResponseSchema],
-            example = _getObjectByPath(pathExample, swaggerSpec),
+            example = _getObjectByPath(pathExample, openapiSpec),
             // Missing response-schemas may occur and are considered valid
-            responseSchema = _extractResponseSchema(pathResponseSchema, swaggerSpec, true),
+            responseSchema = _extractResponseSchema(pathResponseSchema, openapiSpec, true),
             curErrors = _validateExample({
                 createValidator,
                 responseSchema,
@@ -430,9 +430,9 @@ function _initValidatorFactory(specSchema) {
 }
 
 /**
- * Extracts the response-schema in the Swagger-spec at the given JSON-path.
+ * Extracts the response-schema in the OpenAPI-spec at the given JSON-path.
  * @param   {string}    pathResponseSchema                  JSON-path to response-schema
- * @param   {Object}    swaggerSpec                         Swagger-spec
+ * @param   {Object}    openapiSpec                         OpenAPI-spec
  * @param   {boolean}   [suppressErrorIfNotFound=false]     Don't throw `ErrorJsonPathNotFound` if the repsonse does not
  *                                                          exist at the given JSON-path
  * @returns {Object|Array.<Object>|undefined} Matching schema(s)
@@ -440,8 +440,8 @@ function _initValidatorFactory(specSchema) {
  *                                  `suppressErrorIfNotFound` is false
  * @private
  */
-function _extractResponseSchema(pathResponseSchema, swaggerSpec, suppressErrorIfNotFound = false) {
-    const schema = _getObjectByPath(pathResponseSchema, swaggerSpec);
+function _extractResponseSchema(pathResponseSchema, openapiSpec, suppressErrorIfNotFound = false) {
+    const schema = _getObjectByPath(pathResponseSchema, openapiSpec);
     if (!suppressErrorIfNotFound && !schema) {
         throw new ErrorJsonPathNotFound(`Path to response-schema can't be found: '${pathResponseSchema}'`, {
             params: {

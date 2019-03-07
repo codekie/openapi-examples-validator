@@ -1,29 +1,30 @@
-swagger-examples-validator
+openapi-examples-validator
 ==========================
 
-Validates embedded JSON-examples in Swagger-specs (only JSON supported, yet)
+Validates embedded JSON-examples in OpenAPI-specs (v2 and v3 are supported)
 
-[![npm version](https://badge.fury.io/js/swagger-examples-validator.svg)](https://badge.fury.io/js/swagger-examples-validator)
+[![npm version](https://badge.fury.io/js/openapi-examples-validator.svg)](https://badge.fury.io/js/openapi-examples-validator)
 [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
-[![Build Status](https://travis-ci.org/codekie/swagger-examples-validator.svg?branch=master)](https://travis-ci.org/codekie/swagger-examples-validator)
-[![Coverage Status](https://coveralls.io/repos/github/codekie/swagger-examples-validator/badge.svg?branch=master)](https://coveralls.io/github/codekie/swagger-examples-validator?branch=master)
-[![dependencies Status](https://david-dm.org/codekie/swagger-examples-validator/status.svg)](https://david-dm.org/codekie/swagger-examples-validator)
-[![Maintainability](https://api.codeclimate.com/v1/badges/ef493da6c9355a144a29/maintainability)](https://codeclimate.com/github/codekie/swagger-examples-validator/maintainability) [![Greenkeeper badge](https://badges.greenkeeper.io/codekie/swagger-examples-validator.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.org/codekie/openapi-examples-validator.svg?branch=master)](https://travis-ci.org/codekie/openapi-examples-validator)
+[![Coverage Status](https://coveralls.io/repos/github/codekie/openapi-examples-validator/badge.svg?branch=master)](https://coveralls.io/github/codekie/openapi-examples-validator?branch=master)
+[![dependencies Status](https://david-dm.org/codekie/openapi-examples-validator/status.svg)](https://david-dm.org/codekie/openapi-examples-validator)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ef493da6c9355a144a29/maintainability)](https://codeclimate.com/github/codekie/openapi-examples-validator/maintainability)
+[![Greenkeeper badge](https://badges.greenkeeper.io/codekie/openapi-examples-validator.svg)](https://greenkeeper.io/)
 
 Install
 -------
 
 Install using [npm](https://docs.npmjs.com/getting-started/what-is-npm):
 
-    npm install -g swagger-examples-validator
+    npm install -g openapi-examples-validator
 
 Usage
 -----
 
 ```
-swagger-examples-validator [options] <filepath>
+openapi-examples-validator [options] <filepath>
 
-Validate embedded examples in Swagger-JSONs.
+Validate embedded examples in OpenAPI-JSONs.
 To validate external examples, use the `-s` and `-e` option.
 To pass a mapping-file, to validate multiple external examples, use the `-m` option.
 
@@ -41,14 +42,14 @@ Options:
   -h, --help                                 output usage information
 ````
 
-The validator will search the Swagger-JSON for response-examples and validate them against its schema.
+The validator will search the OpenAPI-JSON for response-examples and validate them against its schema.
 
 If an external example has to be verified, the `-s` and `-e` option has to be used.
 
 For example:
 
 ```
-$ swagger-examples-validator -s $.paths./.get.responses.200.schema -e example.json swagger.json
+$ openapi-examples-validator -s $.paths./.get.responses.200.schema -e example.json openapi-spec.json
 ```
 
 To validate multiple external examples, pass a mapping file with a similar structure along with the `-m` option:

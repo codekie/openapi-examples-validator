@@ -4,8 +4,8 @@ const { JSONPath } = require('jsonpath-plus'),
 
 const PROP__ID = '$id',
     JSON_PATH__REFS = '$..\$ref',
-    ID__SPEC_SCHEMA = 'https://www.npmjs.com/package/swagger-examples-validator/defs.json',
-    ID__REPSONSE_SCHEMA = 'https://www.npmjs.com/package/swagger-examples-validator/schema.json';
+    ID__SPEC_SCHEMA = 'https://www.npmjs.com/package/openapi-examples-validator/defs.json',
+    ID__REPSONSE_SCHEMA = 'https://www.npmjs.com/package/openapi-examples-validator/schema.json';
 
 module.exports = {
     getValidatorFactory,
@@ -14,7 +14,7 @@ module.exports = {
 
 /**
  * Get a factory-function to create a prepared validator-instance
- * @param {Object}  specSchema  Swagger-spec of which potential local references will be extracted
+ * @param {Object}  specSchema  OpenAPI-spec of which potential local references will be extracted
  * @param {Object}  [options]   Options for the validator
  * @returns {function(): (ajv | ajv.Ajv)}
  */
@@ -53,7 +53,7 @@ function _prepareResponseSchema(specSchema, idSchema) {
 }
 
 /**
- * Replaces all internal references to the schema, with the extracted references, based on the origin swagger-spec
+ * Replaces all internal references to the schema, with the extracted references, based on the origin OpenAPI-spec
  * @param {Object}  schema  The schema, containing references have to be replaced
  * @private
  */

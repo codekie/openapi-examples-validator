@@ -1,13 +1,13 @@
 {
-  "name": "swagger-examples-validator",
+  "name": "openapi-examples-validator",
   "version": "1.1.0",
-  "description": "Validates embedded examples in Swagger-JSONs",
+  "description": "Validates embedded examples in OpenAPI-JSONs",
   "main": "dist/index.js",
   "engines": {
     "node": ">=6"
   },
   "bin": {
-    "swagger-examples-validator": "dist/cli.js"
+    "openapi-examples-validator": "dist/cli.js"
   },
   "scripts": {
     "start-dev": "babel-node src/cli",
@@ -23,10 +23,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codekie/swagger-examples-validator.git"
+    "url": "git+https://github.com/codekie/openapi-examples-validator.git"
   },
   "keywords": [
     "swagger",
+    "openapi",
     "json",
     "validate",
     "examples"
@@ -34,9 +35,9 @@
   "author": "Josua Amann",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/codekie/swagger-examples-validator/issues"
+    "url": "https://github.com/codekie/openapi-examples-validator/issues"
   },
-  "homepage": "https://github.com/codekie/swagger-examples-validator#readme",
+  "homepage": "https://github.com/codekie/openapi-examples-validator#readme",
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
