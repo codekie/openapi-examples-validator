@@ -44,7 +44,7 @@
     "@babel/node": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
-    "ajv": "6.9.1",
+    "ajv": "6.10.1",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.4",
     "chai": "^4.2.0",
