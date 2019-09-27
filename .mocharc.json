@@ -1,0 +1,9 @@
+{
+  "require": [
+    "@babel/register",
+    "./test/util/setup-tests"
+  ],
+  "recursive": [
+    "./test/specs/**/*.js"
+  ]
+}

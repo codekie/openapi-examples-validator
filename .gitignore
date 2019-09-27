@@ -1,5 +1,7 @@
 *.log
 .idea
+.stryker-tmp
+/reports
 /.nyc_output
 /coverage
 /node_modules
