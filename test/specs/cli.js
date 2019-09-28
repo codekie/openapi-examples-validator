@@ -1,11 +1,13 @@
 const VERSION = require('../../package').version,
-    { text: helpText } = require('../data/output-help'),
+    { text: textHelp } = require('../data/output-help'),
+    { text: textMapExternalExamples } = require('../data/output-map-external-examples'),
     exec = require('child_process').exec,
     {
         getPathOfTestData
     } = require('../util/setup-tests');
 
-const CMD__RUN = 'node dist/cli.js';
+const CMD__RUN = 'node src/cli.js',
+    CMD__RUN_BUILT = 'node src/cli.js';
 
 describe('CLI-module', function() {
     describe('version', function() {
@@ -20,8 +22,24 @@ describe('CLI-module', function() {
     describe('help', function() {
         it('should show the right text', function(done) {
             exec(`${ CMD__RUN } --help`, (err, stdout, stderr) => {
-                stdout.should.equal(helpText);
+                stdout.should.equal(textHelp);
                 stderr.should.equal('');
+                done();
+            });
+        });
+    });
+    describe('file mappings and invalid examples', function() {
+        it('should work with the source code', function(done) {
+            exec(`${ CMD__RUN } -m ${ getPathOfTestData('map-external-examples') } `
+                + `-c ${ getPathOfTestData('external-examples-schema') }`, (err, stdout) => {
+                stdout.should.equal(textMapExternalExamples);
+                done();
+            });
+        });
+        it('should work with the built code', function(done) {
+            exec(`${ CMD__RUN_BUILT } -m ${ getPathOfTestData('map-external-examples') } `
+                + `-c ${ getPathOfTestData('external-examples-schema') }`, (err, stdout) => {
+                stdout.should.equal(textMapExternalExamples);
                 done();
             });
         });
