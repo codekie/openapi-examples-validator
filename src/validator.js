@@ -1,4 +1,4 @@
-const { JSONPath } = require('jsonpath-plus'),
+const { JSONPath: jsonPath } = require('jsonpath-plus'),
     JsonPointer = require('json-pointer'),
     Ajv = require('ajv');
 
@@ -58,8 +58,7 @@ function _prepareResponseSchema(specSchema, idSchema) {
  * @private
  */
 function _replaceRefsToPreparedSpecSchema(schema) {
-    // eslint-disable-next-line new-cap
-    JSONPath({
+    jsonPath({
         path: JSON_PATH__REFS,
         json: schema,
         callback(value, type, payload) {
@@ -79,8 +78,7 @@ function _createReferenceSchema(specSchema) {
     const refSchema = {
         [PROP__ID]: ID__SPEC_SCHEMA
     };
-    // eslint-disable-next-line new-cap
-    JSONPath({
+    jsonPath({
         path: JSON_PATH__REFS,
         json: specSchema,
         callback(value) {
