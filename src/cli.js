@@ -59,9 +59,9 @@ function _handleResult(result) {
 
 function _printStatistics(statistics) {
     const {
-            responseSchemasWithExamples = '-',
-            responseExamplesWithoutSchema = '-',
-            responseExamplesTotal = '-',
+            responseSchemasWithExamples,
+            responseExamplesWithoutSchema,
+            responseExamplesTotal,
             matchingFilePathsMapping
         } = statistics,
         strStatistics = [
