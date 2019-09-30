@@ -2,7 +2,8 @@ const { loadTestData } = require('../../../util/setup-tests'),
     { 'default': validateExamples } = require('../../../../src/index');
 
 const REL_PATH__SIMPLE = 'v3/simple-api-with-examples',
-    REL_PATH__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs';
+    REL_PATH__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs',
+    REL_PATH__INVALID__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs-invalid';
 
 describe('Main-module, for v3 should', () => {
     describe('recognize', () => {
@@ -11,6 +12,9 @@ describe('Main-module, for v3 should', () => {
         });
         it('example with internal refs', () => {
             validateExamples(loadTestData(REL_PATH__WITH_INTERNAL_REFS)).valid.should.equal(true);
+        });
+        it('invalid example with internal refs', () => {
+            validateExamples(loadTestData(REL_PATH__INVALID__WITH_INTERNAL_REFS)).valid.should.equal(false);
         });
     });
 });
