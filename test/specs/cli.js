@@ -7,7 +7,8 @@ const VERSION = require('../../package').version,
     } = require('../util/setup-tests');
 
 const CMD__RUN = 'node src/cli.js',
-    CMD__RUN_BUILT = 'node src/cli.js';
+    CMD__RUN_BUILT = 'node dist/cli.js',
+    JSON_PATH__SCHEMA = '$.paths./.get.responses.200.schema';
 
 describe('CLI-module', function() {
     describe('version', function() {
