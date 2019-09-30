@@ -44,8 +44,8 @@ describe('CLI-module', function() {
             });
         });
     });
-    describe('with valid examples', () => {
-        it('should write to stdout, but not into stderr', (done) => {
+    describe('with valid examples', function() {
+        it('should write to stdout, but not into stderr', function(done) {
             exec(`${ CMD__RUN } ${ getPathOfTestData('simple-example') }`, (err, stdout, stderr) => {
                 stdout.should.not.equal('');
                 stderr.should.equal('');
@@ -53,8 +53,8 @@ describe('CLI-module', function() {
             });
         });
     });
-    describe('with invalid examples', () => {
-        it('should write to stdout and stderr', (done) => {
+    describe('with invalid examples', function() {
+        it('should write to stdout and stderr', function(done) {
             exec(`${ CMD__RUN } ${ getPathOfTestData('multiple-errors') }`, (err, stdout, stderr) => {
                 stdout.should.not.equal('');
                 stderr.should.not.equal('');
