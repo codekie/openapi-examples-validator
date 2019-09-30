@@ -17,6 +17,7 @@
     "coverage": "rimraf ./coverage && nyc --reporter=lcov --reporter=text -x \"dist/**/*\" -x \"test/**/*.js\" npm test",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "npm run build && npm run test:mocha",
+    "test-mutations": "stryker run",
     "test:mocha": "BABEL_DISABLE_CACHE=1 mocha --require \"@babel/register\" --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\"",
     "release": "npm run build && npm run release:stage-artifacts && standard-version -a",
     "release:stage-artifacts": "git add dist/*"
@@ -63,6 +64,7 @@
     "nyc": "^14.1.1",
     "rimraf": "^3.0.0",
     "standard-version": "^7.0.0",
+    "stryker-cli": "1.0.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"
