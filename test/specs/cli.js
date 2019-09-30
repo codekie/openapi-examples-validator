@@ -63,4 +63,15 @@ describe('CLI-module', function() {
             });
         });
     });
+    describe('single external example', function() {
+        it('should have no error', function(done) {
+            exec(`${ CMD__RUN } -s ${ JSON_PATH__SCHEMA } `
+                + `-e ${ getPathOfTestData('external-examples-valid-example1') } `
+                + `${ getPathOfTestData('external-examples-schema') }`, (err, stdout, stderr) => {
+                stdout.should.not.equal('');
+                stderr.should.equal('');
+                done();
+            });
+        });
+    });
 });
