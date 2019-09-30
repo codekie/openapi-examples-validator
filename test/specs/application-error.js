@@ -3,6 +3,8 @@ const
     ApplicationError = require('../../src/application-error'),
     { ERR_TYPE__VALIDATION, ERR_TYPE__JSON_PATH_NOT_FOUND } = ApplicationError;
 
+const TYPE__VALIDATION = 'Validation';
+
 const should = chai.should();
 
 describe('ApplicationError', function() {
@@ -17,6 +19,9 @@ describe('ApplicationError', function() {
             });
             err.path.should.equal('foo');
             err.line.should.equal('bar');
+        });
+        it('should have the right type for the validation-type', function() {
+            (new ApplicationError(ERR_TYPE__VALIDATION)).type.should.equal(TYPE__VALIDATION);
         });
     });
 });
