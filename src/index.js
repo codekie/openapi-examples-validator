@@ -3,6 +3,7 @@ const
     fs = require('fs'),
     path = require('path'),
     glob = require('glob'),
+    yaml = require('yaml'),
     { JSONPath: jsonPath } = require('jsonpath-plus'),
     { createError } = require('errno').custom,
     { getValidatorFactory, compileValidate } = require('./validator'),
@@ -15,7 +16,11 @@ const
 
 const
     PROP__SCHEMA = 'schema',
-    PROP__EXAMPLES = 'examples';
+    PROP__EXAMPLES = 'examples',
+    FILE_EXTENSIONS__YAML = [
+        'yaml',
+        'yml'
+    ];
 
 // STATICS
 
@@ -97,7 +102,7 @@ function validateExamples(openapiSpec) {
 function validateFile(filePath) {
     let openapiSpec = null;
     try {
-        openapiSpec = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        openapiSpec = _parseSpec(filePath);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
@@ -125,7 +130,7 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToM
             openapiSpec = null;
         try {
             mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
-            openapiSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
+            openapiSpec = _parseSpec(filePathSchema);
         } catch (err) {
             return createValidationResponse({ errors: [ApplicationError.create(err)] });
         }
@@ -164,7 +169,7 @@ function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
         openapiSpec = null;
     try {
         example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
-        openapiSpec = JSON.parse(fs.readFileSync(filePathSchema, 'utf-8'));
+        openapiSpec = _parseSpec(filePathSchema);
         responseSchema = _extractResponseSchema(pathResponseSchema, openapiSpec);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
@@ -182,6 +187,30 @@ function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
 }
 
 // Private
+
+/**
+ * Parses the OpenAPI-spec (supports JSON and YAML)
+ * @param {String}  filePath    File-path to the OpenAPI-spec
+ * @returns {object}    Parsed OpenAPI-spec
+ * @private
+ */
+function _parseSpec(filePath) {
+    if (_isFileTypeYaml(filePath)) {
+        return yaml.parse(fs.readFileSync(filePath, 'utf-8'));
+    }
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+}
+
+/**
+ * Determines whether the filePath is pointing to a YAML-file
+ * @param {String}  filePath    File-path to the OpenAPI-spec
+ * @returns {boolean}   `true`, if the file is a YAML-file
+ * @private
+ */
+function _isFileTypeYaml(filePath) {
+    const extension = filePath.split('.').pop();
+    return FILE_EXTENSIONS__YAML.includes(extension);
+}
 
 /**
  * Top-level validator. Prepares common values, required for the validation, then calles the validator and prepares
