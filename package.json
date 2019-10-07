@@ -76,6 +76,7 @@
     "glob": "^7.1.4",
     "json-pointer": "0.6.0",
     "jsonpath-plus": "^1.1.0",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "yaml": "1.7.1"
   }
 }

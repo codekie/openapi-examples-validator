@@ -11,10 +11,10 @@ const
 program
     .version(VERSION)
     .arguments('<filepath>')
-    .description('Validate embedded examples in OpenAPI-JSONs.\n'
+    .description('Validate embedded examples in OpenAPI-specs (JSON and YAML supported).\n'
         + '  To validate external examples, use the `-s` and `-e` option.\n'
         + '  To pass a mapping-file, to validate multiple external examples, use the `-m` option.')
-    .option('-s, --schema-jsonpath <schema-jsonpath>', 'JSON-path to schema, to validate the example file against')
+    .option('-s, --schema-jsonpath <schema-jsonpath>', 'Path to OpenAPI-schema, to validate the example file against')
     .option('-e, --example-filepath <example-filepath>', 'file path to example file, to be validated')
     .option('-m, --mapping-filepath <mapping-filepath>', 'file path to map, containing schema-paths as key and the'
         + ' file-path(s) to examples as value. If wildcards are used, the parameter has to be put in quotes.')
@@ -32,7 +32,7 @@ program.parse(process.argv);
 
 function processAction(filepath, options) {
     const { schemaJsonpath, exampleFilepath, mappingFilepath, cwdToMappingFile } = options;
-    let result = null;
+    let result;
     if (mappingFilepath) {
         console.log('Validating with mapping file');
         result = validateExamplesByMap(filepath, mappingFilepath, { cwdToMappingFile });

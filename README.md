@@ -25,14 +25,13 @@ Usage
 ```
 openapi-examples-validator [options] <filepath>
 
-Validate embedded examples in OpenAPI-JSONs.
-To validate external examples, use the `-s` and `-e` option.
-To pass a mapping-file, to validate multiple external examples, use the `-m` option.
+Validate embedded examples in OpenAPI-specs (JSON and YAML supported).
+  To validate external examples, use the `-s` and `-e` option.
+  To pass a mapping-file, to validate multiple external examples, use the `-m` option.
 
 Options:
-
   -V, --version                              output the version number
-  -s, --schema-jsonpath <schema-jsonpath>    JSON-path to schema, to validate the example file against
+  -s, --schema-jsonpath <schema-jsonpath>    Path to OpenAPI-schema, to validate the example file against
   -e, --example-filepath <example-filepath>  file path to example file, to be validated
   -m, --mapping-filepath <mapping-filepath>  file path to map, containing schema-paths as key and the file-path(s) to
                                              examples as value. If wildcards are used, the parameter has to be put in
@@ -43,7 +42,7 @@ Options:
   -h, --help                                 output usage information
 ````
 
-The validator will search the OpenAPI-JSON for response-examples and validate them against its schema.
+The validator will search the OpenAPI-spec for response-examples and validate them against its schema.
 
 If an external example has to be verified, the `-s` and `-e` option has to be used.
 
@@ -95,8 +94,3 @@ To run the tests, execute
 or to check the coverage
 
     npm run coverage
-
-Future features
----------------
-
-- YAML support
