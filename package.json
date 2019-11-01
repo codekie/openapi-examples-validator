@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "ajv": "6.10.2",
-    "commander": "^3.0.2",
+    "commander": "^4.0.0",
     "errno": "0.1.7",
     "glob": "^7.1.4",
     "json-pointer": "0.6.0",
