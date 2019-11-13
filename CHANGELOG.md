@@ -1,6 +1,27 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [2.0.0](https://github.com/codekie/openapi-examples-validator/compare/v1.1.2...v2.0.0) (2019-11-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop Node.js 6 support
+
+### Bug Fixes
+
+* fix CI-pipeline ([2acd331](https://github.com/codekie/openapi-examples-validator/commit/2acd331))
+* increase mutation score ([87ea53b](https://github.com/codekie/openapi-examples-validator/commit/87ea53b))
+* update dependencies (patches and minor upgrades) ([d5acecf](https://github.com/codekie/openapi-examples-validator/commit/d5acecf))
+* **package:** update yaml to version 1.7.2 ([bad4f89](https://github.com/codekie/openapi-examples-validator/commit/bad4f89))
+
+
+### Features
+
+* add mutation-tests to CI-pipeline ([91c038e](https://github.com/codekie/openapi-examples-validator/commit/91c038e))
+* add stryker-support for mutation-tests ([12a2c80](https://github.com/codekie/openapi-examples-validator/commit/12a2c80))
+* add YAML-support ([c72266c](https://github.com/codekie/openapi-examples-validator/commit/c72266c))
 
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/codekie/openapi-examples-validator/compare/v1.1.1...v1.1.2) (2019-08-26)
