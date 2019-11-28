@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/codekie/openapi-examples-validator/compare/v2.0.0...v2.0.1) (2019-11-28)
+
+
+### Bug Fixes
+
+* upgrade dependencies (fix-versions) ([9e70981](https://github.com/codekie/openapi-examples-validator/commit/9e709817653e5fad67a4b56975e98c007a93049e))
+* upgrade dependencies (minor-versions) ([adf4039](https://github.com/codekie/openapi-examples-validator/commit/adf40393dcb14c279ef883bab4d7032a36a9da46))
+* upgrade stryker-dependencies ([75c6af8](https://github.com/codekie/openapi-examples-validator/commit/75c6af863235e265ba8da139654caccbf2fc1589))
+
 ## [2.0.0](https://github.com/codekie/openapi-examples-validator/compare/v1.1.2...v2.0.0) (2019-11-13)
 
 
