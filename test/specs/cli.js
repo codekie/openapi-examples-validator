@@ -32,15 +32,17 @@ describe('CLI-module', function() {
     describe('file mappings and invalid examples', function() {
         it('should work with the source code', function(done) {
             exec(`${ CMD__RUN } -m ${ getPathOfTestData('map-external-examples') } `
-                + `-c ${ getPathOfTestData('external-examples-schema') }`, (err, stdout) => {
+                + `-c ${ getPathOfTestData('external-examples-schema') }`, (err, stdout, stderr) => {
                 stdout.should.equal(textMapExternalExamples);
+                stderr.should.not.equal('');
                 done();
             });
         });
         it('should work with the built code', function(done) {
             exec(`${ CMD__RUN_BUILT } -m ${ getPathOfTestData('map-external-examples') } `
-                + `-c ${ getPathOfTestData('external-examples-schema') }`, (err, stdout) => {
+                + `-c ${ getPathOfTestData('external-examples-schema') }`, (err, stdout, stderr) => {
                 stdout.should.equal(textMapExternalExamples);
+                stderr.should.not.equal('');
                 done();
             });
         });
