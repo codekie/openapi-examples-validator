@@ -1,3 +1,7 @@
+/**
+ * Entry point for logic that only applies to specific versions of the OpenAPI-spec
+ */
+
 const implV2 = require('./v2/index'),
     implV3 = require('./v3/index');
 

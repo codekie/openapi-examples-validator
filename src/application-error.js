@@ -27,6 +27,15 @@ const
  * }} ApplicationErrorOptions
  */
 
+// CONSTANTS
+
+const ErrorType = {
+    jsENOENT: ENOENT.code,
+    jsonPathNotFound: 'JsonPathNotFound',
+    errorAndErrorsMutuallyExclusive: 'ErrorErrorsMutuallyExclusive',
+    validation: 'Validation'
+};
+
 // CLASSES
 
 /**
@@ -41,13 +50,11 @@ class ApplicationError {
      * @returns {ApplicationError} Unified application-error instance
      */
     static create(err) {
-        const
-            { ERR_TYPE__VALIDATION } = ApplicationError,
-            { code, message, path, cause } = err,               // Certain properties of Javascript-errors
-            type = code || err.type || ERR_TYPE__VALIDATION,    // If `code` is available then it's a Javascript-error
+        const { code, message, path, cause } = err,               // Certain properties of Javascript-errors
+            type = code || err.type || ErrorType.validation,    // If `code` is available then it's a Javascript-error
             options = { message };
-        if (ERR_TYPE__VALIDATION === type) {
-            // If it's an validation-error, copy all properties
+        if (ErrorType.validation === type || ErrorType.errorAndErrorsMutuallyExclusive === type) {
+            // For certain, created error-types, copy all properties
             _.merge(options, err);
         } else {
             // Copy certain properties of Javascript-error (but only if available)
@@ -72,12 +79,7 @@ class ApplicationError {
 
 // PUBLIC API
 
-module.exports = ApplicationError;
-
-// PUBLIC STATICS
-
-// Types of errors
-ApplicationError.ERR_TYPE__VALIDATION = 'Validation';
-ApplicationError.ERR_TYPE__JSON_PATH_NOT_FOUND = 'JsonPathNotFound';
-ApplicationError.ERR_TYPE__JS_ENOENT = ENOENT.code;
-
+module.exports = {
+    ApplicationError,
+    ErrorType
+};

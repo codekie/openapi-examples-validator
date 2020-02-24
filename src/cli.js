@@ -1,6 +1,10 @@
 // Shebang will be added by webpack
 //#!/usr/bin/env node --harmony
 
+/**
+ * Command Line Interface for the validator
+ */
+
 const
     VERSION = require('../package.json').version,
     program = require('commander'),
