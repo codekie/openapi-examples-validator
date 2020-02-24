@@ -12,6 +12,18 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     REL_PATH__EXAMPLES__INVALID__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs-invalid',
     FILE_PATH__INVALID__YAML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs-invalid.yaml'),
     FILE_PATH__INVALID__YML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs-invalid.yml'),
+    FILE_PATH__VALID__REQUEST_PARAMETER = path.join(__dirname, '../../../data/v3/request-valid-parameter.json'),
+    FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES
+        = path.join(__dirname, '../../../data/v3/request-valid-parameter-examples.json'),
+    FILE_PATH__INVALID__REQUEST_PARAMETER = path.join(__dirname, '../../../data/v3/request-invalid-parameter.json'),
+    FILE_PATH__INVALID__REQUEST_PARAMETER__EXAMPLES
+        = path.join(__dirname, '../../../data/v3/request-invalid-parameter-examples.json'),
+    FILE_PATH__VALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-valid-requestbody.json'),
+    FILE_PATH__VALID__REQUEST_BODY__EXAMPLES
+        = path.join(__dirname, '../../../data/v3/request-valid-requestbody-examples.json'),
+    FILE_PATH__INVALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-invalid-requestbody.json'),
+    FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES
+        = path.join(__dirname, '../../../data/v3/request-invalid-requestbody-examples.json'),
     FILE_PATH__VALID__YAML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs.yaml'),
     FILE_PATH__VALID__YML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs.yml');
 
@@ -63,6 +75,42 @@ describe('Main-module, for v3 should', function() {
             });
             it('`with .yml` extension', function() {
                 validateFile(FILE_PATH__INVALID__YML).valid.should.equal(false);
+            });
+        });
+    });
+    describe('be able to validate request parameters', function() {
+        describe('in example-property', function() {
+            it('with a valid example', function() {
+                validateFile(FILE_PATH__VALID__REQUEST_PARAMETER).valid.should.equal(true);
+            });
+            it('with an invalid example', function() {
+                validateFile(FILE_PATH__INVALID__REQUEST_PARAMETER).valid.should.equal(false);
+            });
+        });
+        describe('in examples-property', function() {
+            it('with a valid example', function() {
+                validateFile(FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES).valid.should.equal(true);
+            });
+            it('with an invalid example', function() {
+                validateFile(FILE_PATH__INVALID__REQUEST_PARAMETER__EXAMPLES).valid.should.equal(false);
+            });
+        });
+    });
+    describe('be able to validate request-bodies', function() {
+        describe('in example-property', function() {
+            it('with a valid example', function() {
+                validateFile(FILE_PATH__VALID__REQUEST_BODY).valid.should.equal(true);
+            });
+            it('with an invalid example', function() {
+                validateFile(FILE_PATH__INVALID__REQUEST_BODY).valid.should.equal(false);
+            });
+        });
+        describe('in examples-property', function() {
+            it('with a valid example', function() {
+                validateFile(FILE_PATH__VALID__REQUEST_BODY__EXAMPLES).valid.should.equal(true);
+            });
+            it('with an invalid example', function() {
+                validateFile(FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES).valid.should.equal(false);
             });
         });
     });

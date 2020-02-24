@@ -9,6 +9,10 @@ const { JSONPath: jsonPath } = require('jsonpath-plus'),
 
 const PATH__EXAMPLE = '$..responses..content.application/json.example',
     PATH__EXAMPLES = '$..responses..content.application/json.examples..value',
+    PATH__EXAMPLE__PARAMETER = '$..parameters..example',
+    PATH__EXAMPLES__PARAMETER = '$..parameters..examples..value',
+    PATH__EXAMPLE__REQUEST_BODY = '$..requestBody.content.application/json.example',
+    PATH__EXAMPLES__REQUEST_BODY = '$..requestBody.content.application/json.examples..value',
     PROP__SCHEMA = 'schema',
     PROP__EXAMPLE = 'example',
     PROP__EXAMPLES = 'examples';
@@ -31,7 +35,16 @@ module.exports = {
  * Get the JSONPaths to the examples
  * @returns {Array.<String>}    JSONPaths to the examples
  */
-function getJsonPathsToExamples() { return [PATH__EXAMPLE, PATH__EXAMPLES]; }
+function getJsonPathsToExamples() {
+    return [
+        PATH__EXAMPLE,
+        PATH__EXAMPLES,
+        PATH__EXAMPLE__PARAMETER,
+        PATH__EXAMPLES__PARAMETER,
+        PATH__EXAMPLE__REQUEST_BODY,
+        PATH__EXAMPLES__REQUEST_BODY
+    ];
+}
 
 /**
  * Builds a map with the path to the repsonse-schema as key and the paths to the examples, as value. The path of the
