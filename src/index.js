@@ -1,3 +1,7 @@
+/**
+ * Entry-point for the validator-API
+ */
+
 const
     _ = require('lodash'),
     fs = require('fs'),
@@ -8,19 +12,15 @@ const
     { createError } = require('errno').custom,
     { getValidatorFactory, compileValidate } = require('./validator'),
     Determiner = require('./impl'),
-    ApplicationError = require('./application-error'),
-    { ERR_TYPE__JSON_PATH_NOT_FOUND } = ApplicationError,
+    { ApplicationError, ErrorType } = require('./application-error'),
     { createValidationResponse } = require('./utils');
 
 // CONSTANTS
 
-const
-    PROP__SCHEMA = 'schema',
-    PROP__EXAMPLES = 'examples',
-    FILE_EXTENSIONS__YAML = [
-        'yaml',
-        'yml'
-    ];
+const FILE_EXTENSIONS__YAML = [
+    'yaml',
+    'yml'
+];
 
 // STATICS
 
@@ -41,7 +41,7 @@ const
  * @augments CustomError
  * @returns {ErrorJsonPathNotFound}
  */
-const ErrorJsonPathNotFound = createError(ERR_TYPE__JSON_PATH_NOT_FOUND);
+const ErrorJsonPathNotFound = createError(ErrorType.jsonPathNotFound);
 
 // PUBLIC API
 
@@ -89,9 +89,12 @@ module.exports = {
  * @returns {ValidationResponse}
  */
 function validateExamples(openapiSpec) {
-    const jsonPathToExamples = Determiner.getImplementation(openapiSpec).getJsonPathToExamples(),
-        pathsExamples = _extractExamplePaths(openapiSpec, jsonPathToExamples);
-    return _validateExamplesPaths(pathsExamples, openapiSpec);
+    const impl = Determiner.getImplementation(openapiSpec);
+    let pathsExamples = impl.getJsonPathsToExamples()
+        .reduce((res, pathToExamples) => {
+            return res.concat(_extractExamplePaths(openapiSpec, pathToExamples));
+        }, []);
+    return _validateExamplesPaths({ impl }, pathsExamples, openapiSpec);
 }
 
 /**
@@ -315,22 +318,37 @@ function _extractExamplePaths(openapiSpec, jsonPathToExamples) {
 
 /**
  * Validates examples at the given paths in the OpenAPI-spec.
+ * @param {Object}          impl            Spec-dependant validator
  * @param {Array.<String>}  pathsExamples   JSON-paths to examples
  * @param {Object}          openapiSpec     OpenAPI-spec
  * @returns {ValidationResponse}
  * @private
  */
-function _validateExamplesPaths(pathsExamples, openapiSpec) {
-    const
-        createValidator = _initValidatorFactory(openapiSpec),
-        validationMap = _buildValidationMap(pathsExamples),
-        schemaPaths = Object.keys(validationMap),
-        statistics = _initStatistics({ schemaPaths }),
+function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec) {
+    const statistics = _initStatistics(),
         validationResult = {
             valid: true,
             statistics,
             errors: []
-        };
+        },
+        createValidator = _initValidatorFactory(openapiSpec);
+    let validationMap;
+    try {
+        // Create mapping between JSON-schemas and examples
+        validationMap = impl.buildValidationMap(pathsExamples);
+    } catch (error) {
+        // Throw unexpected errors
+        if (!(error instanceof ApplicationError)) {
+            throw error;
+        }
+        // Add known errors and stop
+        validationResult.valid = false;
+        validationResult.errors.push(error);
+        return validationResult;
+    }
+    // Start validation
+    const schemaPaths = Object.keys(validationMap);
+    validationResult.statistics.responseSchemasWithExamples = schemaPaths.length;
     schemaPaths.forEach(pathResponseSchema => {
         _validateResponseSchema({ openapiSpec, createValidator, pathResponseSchema, validationMap, statistics,
             validationResult });
@@ -372,11 +390,11 @@ function _validateResponseSchema({ openapiSpec, createValidator, pathResponseSch
 
 /**
  * Creates a container-object for the validation statistics.
- * @param {Array.<String>}  schemaPaths     JSON-paths to the response-schemas
+ * @param {Array.<String>}  [schemaPaths=[]]   JSON-paths to the response-schemas
  * @returns {ValidationStatistics}
  * @private
  */
-function _initStatistics({ schemaPaths }) {
+function _initStatistics({ schemaPaths = [] } = {}) {
     return {
         responseSchemasWithExamples: schemaPaths.length,
         responseExamplesTotal: 0,
@@ -399,21 +417,6 @@ function _getObjectByPath(path, json) {
         wrap: false,
         resultType: 'value'
     });
-}
-
-/**
- * Builds a map with the path to the repsonse-schema as key and the paths to the examples, as value. The path of the
- * schema is derived from the path to the example and doesn't necessarily mean that the schema actually exists.
- * @param {Array.<String>}  pathsExamples   Paths to the examples
- * @returns {Object.<String, String>} Map with schema-path as key and example-paths as value
- * @private
- */
-function _buildValidationMap(pathsExamples) {
-    return pathsExamples.reduce((validationMap, pathExample) => {
-        const pathSchema = _getSchemaPathOfExample(pathExample);
-        validationMap[pathSchema] = pathExample;
-        return validationMap;
-    }, {});
 }
 
 /**
@@ -447,20 +450,6 @@ function _validateExample({ createValidator, responseSchema, example, statistics
             error.exampleFilePath = filePathExample;
             return error;
         });
-}
-
-/**
- * Gets a JSON-path to the corresponding response-schema, based on a JSON-path to an example.
- * @param {String}  pathExample JSON-path to example
- * @returns {String} JSON-path to the corresponding response-schema
- * @private
- */
-function _getSchemaPathOfExample(pathExample) {
-    const
-        pathSegs = jsonPath.toPathArray(pathExample).slice(),
-        idxExamples = pathSegs.lastIndexOf(PROP__EXAMPLES);
-    pathSegs.splice(idxExamples, pathSegs.length - idxExamples, PROP__SCHEMA);
-    return jsonPath.toPathString(pathSegs);
 }
 
 /**

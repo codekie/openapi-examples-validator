@@ -1,3 +1,7 @@
+/**
+ * Wrapper for the JSONSchema-validator
+ */
+
 const { JSONPath: jsonPath } = require('jsonpath-plus'),
     JsonPointer = require('json-pointer'),
     Ajv = require('ajv');

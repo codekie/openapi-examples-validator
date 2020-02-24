@@ -6,13 +6,11 @@ const path = require('path'),
         loadTestData,
         getPathOfTestData
     } = require('../util/setup-tests'),
-    ApplicationError = require('../../src/application-error');
+    { ApplicationError, ErrorType } = require('../../src/application-error');
 
 
 // CONSTANTS
 
-// Constants, derived from imports
-const { ERR_TYPE__JS_ENOENT, ERR_TYPE__VALIDATION } = ApplicationError;
 // General constants
 const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     FILE_PATH__NOT_EXISTS = 'Mhhh, dinner',
@@ -64,7 +62,7 @@ describe('Main API', function() {
             it('with error', () => {
                 const result = validateFile(getPathOfTestData('invalid-type'));
                 result.valid.should.equal(false);
-                result.errors.should.deep.equal([new ApplicationError(ERR_TYPE__VALIDATION, {
+                result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
                     dataPath: '.versions[0].id',
                     keyword: 'type',
                     message: 'should be string',
@@ -107,7 +105,7 @@ describe('Main API', function() {
                 const result = validateFile(FILE_PATH__NOT_EXISTS);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    new ApplicationError(ERR_TYPE__JS_ENOENT, {
+                    new ApplicationError(ErrorType.jsENOENT, {
                         message: `ENOENT: no such file or directory, open '${ FILE_PATH__NOT_EXISTS }'`,
                         params: {
                             path: FILE_PATH__NOT_EXISTS

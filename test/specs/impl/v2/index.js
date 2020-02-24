@@ -3,8 +3,7 @@ const path = require('path'),
         loadTestData
     } = require('../../../util/setup-tests'),
     { validateExample, 'default': validateExamples, validateExamplesByMap } = require('../../../../src/index'),
-    ApplicationError = require('../../../../src/application-error'),
-    { ERR_TYPE__JS_ENOENT, ERR_TYPE__JSON_PATH_NOT_FOUND, ERR_TYPE__VALIDATION } = ApplicationError;
+    { ApplicationError, ErrorType } = require('../../../../src/application-error');
 
 const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID = '$.hmm.what.am.i.gonna.get.for.lunch',
@@ -50,7 +49,7 @@ describe('Main-module, for v2 should', () => {
         it('invalid type', () => {
             const result = validateExamples(loadTestData('invalid-type'));
             result.valid.should.equal(false);
-            result.errors.should.deep.equal([new ApplicationError(ERR_TYPE__VALIDATION, {
+            result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
                 dataPath: '.versions[0].id',
                 keyword: 'type',
                 message: 'should be string',
@@ -65,7 +64,7 @@ describe('Main-module, for v2 should', () => {
             const result = validateExamples(loadTestData('multiple-errors'));
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
-                new ApplicationError(ERR_TYPE__VALIDATION, {
+                new ApplicationError(ErrorType.validation, {
                     keyword: 'type',
                     dataPath: '.versions[0].id',
                     schemaPath: '#/properties/versions/items/properties/id/type',
@@ -75,7 +74,7 @@ describe('Main-module, for v2 should', () => {
                     message: 'should be string',
                     examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                 }),
-                new ApplicationError(ERR_TYPE__VALIDATION, {
+                new ApplicationError(ErrorType.validation, {
                     keyword: 'required',
                     dataPath: '.versions[0]',
                     schemaPath: '#/properties/versions/items/required',
@@ -85,7 +84,7 @@ describe('Main-module, for v2 should', () => {
                     message: "should have required property 'links'",
                     examplePath: '/paths/~1/get/responses/300/examples/application~1json'
                 }),
-                new ApplicationError(ERR_TYPE__VALIDATION, {
+                new ApplicationError(ErrorType.validation, {
                     keyword: 'type',
                     dataPath: '.versions[1].id',
                     schemaPath: '#/properties/versions/items/properties/id/type',
@@ -102,7 +101,7 @@ describe('Main-module, for v2 should', () => {
                 const result = validateExamples(loadTestData('invalid-array-response'));
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    new ApplicationError(ERR_TYPE__VALIDATION, {
+                    new ApplicationError(ErrorType.validation, {
                         keyword: 'required',
                         dataPath: '[0]',
                         schemaPath: '#/items/required',
@@ -112,7 +111,7 @@ describe('Main-module, for v2 should', () => {
                         message: "should have required property 'id'",
                         examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                     }),
-                    new ApplicationError(ERR_TYPE__VALIDATION, {
+                    new ApplicationError(ErrorType.validation, {
                         keyword: 'type',
                         dataPath: '[1].links',
                         schemaPath: '#/items/properties/links/type',
@@ -138,7 +137,7 @@ describe('Main-module, for v2 should', () => {
                 const result = validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
                     FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE);
                 result.valid.should.equal(false);
-                result.errors.should.deep.equal([new ApplicationError(ERR_TYPE__VALIDATION, {
+                result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
                     dataPath: '.versions[0].id',
                     keyword: 'type',
                     message: 'should be string',
@@ -154,7 +153,7 @@ describe('Main-module, for v2 should', () => {
             const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, FILE_PATH__EXTERNAL_EXAMPLES_MAP);
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
-                new ApplicationError(ERR_TYPE__VALIDATION, {
+                new ApplicationError(ErrorType.validation, {
                     dataPath: '.versions[0].id',
                     keyword: 'type',
                     message: 'should be string',
@@ -165,7 +164,7 @@ describe('Main-module, for v2 should', () => {
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP,
                     exampleFilePath: 'test/data/external-examples-invalid-type.json'
                 }),
-                new ApplicationError(ERR_TYPE__VALIDATION, {
+                new ApplicationError(ErrorType.validation, {
                     dataPath: '.versions[0]',
                     keyword: 'required',
                     message: "should have required property 'links'",
@@ -186,7 +185,7 @@ describe('Main-module, for v2 should', () => {
                     FILE_PATH__NOT_EXISTS);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    new ApplicationError(ERR_TYPE__JS_ENOENT, {
+                    new ApplicationError(ErrorType.jsENOENT, {
                         message: `ENOENT: no such file or directory, open '${ FILE_PATH__NOT_EXISTS }'`,
                         params: {
                             path: FILE_PATH__NOT_EXISTS
@@ -199,7 +198,7 @@ describe('Main-module, for v2 should', () => {
                     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    new ApplicationError(ERR_TYPE__JS_ENOENT, {
+                    new ApplicationError(ErrorType.jsENOENT, {
                         mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE,
                         message: "ENOENT: no such file or directory, open 'test/data/blegh forgot the sugar in the"
                             + " coffee'",
@@ -207,7 +206,7 @@ describe('Main-module, for v2 should', () => {
                             path: 'test/data/blegh forgot the sugar in the coffee'
                         }
                     }),
-                    new ApplicationError(ERR_TYPE__VALIDATION, {
+                    new ApplicationError(ErrorType.validation, {
                         dataPath: '.versions[0]',
                         keyword: 'required',
                         message: "should have required property 'links'",
@@ -225,7 +224,7 @@ describe('Main-module, for v2 should', () => {
                     FILE_PATH__NOT_EXISTS);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    new ApplicationError(ERR_TYPE__JS_ENOENT, {
+                    new ApplicationError(ErrorType.jsENOENT, {
                         message: `ENOENT: no such file or directory, open '${ FILE_PATH__NOT_EXISTS }'`,
                         params: {
                             path: FILE_PATH__NOT_EXISTS
@@ -240,7 +239,7 @@ describe('Main-module, for v2 should', () => {
                     PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID, FILE_PATH__EXTERNAL_EXAMPLE1_VALID);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    new ApplicationError(ERR_TYPE__JSON_PATH_NOT_FOUND, {
+                    new ApplicationError(ErrorType.jsonPathNotFound, {
                         message: "Path to response-schema can't be found: "
                             + `'${ PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID }'`,
                         params: {
@@ -255,7 +254,7 @@ describe('Main-module, for v2 should', () => {
                     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
-                    new ApplicationError(ERR_TYPE__JSON_PATH_NOT_FOUND, {
+                    new ApplicationError(ErrorType.jsonPathNotFound, {
                         mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH,
                         message: "Path to response-schema can't be found: "
                             + `'${ PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID }'`,
@@ -273,7 +272,7 @@ describe('Main-module, for v2 should', () => {
                 FILE_PATH__EXTERNAL_EXAMPLES_GLOB);
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
-                new ApplicationError(ERR_TYPE__VALIDATION, {
+                new ApplicationError(ErrorType.validation, {
                     message: "should have required property 'links'",
                     keyword: 'required',
                     dataPath: '.versions[0]',
@@ -284,7 +283,7 @@ describe('Main-module, for v2 should', () => {
                     exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK,
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID1
                 }),
-                new ApplicationError(ERR_TYPE__VALIDATION, {
+                new ApplicationError(ErrorType.validation, {
                     message: 'should be string',
                     keyword: 'type',
                     dataPath: '.versions[0].id',
@@ -295,7 +294,7 @@ describe('Main-module, for v2 should', () => {
                     exampleFilePath: FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE,
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID1
                 }),
-                new ApplicationError(ERR_TYPE__VALIDATION, {
+                new ApplicationError(ErrorType.validation, {
                     message: "should have required property 'links'",
                     keyword: 'required',
                     dataPath: '.versions[0]',
