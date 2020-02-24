@@ -7,7 +7,7 @@ const { JSONPath: jsonPath } = require('jsonpath-plus'),
 
 // CONSTANTS
 
-const PATH__EXAMPLE = '$..responses..content.application/json.example..value',
+const PATH__EXAMPLE = '$..responses..content.application/json.example',
     PATH__EXAMPLES = '$..responses..content.application/json.examples..value',
     PROP__SCHEMA = 'schema',
     PROP__EXAMPLE = 'example',
