@@ -64,15 +64,13 @@
                     }
                   }
                 },
-                "example": {
-                  "value": [
-                    {
-                      "id": 0,
-                      "name": "Herbert",
-                      "tag": "Doggo"
-                    }
-                  ]
-                },
+                "example": [
+                  {
+                    "id": 0,
+                    "name": "Herbert",
+                    "tag": "Doggo"
+                  }
+                ],
                 "examples": {
                   "single": {
                     "value": [

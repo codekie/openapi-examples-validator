@@ -47,14 +47,12 @@
                 "schema": {
                   "$ref": "#/components/schemas/Pets"
                 },
-                "example": {
-                  "value": [
-                    {
-                      "id": "0",
-                      "tag": 5
-                    }
-                  ]
-                }
+                "example": [
+                  {
+                    "id": "0",
+                    "tag": 5
+                  }
+                ]
               }
             }
           },
