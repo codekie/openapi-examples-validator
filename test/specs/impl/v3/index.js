@@ -22,9 +22,11 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     FILE_PATH__INVALID__REQUEST_PARAMETER__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-invalid-parameter-examples.json'),
     FILE_PATH__VALID__NULLABLE = path.join(__dirname, '../../../data/v3/response-valid-nullable.json'),
+    FILE_PATH__VALID__NUMBER_FORMATS = path.join(__dirname, '../../../data/v3/response-valid-number-formats.json'),
     FILE_PATH__VALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-valid-requestbody.json'),
     FILE_PATH__VALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-valid-requestbody-examples.json'),
+    FILE_PATH__INVALID__NUMBER_FORMATS = path.join(__dirname, '../../../data/v3/response-invalid-number-formats.json'),
     FILE_PATH__INVALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-invalid-requestbody.json'),
     FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-invalid-requestbody-examples.json'),
@@ -128,6 +130,50 @@ describe('Main-module, for v3 should', function() {
         it('with nullable property, but no type set', function() {
             // Nullable will be ignored, if no `type` is set
             validateFile(FILE_PATH__NULLABLE_INVALID_DEFINITION).valid.should.equal(true);
+        });
+    });
+    describe('be able to handle number formats', function() {
+        it('with valid examples', function() {
+            validateFile(FILE_PATH__VALID__NUMBER_FORMATS).valid.should.equal(true);
+        });
+        describe('invalid examples', function() {
+            before(function() {
+                this.validationResults = validateFile(FILE_PATH__INVALID__NUMBER_FORMATS);
+            });
+
+            it('should be marked as invalid', function() {
+                this.validationResults.valid.should.equal(false);
+            });
+            it('number represented as string', function() {
+                const error = this.validationResults.errors[0];
+                error.message.should.equal('should be number');
+                error.keyword.should.equal('type');
+                error.params.type.should.equal('number');
+            });
+            it('invalid int32', function() {
+                const error = this.validationResults.errors[1];
+                error.message.should.equal('should match format "int32"');
+                error.keyword.should.equal('format');
+                error.params.format.should.equal('int32');
+            });
+            it('invalid int64', function() {
+                const error = this.validationResults.errors[2];
+                error.message.should.equal('should match format "int64"');
+                error.keyword.should.equal('format');
+                error.params.format.should.equal('int64');
+            });
+            it('invalid float', function() {
+                const error = this.validationResults.errors[3];
+                error.message.should.equal('should match format "float"');
+                error.keyword.should.equal('format');
+                error.params.format.should.equal('float');
+            });
+            it('invalid double', function() {
+                const error = this.validationResults.errors[4];
+                error.message.should.equal('should match format "double"');
+                error.keyword.should.equal('format');
+                error.params.format.should.equal('double');
+            });
         });
     });
 });

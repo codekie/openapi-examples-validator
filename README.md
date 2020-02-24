@@ -84,6 +84,12 @@ Sample output of validation errors:
 ]
 ```
 
+Caveat
+------
+
+The formats `int32`, `float` and `double` are supported for the type `number`. The format `int64` is only available
+for the type `string`, though (due to the precision-limitations of Javascript).
+
 Test
 ----
 
