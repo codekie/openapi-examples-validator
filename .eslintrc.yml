@@ -50,6 +50,7 @@ rules:
     - 2
     - 4
     - SwitchCase: 1
+      ignoreComments: true
   key-spacing:
     - 2
     - beforeColon: false

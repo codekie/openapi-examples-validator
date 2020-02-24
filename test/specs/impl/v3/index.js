@@ -15,9 +15,13 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     FILE_PATH__VALID__REQUEST_PARAMETER = path.join(__dirname, '../../../data/v3/request-valid-parameter.json'),
     FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-valid-parameter-examples.json'),
+    FILE_PATH__NULLABLE_INVALID_DEFINITION
+        = path.join(__dirname, '../../../data/v3/response-nullable-invalid-definition.json'),
+    FILE_PATH__INVALID__NON_NULLABLE = path.join(__dirname, '../../../data/v3/response-invalid-non-nullable.json'),
     FILE_PATH__INVALID__REQUEST_PARAMETER = path.join(__dirname, '../../../data/v3/request-invalid-parameter.json'),
     FILE_PATH__INVALID__REQUEST_PARAMETER__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-invalid-parameter-examples.json'),
+    FILE_PATH__VALID__NULLABLE = path.join(__dirname, '../../../data/v3/response-valid-nullable.json'),
     FILE_PATH__VALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-valid-requestbody.json'),
     FILE_PATH__VALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-valid-requestbody-examples.json'),
@@ -112,6 +116,18 @@ describe('Main-module, for v3 should', function() {
             it('with an invalid example', function() {
                 validateFile(FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES).valid.should.equal(false);
             });
+        });
+    });
+    describe('be able to handle `nullable`-types', function() {
+        it('with `null` for non-nullable-type', function() {
+            validateFile(FILE_PATH__INVALID__NON_NULLABLE).valid.should.equal(false);
+        });
+        it('with nullable property', function() {
+            validateFile(FILE_PATH__VALID__NULLABLE).valid.should.equal(true);
+        });
+        it('with nullable property, but no type set', function() {
+            // Nullable will be ignored, if no `type` is set
+            validateFile(FILE_PATH__NULLABLE_INVALID_DEFINITION).valid.should.equal(true);
         });
     });
 });
