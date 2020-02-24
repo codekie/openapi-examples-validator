@@ -12,7 +12,8 @@ const PATH__EXAMPLES = '$..examples.application/json',
 
 module.exports = {
     buildValidationMap,
-    getJsonPathsToExamples
+    getJsonPathsToExamples,
+    prepare
 };
 
 // IMPLEMENTATION DETAILS
@@ -37,6 +38,17 @@ function buildValidationMap(pathsExamples) {
         validationMap[pathSchema] = pathExample;
         return validationMap;
     }, {});
+}
+
+/**
+ * Pre-processes the OpenAPI-spec, for further use.
+ * The passed spec won't be modified. If a modification happens, a modified copy will be returned.
+ * @param {Object}  openapiSpec     The OpenAPI-spec as JSON-schema
+ * @return {Object} The prepared OpenAPI-spec
+ */
+function prepare(openapiSpec) {
+    // No pre-processing yet, so we return the original
+    return openapiSpec;
 }
 
 /**

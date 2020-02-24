@@ -10,6 +10,7 @@ const
     yaml = require('yaml'),
     { JSONPath: jsonPath } = require('jsonpath-plus'),
     { createError } = require('errno').custom,
+    ResultType = require('./const/result-type'),
     { getValidatorFactory, compileValidate } = require('./validator'),
     Determiner = require('./impl'),
     { ApplicationError, ErrorType } = require('./application-error'),
@@ -90,6 +91,7 @@ module.exports = {
  */
 function validateExamples(openapiSpec) {
     const impl = Determiner.getImplementation(openapiSpec);
+    openapiSpec = impl.prepare(openapiSpec);
     let pathsExamples = impl.getJsonPathsToExamples()
         .reduce((res, pathToExamples) => {
             return res.concat(_extractExamplePaths(openapiSpec, pathToExamples));
@@ -134,6 +136,8 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToM
         try {
             mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
             openapiSpec = _parseSpec(filePathSchema);
+            openapiSpec = Determiner.getImplementation(openapiSpec)
+                .prepare(openapiSpec);
         } catch (err) {
             return createValidationResponse({ errors: [ApplicationError.create(err)] });
         }
@@ -173,6 +177,8 @@ function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
     try {
         example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
         openapiSpec = _parseSpec(filePathSchema);
+        openapiSpec = Determiner.getImplementation(openapiSpec)
+            .prepare(openapiSpec);
         responseSchema = _extractResponseSchema(pathResponseSchema, openapiSpec);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
@@ -312,7 +318,7 @@ function _extractExamplePaths(openapiSpec, jsonPathToExamples) {
     return jsonPath({
         json: openapiSpec,
         path: jsonPathToExamples,
-        resultType: 'path'
+        resultType: ResultType.path
     });
 }
 
@@ -415,7 +421,7 @@ function _getObjectByPath(path, json) {
         path,
         flatten: true,
         wrap: false,
-        resultType: 'value'
+        resultType: ResultType.value
     });
 }
 
@@ -459,7 +465,8 @@ function _validateExample({ createValidator, responseSchema, example, statistics
  */
 function _initValidatorFactory(specSchema) {
     return getValidatorFactory(specSchema, {
-        allErrors: true
+        allErrors: true,
+        nullable: true
     });
 }
 
