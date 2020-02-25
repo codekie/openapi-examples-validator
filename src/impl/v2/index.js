@@ -35,7 +35,8 @@ function getJsonPathsToExamples() { return [PATH__EXAMPLES]; }
 function buildValidationMap(pathsExamples) {
     return pathsExamples.reduce((validationMap, pathExample) => {
         const pathSchema = _getSchemaPathOfExample(pathExample);
-        validationMap[pathSchema] = pathExample;
+        validationMap[pathSchema] = (validationMap[pathSchema] || new Set())
+            .add(pathExample);
         return validationMap;
     }, {});
 }

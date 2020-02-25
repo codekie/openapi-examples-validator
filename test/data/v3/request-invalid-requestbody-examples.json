@@ -42,10 +42,22 @@
               },
               "examples": {
                 "default": {
-                  "summary": "Standard example",
+                  "summary": "Standard invalid example",
                   "value": {
                     "name": 5,
                     "tag": "Doggo"
+                  }
+                },
+                "example2": {
+                  "summary": "Another invalid example",
+                  "value": {
+                    "tag": "Doggo"
+                  }
+                },
+                "example3": {
+                  "summary": "Yet another invalid example",
+                  "value": {
+                    "name": "Ronald"
                   }
                 }
               }

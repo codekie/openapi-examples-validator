@@ -60,9 +60,9 @@ module.exports = {
 /**
  * ValidationStatistics
  * @typedef {{
- *      responseSchemasWithExamples: number,
- *      responseExamplesTotal: number,
- *      responseExamplesWithoutSchema: number,
+ *      schemasWithExamples: number,
+ *      examplesTotal: number,
+ *      examplesWithoutSchema: number,
  *      [matchingFilePathsMapping]: number
  * }} ValidationStatistics
  */
@@ -118,8 +118,8 @@ function validateFile(filePath) {
  * Validates examples by mapping-files.
  * @param {string}  filePathSchema              File-path to the OpenAPI-spec
  * @param {string}  globMapExternalExamples     File-path (globs are supported) to the mapping-file containing JSON-
- *                                              paths to response-schemas as key and a single file-path or Array of
- *                                              file-paths to external examples
+ *                                              paths to schemas as key and a single file-path or Array of file-paths
+ *                                              to external examples
  * @param {boolean} [cwdToMappingFile=false]    Change working directory for resolving the example-paths (relative to
  *                                              the mapping-file)
  * @returns {ValidationResponse}
@@ -166,28 +166,28 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToM
 /**
  * Validates a single external example.
  * @param {String}  filePathSchema      File-path to the OpenAPI-spec
- * @param {String}  pathResponseSchema  JSON-path to the response-schema
+ * @param {String}  pathSchema          JSON-path to the schema
  * @param {String}  filePathExample     File-path to the external example-file
  * @returns {ValidationResponse}
  */
-function validateExample(filePathSchema, pathResponseSchema, filePathExample) {
+function validateExample(filePathSchema, pathSchema, filePathExample) {
     let example = null,
-        responseSchema = null,
+        schema = null,
         openapiSpec = null;
     try {
         example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
         openapiSpec = _parseSpec(filePathSchema);
         openapiSpec = Determiner.getImplementation(openapiSpec)
             .prepare(openapiSpec);
-        responseSchema = _extractResponseSchema(pathResponseSchema, openapiSpec);
+        schema = _extractSchema(pathSchema, openapiSpec);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
     return _validate(
-        [pathResponseSchema],
+        [pathSchema],
         statistics => _validateExample({
             createValidator: _initValidatorFactory(openapiSpec),
-            responseSchema,
+            schema,
             example,
             statistics,
             filePathExample
@@ -224,15 +224,15 @@ function _isFileTypeYaml(filePath) {
 /**
  * Top-level validator. Prepares common values, required for the validation, then calles the validator and prepares
  * the result for the output.
- * @param {Array.<String>}      pathsResponseSchema     JSON-paths to the schemas of the responses
+ * @param {Array.<String>}      schemaPaths             JSON-paths to the schemas
  * @param {ValidationHandler}   validationHandler       The handler which performs the validation. It will receive the
  *                                                      statistics-object as argument and has to return an Array of
  *                                                      errors (or an empty Array, when all examples are valid)
  * @returns {ValidationResponse}
  * @private
  */
-function _validate(pathsResponseSchema, validationHandler) {
-    const statistics = _initStatistics({ schemaPaths: pathsResponseSchema }),
+function _validate(schemaPaths, validationHandler) {
+    const statistics = _initStatistics({ schemaPaths }),
         errors = validationHandler(statistics);
     return createValidationResponse({ errors, statistics });
 }
@@ -240,9 +240,9 @@ function _validate(pathsResponseSchema, validationHandler) {
 /**
  * Validates examples by a mapping-file.
  * @param {Object}                  openapiSpec                     OpenAPI-spec
- * @param {Object}                  mapExternalExamples             Mapping-file containing JSON-paths to response-
- *                                                                  schemas as key and a single file-path or Array of
- *                                                                  file-paths to
+ * @param {Object}                  mapExternalExamples             Mapping-file containing JSON-paths to schemas as
+ *                                                                  key and a single file-path or Array of file-paths
+ *                                                                  to external examples
  * @param {ValidationStatistics}    statistics                      Validation-statistics
  * @param {boolean}                 [cwdToMappingFile=false]        Change working directory for resolving the example-
  *                                                                  paths (relative to the mapping-file)
@@ -255,12 +255,12 @@ function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statis
 ) {
     return _(mapExternalExamples)
         .entries()
-        .flatMap(([pathResponseSchema, filePathsExample]) => {
-            let responseSchema = null;
+        .flatMap(([pathSchema, filePathsExample]) => {
+            let schema = null;
             try {
-                responseSchema = _extractResponseSchema(pathResponseSchema, openapiSpec);
+                schema = _extractSchema(pathSchema, openapiSpec);
             } catch (/** @type ErrorJsonPathNotFound */ err) {
-                // If the response-schema can't be found, don't even attempt to process the examples
+                // If the schema can't be found, don't even attempt to process the examples
                 return ApplicationError.create(err);
             }
             return _([filePathsExample])
@@ -277,7 +277,7 @@ function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statis
                     }
                     return _validateExample({
                         createValidator: _initValidatorFactory(openapiSpec),
-                        responseSchema,
+                        schema,
                         example,
                         statistics,
                         filePathExample
@@ -303,7 +303,7 @@ function _mergeValidationResponses(response1, response2) {
             .reduce((res, [key, val]) => {
                 res[key] = val + response2.statistics[key];
                 return res;
-            }, _initStatistics({ schemaPaths: [] }))
+            }, _initStatistics())
     });
 }
 
@@ -354,57 +354,57 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec) {
     }
     // Start validation
     const schemaPaths = Object.keys(validationMap);
-    validationResult.statistics.responseSchemasWithExamples = schemaPaths.length;
-    schemaPaths.forEach(pathResponseSchema => {
-        _validateResponseSchema({ openapiSpec, createValidator, pathResponseSchema, validationMap, statistics,
+    validationResult.statistics.schemasWithExamples = schemaPaths.length;
+    schemaPaths.forEach(pathSchema => {
+        _validateSchema({ openapiSpec, createValidator, pathSchema, validationMap, statistics,
             validationResult });
     });
     return validationResult;
 }
 
 /**
- * Validates a single response-schema.
+ * Validates a single schema.
  * @param {Object}                  openapiSpec         OpenAPI-spec
  * @param {ajv}                     createValidator     Factory, to create JSON-schema validator
- * @param {string}                  pathResponseSchema  JSON-path to response-schema
+ * @param {string}                  pathSchema          JSON-path to schema (for request- or response-property)
  * @param {Object.<String, String>} validationMap Map with schema-path as key and example-paths as value
  * @param {Object}                  statistics          Object to contain statistics metrics
  * @param {Object}                  validationResult    Container, for the validation-results
  * @private
  */
-function _validateResponseSchema({ openapiSpec, createValidator, pathResponseSchema, validationMap, statistics,
+function _validateSchema({ openapiSpec, createValidator, pathSchema, validationMap, statistics,
     validationResult }) {
-    const
-        errors = validationResult.errors,
-        pathExample = validationMap[pathResponseSchema],
-        example = _getObjectByPath(pathExample, openapiSpec),
-        // Missing response-schemas may occur and are considered valid
-        responseSchema = _extractResponseSchema(pathResponseSchema, openapiSpec, true),
-        curErrors = _validateExample({
-            createValidator,
-            responseSchema,
-            example,
-            statistics
-        }).map(error => {
-            error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));
-            return error;
-        });
-    if (!curErrors.length) { return; }
-    validationResult.valid = false;
-    errors.splice(errors.length - 1, 0, ...curErrors);
+    const errors = validationResult.errors;
+    validationMap[pathSchema].forEach(pathExample => {
+        const example = _getObjectByPath(pathExample, openapiSpec),
+            // Examples with missing schemas may occur and those are considered valid
+            schema = _extractSchema(pathSchema, openapiSpec, true),
+            curErrors = _validateExample({
+                createValidator,
+                schema,
+                example,
+                statistics
+            }).map(error => {
+                error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));
+                return error;
+            });
+        if (!curErrors.length) { return; }
+        validationResult.valid = false;
+        errors.splice(errors.length - 1, 0, ...curErrors);
+    });
 }
 
 /**
  * Creates a container-object for the validation statistics.
- * @param {Array.<String>}  [schemaPaths=[]]   JSON-paths to the response-schemas
+ * @param {Array.<String>}  [schemaPaths=[]]    JSON-paths schemas
  * @returns {ValidationStatistics}
  * @private
  */
-function _initStatistics({ schemaPaths = [] } = {}) {
+function _initStatistics({ schemaPaths=[] } = {}) {
     return {
-        responseSchemasWithExamples: schemaPaths.length,
-        responseExamplesTotal: 0,
-        responseExamplesWithoutSchema: 0
+        schemasWithExamples: schemaPaths.length,
+        examplesTotal: 0,
+        examplesWithoutSchema: 0
     };
 }
 
@@ -431,24 +431,24 @@ function _getObjectByPath(path, json) {
  * `pathExample` and `filePathExample` are exclusively mandatory.
  * itself
  * @param {Function}    createValidator     Factory, to create JSON-schema validator
- * @param {Object}      responseSchema      JSON-schema for the response
+ * @param {Object}      schema              JSON-schema
  * @param {Object}      example             Example to validate
  * @param {Object}      statistics          Object to contain statistics metrics
  * @param {String}      [filePathExample]   File-path to the example file
  * @returns {Array.<Object>} Array with errors. Empty array, if examples are valid
  * @private
  */
-function _validateExample({ createValidator, responseSchema, example, statistics, filePathExample }) {
+function _validateExample({ createValidator, schema, example, statistics, filePathExample }) {
     const
         errors = [];
-    statistics.responseExamplesTotal++;
+    statistics.examplesTotal++;
     // No schema, no validation (Examples without schema are considered valid)
-    if (!responseSchema) {
-        statistics.responseSchemasWithExamples--;
-        statistics.responseExamplesWithoutSchema++;
+    if (!schema) {
+        statistics.schemasWithExamples--;
+        statistics.examplesWithoutSchema++;
         return errors;
     }
-    const validate = compileValidate(createValidator(), responseSchema);
+    const validate = compileValidate(createValidator(), schema);
     if (validate(example)) { return errors; }
     return errors.concat(...validate.errors.map(ApplicationError.create))
         .map(error => {
@@ -471,22 +471,22 @@ function _initValidatorFactory(specSchema) {
 }
 
 /**
- * Extracts the response-schema in the OpenAPI-spec at the given JSON-path.
- * @param   {string}    pathResponseSchema                  JSON-path to response-schema
+ * Extracts the schema in the OpenAPI-spec at the given JSON-path.
+ * @param   {string}    pathSchema                          JSON-path to the schema
  * @param   {Object}    openapiSpec                         OpenAPI-spec
  * @param   {boolean}   [suppressErrorIfNotFound=false]     Don't throw `ErrorJsonPathNotFound` if the repsonse does not
  *                                                          exist at the given JSON-path
  * @returns {Object|Array.<Object>|undefined} Matching schema(s)
- * @throws  {ErrorJsonPathNotFound} Thrown, when there is no response-schema at the given path and
+ * @throws  {ErrorJsonPathNotFound} Thrown, when there is no schema at the given path and
  *                                  `suppressErrorIfNotFound` is false
  * @private
  */
-function _extractResponseSchema(pathResponseSchema, openapiSpec, suppressErrorIfNotFound = false) {
-    const schema = _getObjectByPath(pathResponseSchema, openapiSpec);
+function _extractSchema(pathSchema, openapiSpec, suppressErrorIfNotFound = false) {
+    const schema = _getObjectByPath(pathSchema, openapiSpec);
     if (!suppressErrorIfNotFound && !schema) {
-        throw new ErrorJsonPathNotFound(`Path to response-schema can't be found: '${pathResponseSchema}'`, {
+        throw new ErrorJsonPathNotFound(`Path to schema can't be found: '${ pathSchema }'`, {
             params: {
-                path: pathResponseSchema
+                path: pathSchema
             }
         });
     }

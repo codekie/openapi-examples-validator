@@ -64,7 +64,8 @@ function buildValidationMap(pathsExamples) {
             exampleTypeOfSchema !== exampleType && _throwMutuallyExclusiveError(pathSchemaAsArray);
         }
         exampleTypesOfSchemas.set(pathSchema, exampleType);
-        validationMap[pathSchema] = pathExample;
+        validationMap[pathSchema] = (validationMap[pathSchema] || new Set())
+            .add(pathExample);
         return validationMap;
     }, {});
 }

@@ -63,15 +63,15 @@ function _handleResult(result) {
 
 function _printStatistics(statistics) {
     const {
-            responseSchemasWithExamples,
-            responseExamplesWithoutSchema,
-            responseExamplesTotal,
+            schemasWithExamples,
+            examplesWithoutSchema,
+            examplesTotal,
             matchingFilePathsMapping
         } = statistics,
         strStatistics = [
-            `Response schemas with examples found: ${ responseSchemasWithExamples }`,
-            `Response examples without schema found: ${ responseExamplesWithoutSchema }`,
-            `Total examples found: ${ responseExamplesTotal }`
+            `Schemas with examples found: ${ schemasWithExamples }`,
+            `Examples without schema found: ${ examplesWithoutSchema }`,
+            `Total examples found: ${ examplesTotal }`
         ];
     if (matchingFilePathsMapping != null) {
         strStatistics.push(`Matching mapping files found: ${ matchingFilePathsMapping }`);
