@@ -374,24 +374,24 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec) {
  */
 function _validateSchema({ openapiSpec, createValidator, pathSchema, validationMap, statistics,
     validationResult }) {
-    const
-        errors = validationResult.errors,
-        pathExample = validationMap[pathSchema],
-        example = _getObjectByPath(pathExample, openapiSpec),
-        // Examples with missing schemas may occur and those are considered valid
-        schema = _extractSchema(pathSchema, openapiSpec, true),
-        curErrors = _validateExample({
-            createValidator,
-            schema,
-            example,
-            statistics
-        }).map(error => {
-            error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));
-            return error;
-        });
-    if (!curErrors.length) { return; }
-    validationResult.valid = false;
-    errors.splice(errors.length - 1, 0, ...curErrors);
+    const errors = validationResult.errors;
+    validationMap[pathSchema].forEach(pathExample => {
+        const example = _getObjectByPath(pathExample, openapiSpec),
+            // Examples with missing schemas may occur and those are considered valid
+            schema = _extractSchema(pathSchema, openapiSpec, true),
+            curErrors = _validateExample({
+                createValidator,
+                schema,
+                example,
+                statistics
+            }).map(error => {
+                error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));
+                return error;
+            });
+        if (!curErrors.length) { return; }
+        validationResult.valid = false;
+        errors.splice(errors.length - 1, 0, ...curErrors);
+    });
 }
 
 /**
