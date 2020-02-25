@@ -54,7 +54,15 @@ describe('Main-module, for v3 should', function() {
             });
         });
         describe('`examples`-property', function() {
-            it('valid single example', function() {
+            it('statistics for multiple examples', function() {
+                const { statistics } = validateExamples(loadTestData(REL_PATH__EXAMPLES__SIMPLE));
+                statistics.should.deep.equal({
+                    examplesTotal: 3,
+                    examplesWithoutSchema: 0,
+                    schemasWithExamples: 1
+                });
+            });
+            it('valid examples', function() {
                 validateExamples(loadTestData(REL_PATH__EXAMPLES__SIMPLE)).valid.should.equal(true);
             });
             it('example with internal refs', function() {
@@ -105,7 +113,7 @@ describe('Main-module, for v3 should', function() {
             it('with statistics', function() {
                 const { statistics } = validateFile(FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES);
                 statistics.should.deep.equal({
-                    examplesTotal: 1,
+                    examplesTotal: 2,
                     examplesWithoutSchema: 0,
                     schemasWithExamples: 1
                 });
@@ -147,8 +155,16 @@ describe('Main-module, for v3 should', function() {
             it('with a valid example', function() {
                 validateFile(FILE_PATH__VALID__REQUEST_BODY__EXAMPLES).valid.should.equal(true);
             });
-            it('with an invalid example', function() {
-                validateFile(FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES).valid.should.equal(false);
+            describe('with invalid examples', function() {
+                before(function() {
+                    this.validationResult = validateFile(FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES);
+                });
+                it('should recognize it as invalid', function() {
+                    this.validationResult.valid.should.equal(false);
+                });
+                it('should recognize all errors', function() {
+                    this.validationResult.errors.length.should.equal(3);
+                });
             });
         });
     });
