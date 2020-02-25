@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/codekie/openapi-examples-validator/compare/v2.0.1...v2.1.0) (2020-02-25)
+
+
+### Features
+
+* add formats `int32`, `float` and `double` to type `number` and format `int64` to type `string` ([9f5a6d9](https://github.com/codekie/openapi-examples-validator/commit/9f5a6d96be8e56ce1d5702693297bbedfdc93d6a))
+* support `example`-property ([3cf4167](https://github.com/codekie/openapi-examples-validator/commit/3cf4167d7229d77d5a6cf315d9fd3c3b7be35ea8))
+* support `nullable` for input and output data types ([c9ceb38](https://github.com/codekie/openapi-examples-validator/commit/c9ceb383df44ffdbf2eacad5d6d8b95f3f91d097))
+* support validation of example/examples in request (as `parameters` and `requestBody`) ([cb5ca6e](https://github.com/codekie/openapi-examples-validator/commit/cb5ca6e1ad9ff5cec6f6ef5cadc9daca2d72f71a))
+
+
+### Bug Fixes
+
+* test all examples of a spec, not only the last one ([e0a2dfc](https://github.com/codekie/openapi-examples-validator/commit/e0a2dfcb7094b5156488951219bbae8ffbbb9895))
+* upgrade node-engine, in package.json ([4e281d5](https://github.com/codekie/openapi-examples-validator/commit/4e281d5eb8b3fe085430c85df2600f2417e3b8cd))
+
 ### [2.0.1](https://github.com/codekie/openapi-examples-validator/compare/v2.0.0...v2.0.1) (2019-11-28)
 
 
