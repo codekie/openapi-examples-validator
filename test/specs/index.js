@@ -78,25 +78,25 @@ describe('Main API', function() {
             it('with examples with missing schemas', () => {
                 validateFile(getPathOfTestData('simple-example')).statistics.should.deep
                     .equal({
-                        responseSchemasWithExamples: 1,
-                        responseExamplesWithoutSchema: 3,
-                        responseExamplesTotal: 4
+                        schemasWithExamples: 1,
+                        examplesWithoutSchema: 3,
+                        examplesTotal: 4
                     });
             });
             it('without examples', () => {
                 validateFile(getPathOfTestData('valid-without-examples')).statistics.should.deep
                     .equal({
-                        responseSchemasWithExamples: 1,
-                        responseExamplesWithoutSchema: 0,
-                        responseExamplesTotal: 1
+                        schemasWithExamples: 1,
+                        examplesWithoutSchema: 0,
+                        examplesTotal: 1
                     });
             });
             it('without schema', () => {
                 validateFile(getPathOfTestData('valid-without-schema')).statistics.should.deep
                     .equal({
-                        responseSchemasWithExamples: 1,
-                        responseExamplesWithoutSchema: 1,
-                        responseExamplesTotal: 2
+                        schemasWithExamples: 1,
+                        examplesWithoutSchema: 1,
+                        examplesTotal: 2
                     });
             });
         });

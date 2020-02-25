@@ -116,6 +116,10 @@
               "default": {
                 "summary": "Standard example",
                 "value": 5
+              },
+              "generic1": {
+                "summary": "Standard example",
+                "value": 10
               }
             }
           }

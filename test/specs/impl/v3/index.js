@@ -86,6 +86,14 @@ describe('Main-module, for v3 should', function() {
     });
     describe('be able to validate request parameters', function() {
         describe('in example-property', function() {
+            it('with statistics', function() {
+                const { statistics } = validateFile(FILE_PATH__VALID__REQUEST_PARAMETER);
+                statistics.should.deep.equal({
+                    examplesTotal: 1,
+                    examplesWithoutSchema: 0,
+                    schemasWithExamples: 1
+                });
+            });
             it('with a valid example', function() {
                 validateFile(FILE_PATH__VALID__REQUEST_PARAMETER).valid.should.equal(true);
             });
@@ -94,6 +102,14 @@ describe('Main-module, for v3 should', function() {
             });
         });
         describe('in examples-property', function() {
+            it('with statistics', function() {
+                const { statistics } = validateFile(FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES);
+                statistics.should.deep.equal({
+                    examplesTotal: 1,
+                    examplesWithoutSchema: 0,
+                    schemasWithExamples: 1
+                });
+            });
             it('with a valid example', function() {
                 validateFile(FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES).valid.should.equal(true);
             });
@@ -104,6 +120,14 @@ describe('Main-module, for v3 should', function() {
     });
     describe('be able to validate request-bodies', function() {
         describe('in example-property', function() {
+            it('with statistics', function() {
+                const { statistics } = validateFile(FILE_PATH__VALID__REQUEST_BODY);
+                statistics.should.deep.equal({
+                    examplesTotal: 2,
+                    examplesWithoutSchema: 0,
+                    schemasWithExamples: 2
+                });
+            });
             it('with a valid example', function() {
                 validateFile(FILE_PATH__VALID__REQUEST_BODY).valid.should.equal(true);
             });
@@ -112,6 +136,14 @@ describe('Main-module, for v3 should', function() {
             });
         });
         describe('in examples-property', function() {
+            it('with statistics', function() {
+                const { statistics } = validateFile(FILE_PATH__VALID__REQUEST_BODY__EXAMPLES);
+                statistics.should.deep.equal({
+                    examplesTotal: 2,
+                    examplesWithoutSchema: 0,
+                    schemasWithExamples: 2
+                });
+            });
             it('with a valid example', function() {
                 validateFile(FILE_PATH__VALID__REQUEST_BODY__EXAMPLES).valid.should.equal(true);
             });
