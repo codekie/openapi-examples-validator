@@ -50,7 +50,7 @@
     "@stryker-mutator/html-reporter": "^2.5.0",
     "@stryker-mutator/javascript-mutator": "^2.5.0",
     "@stryker-mutator/mocha-framework": "^2.5.0",
-    "@stryker-mutator/mocha-runner": "^2.5.0",
+    "@stryker-mutator/mocha-runner": "^3.0.0",
     "@stryker-mutator/webpack-transpiler": "^2.5.0",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
