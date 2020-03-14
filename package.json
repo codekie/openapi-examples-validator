@@ -71,7 +71,7 @@
   "dependencies": {
     "ajv": "^6.12.0",
     "ajv-oai": "1.2.0",
-    "commander": "^4.1.1",
+    "commander": "^5.0.0",
     "errno": "0.1.7",
     "glob": "^7.1.6",
     "json-pointer": "0.6.0",
