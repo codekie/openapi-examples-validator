@@ -7,7 +7,7 @@ const path = require('path'),
 
 const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID = '$.hmm.what.am.i.gonna.get.for.lunch',
-    FILE_PATH__DATA = path.join(__dirname, '..', '..', '..', 'data'),
+    FILE_PATH__DATA = path.join(__dirname, '..', '..', '..', 'data', 'v2'),
     FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA = path.join(FILE_PATH__DATA, 'external-examples-schema.json'),
     FILE_PATH__EXTERNAL_EXAMPLE1_VALID = path.join(FILE_PATH__DATA, 'external-examples-valid-example1.json'),
     FILE_PATH__EXTERNAL_EXAMPLE2_VALID = path.join(FILE_PATH__DATA, 'external-examples-valid-example2.json'),
@@ -21,33 +21,33 @@ const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE = path.join(FILE_PATH__DATA,
         'map-external-examples-map-with-missing-examples.json'),
     FILE_PATH__NOT_EXISTS = 'there is no spoon',
-    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE = path.join('test', 'data', 'external-examples-invalid-type.json'),
-    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK = path.join('test', 'data',
+    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE = path.join('test', 'data', 'v2', 'external-examples-invalid-type.json'),
+    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK = path.join('test', 'data', 'v2',
         'external-examples-invalid-missing-link.json');
 
 describe('Main-module, for v2 should', () => {
     describe('recognize', () => {
         it('valid single example', () => {
-            validateExamples(loadTestData('valid-single-example')).valid.should.equal(true);
+            validateExamples(loadTestData('v2/valid-single-example')).valid.should.equal(true);
         });
         it('valid multiple examples', () => {
-            validateExamples(loadTestData('valid-multiple-examples')).valid.should.equal(true);
+            validateExamples(loadTestData('v2/valid-multiple-examples')).valid.should.equal(true);
         });
         it('valid array-example', () => {
-            validateExamples(loadTestData('valid-array-response')).valid.should.equal(true);
+            validateExamples(loadTestData('v2/valid-array-response')).valid.should.equal(true);
         });
     });
     describe('ignore', () => {
         it('responses without schema', () => {
-            validateExamples(loadTestData('valid-without-schema')).valid.should.equal(true);
+            validateExamples(loadTestData('v2/valid-without-schema')).valid.should.equal(true);
         });
         it('responses without examples', () => {
-            validateExamples(loadTestData('valid-without-examples')).valid.should.equal(true);
+            validateExamples(loadTestData('v2/valid-without-examples')).valid.should.equal(true);
         });
     });
     describe('find error:', () => {
         it('invalid type', () => {
-            const result = validateExamples(loadTestData('invalid-type'));
+            const result = validateExamples(loadTestData('v2/invalid-type'));
             result.valid.should.equal(false);
             result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
                 dataPath: '.versions[0].id',
@@ -61,7 +61,7 @@ describe('Main-module, for v2 should', () => {
             })]);
         });
         it('multiple errors', () => {
-            const result = validateExamples(loadTestData('multiple-errors'));
+            const result = validateExamples(loadTestData('v2/multiple-errors'));
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
                 new ApplicationError(ErrorType.validation, {
@@ -98,7 +98,7 @@ describe('Main-module, for v2 should', () => {
         });
         describe('In array-response:', () => {
             it('multiple errors', () => {
-                const result = validateExamples(loadTestData('invalid-array-response'));
+                const result = validateExamples(loadTestData('v2/invalid-array-response'));
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
                     new ApplicationError(ErrorType.validation, {
@@ -162,7 +162,7 @@ describe('Main-module, for v2 should', () => {
                     },
                     schemaPath: '#/properties/versions/items/properties/id/type',
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP,
-                    exampleFilePath: 'test/data/external-examples-invalid-type.json'
+                    exampleFilePath: 'test/data/v2/external-examples-invalid-type.json'
                 }),
                 new ApplicationError(ErrorType.validation, {
                     dataPath: '.versions[0]',
@@ -200,10 +200,10 @@ describe('Main-module, for v2 should', () => {
                 result.errors.should.deep.equal([
                     new ApplicationError(ErrorType.jsENOENT, {
                         mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE,
-                        message: "ENOENT: no such file or directory, open 'test/data/blegh forgot the sugar in the"
+                        message: "ENOENT: no such file or directory, open 'test/data/v2/blegh forgot the sugar in the"
                             + " coffee'",
                         params: {
-                            path: 'test/data/blegh forgot the sugar in the coffee'
+                            path: 'test/data/v2/blegh forgot the sugar in the coffee'
                         }
                     }),
                     new ApplicationError(ErrorType.validation, {

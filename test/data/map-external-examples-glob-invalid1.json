@@ -1,8 +1,0 @@
-{
-  "$.paths./.get.responses.200.schema": [
-    "test/data/external-examples-valid-example1.json",
-    "test/data/external-examples-valid-example2.json",
-    "test/data/external-examples-invalid-missing-link.json"
-  ],
-  "$.paths./.get.responses.300.schema": "test/data/external-examples-invalid-type.json"
-}

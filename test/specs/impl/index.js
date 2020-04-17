@@ -4,7 +4,7 @@ const chai = require('chai'),
     implV2 = require('../../../src/impl/v2/index'),
     implV3 = require('../../../src/impl/v3/index');
 
-const FILE_PATH__V2__VALID__SINGLE_EXAMPLE = 'valid-single-example',
+const FILE_PATH__V2__VALID__SINGLE_EXAMPLE = 'v2/valid-single-example',
     FILE_PATH__V3__VALID__EXAMPLES = 'v3/simple-api-with-examples';
 
 const should = chai.should();

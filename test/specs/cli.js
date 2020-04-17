@@ -1,6 +1,6 @@
 const VERSION = require('../../package').version,
     { text: textHelp } = require('../data/output-help'),
-    { text: textMapExternalExamples } = require('../data/output-map-external-examples'),
+    { text: textMapExternalExamples } = require('../data/v2/output-map-external-examples'),
     exec = require('child_process').exec,
     {
         getPathOfTestData
@@ -31,16 +31,16 @@ describe('CLI-module', function() {
     });
     describe('file mappings and invalid examples', function() {
         it('should work with the source code', function(done) {
-            exec(`${ CMD__RUN } -m ${ getPathOfTestData('map-external-examples') } `
-                + `-c ${ getPathOfTestData('external-examples-schema') }`, (err, stdout, stderr) => {
+            exec(`${ CMD__RUN } -m ${ getPathOfTestData('v2/map-external-examples') } `
+                + `-c ${ getPathOfTestData('v2/external-examples-schema') }`, (err, stdout, stderr) => {
                 stdout.should.equal(textMapExternalExamples);
                 stderr.should.not.equal('');
                 done();
             });
         });
         it('should work with the built code', function(done) {
-            exec(`${ CMD__RUN_BUILT } -m ${ getPathOfTestData('map-external-examples') } `
-                + `-c ${ getPathOfTestData('external-examples-schema') }`, (err, stdout, stderr) => {
+            exec(`${ CMD__RUN_BUILT } -m ${ getPathOfTestData('v2/map-external-examples') } `
+                + `-c ${ getPathOfTestData('v2/external-examples-schema') }`, (err, stdout, stderr) => {
                 stdout.should.equal(textMapExternalExamples);
                 stderr.should.not.equal('');
                 done();
@@ -49,7 +49,7 @@ describe('CLI-module', function() {
     });
     describe('with valid examples', function() {
         it('should write to stdout, but not into stderr', function(done) {
-            exec(`${ CMD__RUN } ${ getPathOfTestData('simple-example') }`, (err, stdout, stderr) => {
+            exec(`${ CMD__RUN } ${ getPathOfTestData('v2/simple-example') }`, (err, stdout, stderr) => {
                 stdout.should.not.equal('');
                 stderr.should.equal('');
                 done();
@@ -58,7 +58,7 @@ describe('CLI-module', function() {
     });
     describe('with invalid examples', function() {
         it('should write to stdout and stderr', function(done) {
-            exec(`${ CMD__RUN } ${ getPathOfTestData('multiple-errors') }`, (err, stdout, stderr) => {
+            exec(`${ CMD__RUN } ${ getPathOfTestData('v2/multiple-errors') }`, (err, stdout, stderr) => {
                 stdout.should.not.equal('');
                 stderr.should.not.equal('');
                 done();
@@ -68,8 +68,8 @@ describe('CLI-module', function() {
     describe('single external example', function() {
         it('should have no error', function(done) {
             exec(`${ CMD__RUN } -s ${ JSON_PATH__SCHEMA } `
-                + `-e ${ getPathOfTestData('external-examples-valid-example1') } `
-                + `${ getPathOfTestData('external-examples-schema') }`, (err, stdout, stderr) => {
+                + `-e ${ getPathOfTestData('v2/external-examples-valid-example1') } `
+                + `${ getPathOfTestData('v2/external-examples-schema') }`, (err, stdout, stderr) => {
                 stdout.should.not.equal('');
                 stderr.should.equal('');
                 done();

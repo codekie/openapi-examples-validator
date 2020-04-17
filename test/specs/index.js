@@ -14,7 +14,7 @@ const path = require('path'),
 // General constants
 const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     FILE_PATH__NOT_EXISTS = 'Mhhh, dinner',
-    FILE_PATH__DATA = path.join(__dirname, '..', 'data'),
+    FILE_PATH__DATA = path.join(__dirname, '..', 'data', 'v2'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP__RELATIVE = path.join(FILE_PATH__DATA, 'map-external-examples-relative.json'),
     FILE_PATH__EXTERNAL_EXAMPLE1_VALID = path.join(FILE_PATH__DATA, 'external-examples-valid-example1.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA = path.join(FILE_PATH__DATA, 'external-examples-schema.json');
@@ -26,7 +26,7 @@ describe('Main API', function() {
     describe('validateExamples', function() {
         describe('API version 2', function() {
             it('should successfully validate the file', function() {
-                validateExamples(loadTestData('valid-single-example')).valid.should.equal(true);
+                validateExamples(loadTestData('v2/valid-single-example')).valid.should.equal(true);
             });
         });
     });
@@ -57,10 +57,10 @@ describe('Main API', function() {
     describe('validateFile', function() {
         describe('be able to validate file', () => {
             it('without errors', () => {
-                validateFile(getPathOfTestData('valid-single-example')).valid.should.equal(true);
+                validateFile(getPathOfTestData('v2/valid-single-example')).valid.should.equal(true);
             });
             it('with error', () => {
-                const result = validateFile(getPathOfTestData('invalid-type'));
+                const result = validateFile(getPathOfTestData('v2/invalid-type'));
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
                     dataPath: '.versions[0].id',
@@ -76,7 +76,7 @@ describe('Main API', function() {
         });
         describe('collect statistics', () => {
             it('with examples with missing schemas', () => {
-                validateFile(getPathOfTestData('simple-example')).statistics.should.deep
+                validateFile(getPathOfTestData('v2/simple-example')).statistics.should.deep
                     .equal({
                         schemasWithExamples: 1,
                         examplesWithoutSchema: 3,
@@ -84,7 +84,7 @@ describe('Main API', function() {
                     });
             });
             it('without examples', () => {
-                validateFile(getPathOfTestData('valid-without-examples')).statistics.should.deep
+                validateFile(getPathOfTestData('v2/valid-without-examples')).statistics.should.deep
                     .equal({
                         schemasWithExamples: 1,
                         examplesWithoutSchema: 0,
@@ -92,7 +92,7 @@ describe('Main API', function() {
                     });
             });
             it('without schema', () => {
-                validateFile(getPathOfTestData('valid-without-schema')).statistics.should.deep
+                validateFile(getPathOfTestData('v2/valid-without-schema')).statistics.should.deep
                     .equal({
                         schemasWithExamples: 1,
                         examplesWithoutSchema: 1,
