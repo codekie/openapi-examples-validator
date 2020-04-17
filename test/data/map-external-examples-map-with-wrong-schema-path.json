@@ -1,7 +1,0 @@
-{
-  "$.hmm.what.am.i.gonna.get.for.lunch": [
-    "test/data/external-examples-valid-example1.json",
-    "test/data/external-examples-invalid-type.json"
-  ],
-  "$.paths./.get.responses.300.schema": "test/data/external-examples-valid-example2.json"
-}
