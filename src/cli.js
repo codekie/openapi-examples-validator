@@ -34,18 +34,18 @@ program.parse(process.argv);
 
 // IMPLEMENTATION DETAILS
 
-function processAction(filepath, options) {
+async function processAction(filepath, options) {
     const { schemaJsonpath, exampleFilepath, mappingFilepath, cwdToMappingFile } = options;
     let result;
     if (mappingFilepath) {
         console.log('Validating with mapping file');
-        result = validateExamplesByMap(filepath, mappingFilepath, { cwdToMappingFile });
+        result = await validateExamplesByMap(filepath, mappingFilepath, { cwdToMappingFile });
     } else if (schemaJsonpath && exampleFilepath) {
         console.log('Validating single external example');
-        result = validateExample(filepath, schemaJsonpath, exampleFilepath);
+        result = await validateExample(filepath, schemaJsonpath, exampleFilepath);
     } else {
         console.log('Validating examples');
-        result = validateFile(filepath);
+        result = await validateFile(filepath);
     }
     _handleResult(result);
 }

@@ -76,88 +76,90 @@ describe('Main-module, for v3 should', function() {
     });
     describe('be able to load and validate YAML-specs', function() {
         describe('containing valid examples', function() {
-            it('`with .yaml` extension', function() {
-                validateFile(FILE_PATH__VALID__YAML).valid.should.equal(true);
+            it('`with .yaml` extension', async function() {
+                (await validateFile(FILE_PATH__VALID__YAML)).valid.should.equal(true);
             });
-            it('`with .yml` extension', function() {
-                validateFile(FILE_PATH__VALID__YML).valid.should.equal(true);
+            it('`with .yml` extension', async function() {
+                (await validateFile(FILE_PATH__VALID__YML)).valid.should.equal(true);
             });
         });
         describe('containing invalid examples', function() {
-            it('`with .yaml` extension', function() {
-                validateFile(FILE_PATH__INVALID__YAML).valid.should.equal(false);
+            it('`with .yaml` extension', async function() {
+                (await validateFile(FILE_PATH__INVALID__YAML)).valid.should.equal(false);
             });
-            it('`with .yml` extension', function() {
-                validateFile(FILE_PATH__INVALID__YML).valid.should.equal(false);
+            it('`with .yml` extension', async function() {
+                (await validateFile(FILE_PATH__INVALID__YML)).valid.should.equal(false);
             });
         });
     });
     describe('be able to validate request parameters', function() {
         describe('in example-property', function() {
-            it('with statistics', function() {
-                const { statistics } = validateFile(FILE_PATH__VALID__REQUEST_PARAMETER);
+            it('with statistics', async function() {
+                const { statistics } = await validateFile(FILE_PATH__VALID__REQUEST_PARAMETER);
                 statistics.should.deep.equal({
                     examplesTotal: 1,
                     examplesWithoutSchema: 0,
                     schemasWithExamples: 1
                 });
             });
-            it('with a valid example', function() {
-                validateFile(FILE_PATH__VALID__REQUEST_PARAMETER).valid.should.equal(true);
+            it('with a valid example', async function() {
+                (await validateFile(FILE_PATH__VALID__REQUEST_PARAMETER))
+                    .valid.should.equal(true);
             });
-            it('with an invalid example', function() {
-                validateFile(FILE_PATH__INVALID__REQUEST_PARAMETER).valid.should.equal(false);
+            it('with an invalid example', async function() {
+                (await validateFile(FILE_PATH__INVALID__REQUEST_PARAMETER))
+                    .valid.should.equal(false);
             });
         });
         describe('in examples-property', function() {
-            it('with statistics', function() {
-                const { statistics } = validateFile(FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES);
+            it('with statistics', async function() {
+                const { statistics } = await validateFile(FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES);
                 statistics.should.deep.equal({
                     examplesTotal: 2,
                     examplesWithoutSchema: 0,
                     schemasWithExamples: 1
                 });
             });
-            it('with a valid example', function() {
-                validateFile(FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES).valid.should.equal(true);
+            it('with a valid example', async function() {
+                (await validateFile(FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES)).valid.should.equal(true);
             });
-            it('with an invalid example', function() {
-                validateFile(FILE_PATH__INVALID__REQUEST_PARAMETER__EXAMPLES).valid.should.equal(false);
+            it('with an invalid example', async function() {
+                (await validateFile(FILE_PATH__INVALID__REQUEST_PARAMETER__EXAMPLES)).valid.should.equal(false);
             });
         });
     });
     describe('be able to validate request-bodies', function() {
         describe('in example-property', function() {
-            it('with statistics', function() {
-                const { statistics } = validateFile(FILE_PATH__VALID__REQUEST_BODY);
+            it('with statistics', async function() {
+                const { statistics } = await validateFile(FILE_PATH__VALID__REQUEST_BODY);
                 statistics.should.deep.equal({
                     examplesTotal: 2,
                     examplesWithoutSchema: 0,
                     schemasWithExamples: 2
                 });
             });
-            it('with a valid example', function() {
-                validateFile(FILE_PATH__VALID__REQUEST_BODY).valid.should.equal(true);
+            it('with a valid example', async function() {
+                (await validateFile(FILE_PATH__VALID__REQUEST_BODY)).valid.should.equal(true);
             });
-            it('with an invalid example', function() {
-                validateFile(FILE_PATH__INVALID__REQUEST_BODY).valid.should.equal(false);
+            it('with an invalid example', async function() {
+                (await validateFile(FILE_PATH__INVALID__REQUEST_BODY)).valid.should.equal(false);
             });
         });
         describe('in examples-property', function() {
-            it('with statistics', function() {
-                const { statistics } = validateFile(FILE_PATH__VALID__REQUEST_BODY__EXAMPLES);
+            it('with statistics', async function() {
+                const { statistics } = await validateFile(FILE_PATH__VALID__REQUEST_BODY__EXAMPLES);
                 statistics.should.deep.equal({
                     examplesTotal: 2,
                     examplesWithoutSchema: 0,
                     schemasWithExamples: 2
                 });
             });
-            it('with a valid example', function() {
-                validateFile(FILE_PATH__VALID__REQUEST_BODY__EXAMPLES).valid.should.equal(true);
+            it('with a valid example', async function() {
+                (await validateFile(FILE_PATH__VALID__REQUEST_BODY__EXAMPLES)).valid.should.equal(true);
             });
             describe('with invalid examples', function() {
-                before(function() {
-                    this.validationResult = validateFile(FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES);
+                before(async function() {
+                    this.validationResult = await validateFile(FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES);
                 });
                 it('should recognize it as invalid', function() {
                     this.validationResult.valid.should.equal(false);
@@ -169,24 +171,24 @@ describe('Main-module, for v3 should', function() {
         });
     });
     describe('be able to handle `nullable`-types', function() {
-        it('with `null` for non-nullable-type', function() {
-            validateFile(FILE_PATH__INVALID__NON_NULLABLE).valid.should.equal(false);
+        it('with `null` for non-nullable-type', async function() {
+            (await validateFile(FILE_PATH__INVALID__NON_NULLABLE)).valid.should.equal(false);
         });
-        it('with nullable property', function() {
-            validateFile(FILE_PATH__VALID__NULLABLE).valid.should.equal(true);
+        it('with nullable property', async function() {
+            (await validateFile(FILE_PATH__VALID__NULLABLE)).valid.should.equal(true);
         });
-        it('with nullable property, but no type set', function() {
+        it('with nullable property, but no type set', async function() {
             // Nullable will be ignored, if no `type` is set
-            validateFile(FILE_PATH__NULLABLE_INVALID_DEFINITION).valid.should.equal(true);
+            (await validateFile(FILE_PATH__NULLABLE_INVALID_DEFINITION)).valid.should.equal(true);
         });
     });
     describe('be able to handle number formats', function() {
-        it('with valid examples', function() {
-            validateFile(FILE_PATH__VALID__NUMBER_FORMATS).valid.should.equal(true);
+        it('with valid examples', async function() {
+            (await validateFile(FILE_PATH__VALID__NUMBER_FORMATS)).valid.should.equal(true);
         });
         describe('invalid examples', function() {
-            before(function() {
-                this.validationResults = validateFile(FILE_PATH__INVALID__NUMBER_FORMATS);
+            before(async function() {
+                this.validationResults = await validateFile(FILE_PATH__INVALID__NUMBER_FORMATS);
             });
 
             it('should be marked as invalid', function() {
