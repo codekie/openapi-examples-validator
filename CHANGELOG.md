@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/codekie/openapi-examples-validator/compare/v2.1.0...v3.0.0) (2020-04-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* Raised minimal requirement of NodeJS to `v10`
+
+### Features
+
+* support dereferencing JSON Schema $ref pointers ([fd85c20](https://github.com/codekie/openapi-examples-validator/commit/fd85c2071dc5015531f4a4187b272e50f79ec22f))
+
+
+### Bug Fixes
+
+* upgrade dependencies ([cfcaf9f](https://github.com/codekie/openapi-examples-validator/commit/cfcaf9f7b36fae043f24ec0597f8fd4999f5bce0))
+
 ## [2.1.0](https://github.com/codekie/openapi-examples-validator/compare/v2.0.1...v2.1.0) (2020-02-25)
 
 
