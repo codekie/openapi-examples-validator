@@ -14,7 +14,7 @@ const
     { getValidatorFactory, compileValidate } = require('./validator'),
     Determiner = require('./impl'),
     { ApplicationError, ErrorType } = require('./application-error'),
-    { createValidationResponse } = require('./utils');
+    { createValidationResponse, dereferenceJsonSchema } = require('./utils');
 
 // CONSTANTS
 
@@ -104,10 +104,10 @@ function validateExamples(openapiSpec) {
  * @param {string}  filePath    File-path to the OpenAPI-spec
  * @returns {ValidationResponse}
  */
-function validateFile(filePath) {
+async function validateFile(filePath) {
     let openapiSpec = null;
     try {
-        openapiSpec = _parseSpec(filePath);
+        openapiSpec = await _parseSpec(filePath);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
@@ -124,36 +124,43 @@ function validateFile(filePath) {
  *                                              the mapping-file)
  * @returns {ValidationResponse}
  */
-function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToMappingFile } = {}) {
+async function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToMappingFile } = {}) {
     let matchingFilePathsMapping = 0;
-    const responses = glob.sync(
+    const filePathsMaps = glob.sync(
         globMapExternalExamples,
         // Using `nonull`-option to explicitly create an app-error if there's no match for `globMapExternalExamples`
         { nonull: true }
-    ).map(filePathMapExternalExamples => {
+    );
+    let responses = [];
+    // for..of here, to support sequential execution of async calls. This is required, since dereferencing the
+    // `openapiSpec` is not concurrency-safe
+    for (let filePathMapExternalExamples of filePathsMaps) {
         let mapExternalExamples = null,
             openapiSpec = null;
         try {
             mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
-            openapiSpec = _parseSpec(filePathSchema);
+            openapiSpec = await _parseSpec(filePathSchema);
             openapiSpec = Determiner.getImplementation(openapiSpec)
                 .prepare(openapiSpec);
         } catch (err) {
-            return createValidationResponse({ errors: [ApplicationError.create(err)] });
+            responses.push(createValidationResponse({ errors: [ApplicationError.create(err)] }));
+            continue;
         }
         // Not using `glob`'s response-length, becuse it is `1` if there's no match for `globMapExternalExamples`.
         // Instead, increment on every match
         matchingFilePathsMapping++;
-        return _validate(
-            Object.keys(mapExternalExamples),
-            statistics => _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statistics, {
-                cwdToMappingFile,
-                dirPathMapExternalExamples: path.dirname(filePathMapExternalExamples)
-            }).map((/** @type ApplicationError */ error) => Object.assign(error, {
-                mapFilePath: filePathMapExternalExamples
-            }))
+        responses.push(
+            _validate(
+                Object.keys(mapExternalExamples),
+                statistics => _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statistics, {
+                    cwdToMappingFile,
+                    dirPathMapExternalExamples: path.dirname(filePathMapExternalExamples)
+                }).map((/** @type ApplicationError */ error) => Object.assign(error, {
+                    mapFilePath: filePathMapExternalExamples
+                }))
+            )
         );
-    });
+    }
     return _.merge(
         responses.reduce((res, response) => {
             if (!res) { return response; }
@@ -170,13 +177,13 @@ function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToM
  * @param {String}  filePathExample     File-path to the external example-file
  * @returns {ValidationResponse}
  */
-function validateExample(filePathSchema, pathSchema, filePathExample) {
+async function validateExample(filePathSchema, pathSchema, filePathExample) {
     let example = null,
         schema = null,
         openapiSpec = null;
     try {
         example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
-        openapiSpec = _parseSpec(filePathSchema);
+        openapiSpec = await _parseSpec(filePathSchema);
         openapiSpec = Determiner.getImplementation(openapiSpec)
             .prepare(openapiSpec);
         schema = _extractSchema(pathSchema, openapiSpec);
@@ -203,11 +210,11 @@ function validateExample(filePathSchema, pathSchema, filePathExample) {
  * @returns {object}    Parsed OpenAPI-spec
  * @private
  */
-function _parseSpec(filePath) {
-    if (_isFileTypeYaml(filePath)) {
-        return yaml.parse(fs.readFileSync(filePath, 'utf-8'));
-    }
-    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+async function _parseSpec(filePath) {
+    const jsonSchema = _isFileTypeYaml(filePath)
+        ? yaml.parse(fs.readFileSync(filePath, 'utf-8'))
+        : JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    return await dereferenceJsonSchema(filePath, jsonSchema);
 }
 
 /**

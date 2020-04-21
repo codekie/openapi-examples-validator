@@ -126,16 +126,25 @@ describe('Main-module, for v2 should', () => {
         });
     });
     describe('should be able to validate external examples', () => {
-        it('without errors', () => {
-            validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
-                FILE_PATH__EXTERNAL_EXAMPLE1_VALID).valid.should.equal(true);
-            validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
-                FILE_PATH__EXTERNAL_EXAMPLE2_VALID).valid.should.equal(true);
+        it('without errors', async() => {
+            (await validateExample(
+                FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                PATH__SCHEMA_EXTERNAL_EXAMPLE,
+                FILE_PATH__EXTERNAL_EXAMPLE1_VALID
+            )).valid.should.equal(true);
+            (await validateExample(
+                FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                PATH__SCHEMA_EXTERNAL_EXAMPLE,
+                FILE_PATH__EXTERNAL_EXAMPLE2_VALID
+            )).valid.should.equal(true);
         });
         describe('with errors', () => {
-            it('(type error)', () => {
-                const result = validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
-                    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE);
+            it('(type error)', async() => {
+                const result = await validateExample(
+                    FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                    PATH__SCHEMA_EXTERNAL_EXAMPLE,
+                    FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE
+                );
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
                     dataPath: '.versions[0].id',
@@ -149,8 +158,9 @@ describe('Main-module, for v2 should', () => {
                 })]);
             });
         });
-        it('with an example-map', () => {
-            const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, FILE_PATH__EXTERNAL_EXAMPLES_MAP);
+        it('with an example-map', async() => {
+            const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                FILE_PATH__EXTERNAL_EXAMPLES_MAP);
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
                 new ApplicationError(ErrorType.validation, {
@@ -180,8 +190,8 @@ describe('Main-module, for v2 should', () => {
     });
     describe('should throw errors', () => {
         describe("when files can't be found:", () => {
-            it('the mapping-file', () => {
-                const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+            it('the mapping-file', async() => {
+                const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                     FILE_PATH__NOT_EXISTS);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
@@ -193,8 +203,8 @@ describe('Main-module, for v2 should', () => {
                     })
                 ]);
             });
-            it('referenced example-file in the mapping-file', () => {
-                const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+            it('referenced example-file in the mapping-file', async() => {
+                const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
@@ -219,9 +229,12 @@ describe('Main-module, for v2 should', () => {
                     })
                 ]);
             });
-            it('the example-file', () => {
-                const result = validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
-                    FILE_PATH__NOT_EXISTS);
+            it('the example-file', async() => {
+                const result = (await validateExample(
+                    FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                    PATH__SCHEMA_EXTERNAL_EXAMPLE,
+                    FILE_PATH__NOT_EXISTS
+                ));
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
                     new ApplicationError(ErrorType.jsENOENT, {
@@ -234,9 +247,12 @@ describe('Main-module, for v2 should', () => {
             });
         });
         describe("when the response-schema can't be found", () => {
-            it('while validating a single external example', () => {
-                const result = validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
-                    PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID, FILE_PATH__EXTERNAL_EXAMPLE1_VALID);
+            it('while validating a single external example', async() => {
+                const result = await validateExample(
+                    FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                    PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID,
+                    FILE_PATH__EXTERNAL_EXAMPLE1_VALID
+                );
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
                     new ApplicationError(ErrorType.jsonPathNotFound, {
@@ -249,8 +265,8 @@ describe('Main-module, for v2 should', () => {
                     })
                 ]);
             });
-            it('while validating a map of external examples', () => {
-                const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+            it('while validating a map of external examples', async() => {
+                const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
@@ -267,8 +283,8 @@ describe('Main-module, for v2 should', () => {
         });
     });
     describe('should be able to resolve globs for mapping-files', () => {
-        it('and collect the errors for all mapping-files', () => {
-            const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+        it('and collect the errors for all mapping-files', async() => {
+            const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                 FILE_PATH__EXTERNAL_EXAMPLES_GLOB);
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
@@ -307,8 +323,8 @@ describe('Main-module, for v2 should', () => {
                 })
             ]);
         });
-        it('should collect the statistics over all mapping-files', () => {
-            validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, FILE_PATH__EXTERNAL_EXAMPLES_GLOB)
+        it('should collect the statistics over all mapping-files', async() => {
+            (await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, FILE_PATH__EXTERNAL_EXAMPLES_GLOB))
                 .statistics.should.deep.equal({
                     schemasWithExamples: 4,
                     examplesWithoutSchema: 0,
@@ -318,8 +334,8 @@ describe('Main-module, for v2 should', () => {
         });
     });
     describe('with set `cwd-to-mapping-file`-flag', () => {
-        it('resolve the relative paths in the mapping-files', () => {
-            const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+        it('resolve the relative paths in the mapping-files', async() => {
+            const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                 FILE_PATH__EXTERNAL_EXAMPLES_MAP__RELATIVE, { cwdToMappingFile: true });
             result.valid.should.equal(true);
             result.statistics.should.deep.equal({

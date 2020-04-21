@@ -75,6 +75,7 @@
     "errno": "0.1.7",
     "glob": "^7.1.6",
     "json-pointer": "0.6.0",
+    "json-schema-ref-parser": "8.0.0",
     "jsonpath-plus": "^4.0.0",
     "lodash": "^4.17.15",
     "yaml": "^1.9.2"

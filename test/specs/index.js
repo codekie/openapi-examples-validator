@@ -32,22 +32,25 @@ describe('Main API', function() {
     });
     describe('validateExample', function() {
         describe('API version 2', function() {
-            it('should successfully validate the file', function() {
-                validateExample(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, PATH__SCHEMA_EXTERNAL_EXAMPLE,
-                    FILE_PATH__EXTERNAL_EXAMPLE1_VALID).valid.should.equal(true);
+            it('should successfully validate the file', async function() {
+                (await validateExample(
+                    FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                    PATH__SCHEMA_EXTERNAL_EXAMPLE,
+                    FILE_PATH__EXTERNAL_EXAMPLE1_VALID
+                )).valid.should.equal(true);
             });
         });
     });
     describe('validateExamplesByMap', function() {
         describe('API version 2', function() {
-            it('should successfully validate the file', function() {
-                const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+            it('should successfully validate the file', async function() {
+                const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                     FILE_PATH__EXTERNAL_EXAMPLES_MAP__RELATIVE, { cwdToMappingFile: true });
                 result.valid.should.equal(true);
             });
             describe('without changing the working directory', function() {
-                it('should fail', function() {
-                    const result = validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                it('should fail', async function() {
+                    const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                         FILE_PATH__EXTERNAL_EXAMPLES_MAP__RELATIVE);
                     result.valid.should.equal(false);
                 });
@@ -56,11 +59,12 @@ describe('Main API', function() {
     });
     describe('validateFile', function() {
         describe('be able to validate file', () => {
-            it('without errors', () => {
-                validateFile(getPathOfTestData('v2/valid-single-example')).valid.should.equal(true);
+            it('without errors', async() => {
+                (await validateFile(getPathOfTestData('v2/valid-single-example'))).valid
+                    .should.equal(true);
             });
-            it('with error', () => {
-                const result = validateFile(getPathOfTestData('v2/invalid-type'));
+            it('with error', async() => {
+                const result = await validateFile(getPathOfTestData('v2/invalid-type'));
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
                     dataPath: '.versions[0].id',
@@ -75,25 +79,25 @@ describe('Main API', function() {
             });
         });
         describe('collect statistics', () => {
-            it('with examples with missing schemas', () => {
-                validateFile(getPathOfTestData('v2/simple-example')).statistics.should.deep
+            it('with examples with missing schemas', async() => {
+                (await validateFile(getPathOfTestData('v2/simple-example'))).statistics.should.deep
                     .equal({
                         schemasWithExamples: 1,
                         examplesWithoutSchema: 3,
                         examplesTotal: 4
                     });
             });
-            it('without examples', () => {
-                validateFile(getPathOfTestData('v2/valid-without-examples')).statistics.should.deep
-                    .equal({
+            it('without examples', async() => {
+                (await validateFile(getPathOfTestData('v2/valid-without-examples'))).statistics
+                    .should.deep.equal({
                         schemasWithExamples: 1,
                         examplesWithoutSchema: 0,
                         examplesTotal: 1
                     });
             });
-            it('without schema', () => {
-                validateFile(getPathOfTestData('v2/valid-without-schema')).statistics.should.deep
-                    .equal({
+            it('without schema', async() => {
+                (await validateFile(getPathOfTestData('v2/valid-without-schema'))).statistics
+                    .should.deep.equal({
                         schemasWithExamples: 1,
                         examplesWithoutSchema: 1,
                         examplesTotal: 2
@@ -101,8 +105,8 @@ describe('Main API', function() {
             });
         });
         describe('should throw errors, when the files can\'t be found:', function() {
-            it('The schema-file', () => {
-                const result = validateFile(FILE_PATH__NOT_EXISTS);
+            it('The schema-file', async() => {
+                const result = await validateFile(FILE_PATH__NOT_EXISTS);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
                     new ApplicationError(ErrorType.jsENOENT, {
