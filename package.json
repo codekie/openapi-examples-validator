@@ -65,7 +65,7 @@
     "rimraf": "^3.0.2",
     "standard-version": "^7.1.0",
     "stryker-cli": "1.0.0",
-    "webpack": "^4.42.1",
+    "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
@@ -75,7 +75,7 @@
     "errno": "0.1.7",
     "glob": "^7.1.6",
     "json-pointer": "0.6.0",
-    "json-schema-ref-parser": "8.0.0",
+    "json-schema-ref-parser": "^9.0.1",
     "jsonpath-plus": "^4.0.0",
     "lodash": "^4.17.15",
     "yaml": "^1.9.2"
