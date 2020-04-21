@@ -1,0 +1,56 @@
+{
+  "description": "200 response",
+  "schema": {
+    "type": "object",
+    "required": [
+      "versions"
+    ],
+    "properties": {
+      "versions": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "status",
+            "id",
+            "links"
+          ],
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "updated": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "links": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "href",
+                  "rel"
+                ],
+                "properties": {
+                  "href": {
+                    "type": "string"
+                  },
+                  "rel": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "examples": {
+    "application/json": {
+      "$ref": "./external-examples-valid-example1.json"
+    }
+  }
+}
