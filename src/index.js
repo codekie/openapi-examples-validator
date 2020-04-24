@@ -18,10 +18,12 @@ const
 
 // CONSTANTS
 
-const FILE_EXTENSIONS__YAML = [
-    'yaml',
-    'yml'
-];
+const SYM__INTERNAL = Symbol('internal'),
+    PROP__SCHEMAS_WITH_EXAMPLES = 'schemasWithExamples',
+    FILE_EXTENSIONS__YAML = [
+        'yaml',
+        'yml'
+    ];
 
 // STATICS
 
@@ -151,13 +153,18 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples, { 
         matchingFilePathsMapping++;
         responses.push(
             _validate(
-                Object.keys(mapExternalExamples),
-                statistics => _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statistics, {
-                    cwdToMappingFile,
-                    dirPathMapExternalExamples: path.dirname(filePathMapExternalExamples)
-                }).map((/** @type ApplicationError */ error) => Object.assign(error, {
-                    mapFilePath: filePathMapExternalExamples
-                }))
+                statistics => {
+                    return _handleExamplesByMapValidation(
+                        openapiSpec, mapExternalExamples, statistics, {
+                            cwdToMappingFile,
+                            dirPathMapExternalExamples: path.dirname(filePathMapExternalExamples)
+                        }
+                    ).map(
+                        (/** @type ApplicationError */ error) => Object.assign(error, {
+                            mapFilePath: filePathMapExternalExamples
+                        })
+                    );
+                }
             )
         );
     }
@@ -191,7 +198,6 @@ async function validateExample(filePathSchema, pathSchema, filePathExample) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
     return _validate(
-        [pathSchema],
         statistics => _validateExample({
             createValidator: _initValidatorFactory(openapiSpec),
             schema,
@@ -231,15 +237,14 @@ function _isFileTypeYaml(filePath) {
 /**
  * Top-level validator. Prepares common values, required for the validation, then calles the validator and prepares
  * the result for the output.
- * @param {Array.<String>}      schemaPaths             JSON-paths to the schemas
  * @param {ValidationHandler}   validationHandler       The handler which performs the validation. It will receive the
  *                                                      statistics-object as argument and has to return an Array of
  *                                                      errors (or an empty Array, when all examples are valid)
  * @returns {ValidationResponse}
  * @private
  */
-function _validate(schemaPaths, validationHandler) {
-    const statistics = _initStatistics({ schemaPaths }),
+function _validate(validationHandler) {
+    const statistics = _initStatistics(),
         errors = validationHandler(statistics);
     return createValidationResponse({ errors, statistics });
 }
@@ -308,6 +313,14 @@ function _mergeValidationResponses(response1, response2) {
         errors: response1.errors.concat(response2.errors),
         statistics: _.entries(response1.statistics)
             .reduce((res, [key, val]) => {
+                if (PROP__SCHEMAS_WITH_EXAMPLES === key) {
+                    const schemasWithExample = response2.statistics[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES]
+                        .values();
+                    for (let schema of schemasWithExample) {
+                        res[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES].add(schema);
+                    }
+                    return res;
+                }
                 res[key] = val + response2.statistics[key];
                 return res;
             }, _initStatistics())
@@ -361,7 +374,6 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec) {
     }
     // Start validation
     const schemaPaths = Object.keys(validationMap);
-    validationResult.statistics.schemasWithExamples = schemaPaths.length;
     schemaPaths.forEach(pathSchema => {
         _validateSchema({ openapiSpec, createValidator, pathSchema, validationMap, statistics,
             validationResult });
@@ -403,16 +415,22 @@ function _validateSchema({ openapiSpec, createValidator, pathSchema, validationM
 
 /**
  * Creates a container-object for the validation statistics.
- * @param {Array.<String>}  [schemaPaths=[]]    JSON-paths schemas
  * @returns {ValidationStatistics}
  * @private
  */
-function _initStatistics({ schemaPaths=[] } = {}) {
-    return {
-        schemasWithExamples: schemaPaths.length,
+function _initStatistics() {
+    const statistics = {
+        [SYM__INTERNAL]: {
+            [PROP__SCHEMAS_WITH_EXAMPLES]: new Set()
+        },
         examplesTotal: 0,
         examplesWithoutSchema: 0
     };
+    Object.defineProperty(statistics, PROP__SCHEMAS_WITH_EXAMPLES, {
+        enumerable: true,
+        get: () => statistics[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES].size
+    });
+    return statistics;
 }
 
 /**
@@ -451,10 +469,10 @@ function _validateExample({ createValidator, schema, example, statistics, filePa
     statistics.examplesTotal++;
     // No schema, no validation (Examples without schema are considered valid)
     if (!schema) {
-        statistics.schemasWithExamples--;
         statistics.examplesWithoutSchema++;
         return errors;
     }
+    statistics[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES].add(schema);
     const validate = compileValidate(createValidator(), schema);
     if (validate(example)) { return errors; }
     return errors.concat(...validate.errors.map(ApplicationError.create))
