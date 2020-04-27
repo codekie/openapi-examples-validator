@@ -1,0 +1,7 @@
+{
+  "$.paths./.get.responses.200.schema": [
+    "external-examples-invalid-missing-link.json",
+    "external-examples-valid-example1.json"
+  ],
+  "$.paths./.get.responses.300.schema": "./external-examples-valid-example1.json"
+}
