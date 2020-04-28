@@ -326,7 +326,7 @@ describe('Main-module, for v2 should', () => {
         it('should collect the statistics over all mapping-files', async() => {
             (await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, FILE_PATH__EXTERNAL_EXAMPLES_GLOB))
                 .statistics.should.deep.equal({
-                    schemasWithExamples: 2,
+                    schemasWithExamples: 4,
                     examplesWithoutSchema: 0,
                     examplesTotal: 7,
                     matchingFilePathsMapping: 2

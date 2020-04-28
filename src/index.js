@@ -314,11 +314,16 @@ function _mergeValidationResponses(response1, response2) {
         statistics: _.entries(response1.statistics)
             .reduce((res, [key, val]) => {
                 if (PROP__SCHEMAS_WITH_EXAMPLES === key) {
-                    const schemasWithExample = response2.statistics[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES]
-                        .values();
-                    for (let schema of schemasWithExample) {
-                        res[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES].add(schema);
-                    }
+                    [
+                        response1,
+                        response2
+                    ].forEach(response => {
+                        const schemasWithExample = response.statistics[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES]
+                            .values();
+                        for (let schema of schemasWithExample) {
+                            res[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES].add(schema);
+                        }
+                    });
                     return res;
                 }
                 res[key] = val + response2.statistics[key];
