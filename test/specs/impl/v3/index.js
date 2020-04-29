@@ -10,6 +10,8 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     REL_PATH__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs',
     REL_PATH__EXAMPLE__INVALID__WITH_INTERNAL_REFS = 'v3/simple-api-with-example-with-refs-invalid',
     REL_PATH__EXAMPLES__INVALID__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs-invalid',
+    FILE_PATH__EXAMPLES_WITH_MISSING_SCHEMA
+        = path.join(__dirname, '../../../data/v3/simple-api-with-examples-and-missing-schema.json'),
     FILE_PATH__INVALID__YAML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs-invalid.yaml'),
     FILE_PATH__INVALID__YML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs-invalid.yml'),
     FILE_PATH__VALID__REQUEST_PARAMETER = path.join(__dirname, '../../../data/v3/request-valid-parameter.json'),
@@ -224,6 +226,12 @@ describe('Main-module, for v3 should', function() {
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('double');
             });
+        });
+    });
+    describe('statistics for examples, without schema', function() {
+        it('should return the right amount', async function() {
+            (await validateFile(FILE_PATH__EXAMPLES_WITH_MISSING_SCHEMA))
+                .statistics.schemasWithExamples.should.equal(2);
         });
     });
 });
