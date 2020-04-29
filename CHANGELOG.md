@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.2](https://github.com/codekie/openapi-examples-validator/compare/v3.0.1...v3.0.2) (2020-04-29)
+
+
+### Bug Fixes
+
+* fix statistics for `schemasWithExamples` over multiple mapping-files ([d694cdf](https://github.com/codekie/openapi-examples-validator/commit/d694cdfe716fe04c787ec97f648e2c4b97ea49e2))
+
 ### [3.0.1](https://github.com/codekie/openapi-examples-validator/compare/v3.0.0...v3.0.1) (2020-04-27)
 
 
