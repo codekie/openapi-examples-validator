@@ -33,6 +33,7 @@ const ErrorType = {
     jsENOENT: ENOENT.code,
     jsonPathNotFound: 'JsonPathNotFound',
     errorAndErrorsMutuallyExclusive: 'ErrorErrorsMutuallyExclusive',
+    parseError: 'ParseError',
     validation: 'Validation'
 };
 

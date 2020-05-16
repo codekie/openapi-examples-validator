@@ -13,7 +13,8 @@ const should = chai.should();
 module.exports = {
     should,
     getPathOfTestData,
-    loadTestData
+    loadTestData,
+    normalizeValidationResultPaths
 };
 
 // IMPLEMENTATION DETAILS
@@ -40,4 +41,19 @@ function loadTestData(fileName, asString) {
 
 function getPathOfTestData(fileName, asString) {
     return path.join(BASE_PATH__TEST_DATA_STRING, fileName + (!asString ? SUFFIX__JSON : ''));
+}
+
+/**
+ * Normalizes the file paths in the validation results. The passed result will be modified in place.
+ * @param {ValidationResult} validationResult   The modified validation-result
+ */
+function normalizeValidationResultPaths(validationResult) {
+    if (!validationResult.errors) { return validationResult; }
+    validationResult.errors.forEach(error => {
+        ['mapFilePath', 'exampleFilePath'].forEach(prop => {
+            if (!error[prop]) { return; }
+            error[prop] = path.normalize(error[prop]);
+        });
+    });
+    return validationResult;
 }
