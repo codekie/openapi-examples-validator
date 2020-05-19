@@ -1,5 +1,6 @@
 const path = require('path'),
-    { validateFile, validateExamplesByMap } = require('../../../../src/index');
+    { validateFile, validateExamplesByMap } = require('../../../../src/index'),
+    { normalizeValidationResultPaths } = require('../../../util/setup-tests');
 
 const FILE_PATH__DATA = path.join(__dirname, '..', '..', '..', 'data', 'v2'),
     FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA = path.join(FILE_PATH__DATA,
@@ -57,7 +58,7 @@ describe('Main-module, for v2 should', () => {
             it('without changing the working directory', async() => {
                 const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                     FILE_PATH__EXTERNAL_EXAMPLES_MAP, { cwdToMappingFile: false });
-                result.should.deep.equal({
+                normalizeValidationResultPaths(result).should.deep.equal({
                     valid: false,
                     statistics: {
                         schemasWithExamples: 2,
@@ -75,7 +76,7 @@ describe('Main-module, for v2 should', () => {
                             params: {
                                 type: 'string'
                             },
-                            exampleFilePath: 'test/data/v2/external-examples-invalid-type.json',
+                            exampleFilePath: path.normalize('test/data/v2/external-examples-invalid-type.json'),
                             mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP
                         },
                         {
@@ -87,7 +88,7 @@ describe('Main-module, for v2 should', () => {
                             params: {
                                 missingProperty: 'links'
                             },
-                            exampleFilePath: 'test/data/v2/external-examples-invalid-missing-link.json',
+                            exampleFilePath: path.normalize('test/data/v2/external-examples-invalid-missing-link.json'),
                             mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP
                         }
                     ]

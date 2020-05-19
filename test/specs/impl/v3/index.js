@@ -13,6 +13,8 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     FILE_PATH__EXAMPLES_WITH_MISSING_SCHEMA
         = path.join(__dirname, '../../../data/v3/simple-api-with-examples-and-missing-schema.json'),
     FILE_PATH__INVALID__YAML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs-invalid.yaml'),
+    FILE_PATH__INVALID__INDENTATION__YAML
+        = path.join(__dirname, '../../../data/v3/simple-api-with-examples-invalid-indentation.yml'),
     FILE_PATH__INVALID__YML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs-invalid.yml'),
     FILE_PATH__VALID__REQUEST_PARAMETER = path.join(__dirname, '../../../data/v3/request-valid-parameter.json'),
     FILE_PATH__VALID__REQUEST_PARAMETER__EXAMPLES
@@ -91,6 +93,15 @@ describe('Main-module, for v3 should', function() {
             });
             it('`with .yml` extension', async function() {
                 (await validateFile(FILE_PATH__INVALID__YML)).valid.should.equal(false);
+            });
+        });
+        describe('containing an invalid yaml', function() {
+            it('with wrong indentation', async function() {
+                const errors = (await validateFile(FILE_PATH__INVALID__INDENTATION__YAML)).errors,
+                    error = errors[0];
+                errors.length.should.equal(1);
+                error.message.should.equal('YAMLSemanticError: Nested mappings are not allowed in compact mappings');
+                error.type.should.equal('ParseError');
             });
         });
     });

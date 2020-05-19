@@ -1,7 +1,5 @@
 const path = require('path'),
-    {
-        loadTestData
-    } = require('../../../util/setup-tests'),
+    { loadTestData, normalizeValidationResultPaths } = require('../../../util/setup-tests'),
     { validateExample, 'default': validateExamples, validateExamplesByMap } = require('../../../../src/index'),
     { ApplicationError, ErrorType } = require('../../../../src/application-error');
 
@@ -161,6 +159,7 @@ describe('Main-module, for v2 should', () => {
         it('with an example-map', async() => {
             const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                 FILE_PATH__EXTERNAL_EXAMPLES_MAP);
+            normalizeValidationResultPaths(result);
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
                 new ApplicationError(ErrorType.validation, {
@@ -172,7 +171,7 @@ describe('Main-module, for v2 should', () => {
                     },
                     schemaPath: '#/properties/versions/items/properties/id/type',
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP,
-                    exampleFilePath: 'test/data/v2/external-examples-invalid-type.json'
+                    exampleFilePath: path.normalize('test/data/v2/external-examples-invalid-type.json')
                 }),
                 new ApplicationError(ErrorType.validation, {
                     dataPath: '.versions[0]',
@@ -206,6 +205,7 @@ describe('Main-module, for v2 should', () => {
             it('referenced example-file in the mapping-file', async() => {
                 const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE);
+                normalizeValidationResultPaths(result);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
                     new ApplicationError(ErrorType.jsENOENT, {
@@ -268,6 +268,7 @@ describe('Main-module, for v2 should', () => {
             it('while validating a map of external examples', async() => {
                 const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH);
+                normalizeValidationResultPaths(result);
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
                     new ApplicationError(ErrorType.jsonPathNotFound, {
@@ -286,6 +287,7 @@ describe('Main-module, for v2 should', () => {
         it('and collect the errors for all mapping-files', async() => {
             const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                 FILE_PATH__EXTERNAL_EXAMPLES_GLOB);
+            normalizeValidationResultPaths(result);
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
                 new ApplicationError(ErrorType.validation, {

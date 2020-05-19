@@ -217,9 +217,20 @@ async function validateExample(filePathSchema, pathSchema, filePathExample) {
  * @private
  */
 async function _parseSpec(filePath) {
-    const jsonSchema = _isFileTypeYaml(filePath)
-        ? yaml.parse(fs.readFileSync(filePath, 'utf-8'))
-        : JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    const isYaml = _isFileTypeYaml(filePath);
+    let jsonSchema;
+
+    if (isYaml) {
+        try {
+            jsonSchema = yaml.parse(fs.readFileSync(filePath, 'utf-8'));
+        } catch (e) {
+            const { name, message } = e;
+            throw new ApplicationError(ErrorType.parseError, { message: `${ name }: ${ message }` });
+        }
+    } else {
+        jsonSchema = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    }
+
     return await dereferenceJsonSchema(filePath, jsonSchema);
 }
 
