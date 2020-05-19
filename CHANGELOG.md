@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.3](https://github.com/codekie/openapi-examples-validator/compare/v3.0.2...v3.0.3) (2020-05-19)
+
+
+### Bug Fixes
+
+* map yaml-parser errors to ApplicationErros ([0737dd3](https://github.com/codekie/openapi-examples-validator/commit/0737dd37afce26ff1d0e591334531bd3796f4a8b))
+* upgrade dependencies ([b86daee](https://github.com/codekie/openapi-examples-validator/commit/b86daeedc76603a0c5183b92f2bf0fa9cfd8a92b))
+
 ### [3.0.2](https://github.com/codekie/openapi-examples-validator/compare/v3.0.1...v3.0.2) (2020-04-29)
 
 
