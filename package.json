@@ -18,7 +18,7 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "npm run build && npm run test:mocha",
     "test-mutations": "stryker run",
-    "test:mocha": "BABEL_DISABLE_CACHE=1 mocha --require \"@babel/register\" --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\"",
+    "test:mocha": "mocha --require \"@babel/register\" --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\"",
     "release": "npm run build && npm run release:stage-artifacts && standard-version -a",
     "release:stage-artifacts": "git add dist/*"
   },
@@ -63,7 +63,7 @@
     "mocha-lcov-reporter": "^1.3.0",
     "nyc": "^15.0.1",
     "rimraf": "^3.0.2",
-    "standard-version": "^7.1.0",
+    "standard-version": "8.0.0",
     "stryker-cli": "1.0.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
