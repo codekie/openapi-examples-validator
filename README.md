@@ -10,7 +10,7 @@ Validates embedded JSON-examples in OpenAPI-specs (v2 and v3 are supported)
 [![Mutation testing badge](https://badge.stryker-mutator.io/github.com/codekie/openapi-examples-validator/master)](https://stryker-mutator.github.io)
 [![dependencies Status](https://david-dm.org/codekie/openapi-examples-validator/status.svg)](https://david-dm.org/codekie/openapi-examples-validator)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ef493da6c9355a144a29/maintainability)](https://codeclimate.com/github/codekie/openapi-examples-validator/maintainability)
-[![Greenkeeper badge](https://badges.greenkeeper.io/codekie/openapi-examples-validator.svg)](https://greenkeeper.io/)
+
 
 Install
 -------
