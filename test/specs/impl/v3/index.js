@@ -34,6 +34,7 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     FILE_PATH__INVALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-invalid-requestbody.json'),
     FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-invalid-requestbody-examples.json'),
+    FILE_PATH__VALID__VALUE_PROPERTY = path.join(__dirname, '../../../data/v3/valid-single-with-value-property.yaml'),
     FILE_PATH__VALID__YAML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs.yaml'),
     FILE_PATH__VALID__YML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs.yml');
 
@@ -236,6 +237,17 @@ describe('Main-module, for v3 should', function() {
                 error.message.should.equal('should match format "double"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('double');
+            });
+        });
+    });
+    describe('example with `value`s as properties', function() {
+        it('should not be recognized as separate example', async function() {
+            const { valid, statistics } = (await validateFile(FILE_PATH__VALID__VALUE_PROPERTY));
+            valid.should.equal(true);
+            statistics.should.deep.equal({
+                schemasWithExamples: 1,
+                examplesWithoutSchema: 0,
+                examplesTotal: 1
             });
         });
     });
