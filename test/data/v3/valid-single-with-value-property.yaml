@@ -1,0 +1,52 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  license:
+    name: MIT
+servers:
+  - url: 'http://petstore.swagger.io/v1'
+paths:
+  /pets:
+    get:
+      summary: List all assets
+      operationId: listAssets
+      responses:
+        '200':
+          description: An array of assets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assets'
+              examples:
+                single:
+                  summary: a single example
+                  value:
+                    value:
+                      - id: 0
+                        name: Table
+                        tag: furniture
+                        value: 500
+                        currency: USD
+components:
+  schemas:
+    Asset:
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        tag:
+          type: string
+        value:
+            type: number
+    Assets:
+      type: object
+      properties:
+        value:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'

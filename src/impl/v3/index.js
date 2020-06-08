@@ -8,11 +8,11 @@ const { JSONPath: jsonPath } = require('jsonpath-plus'),
 // CONSTANTS
 
 const PATH__EXAMPLE = '$..responses..content.application/json.example',
-    PATH__EXAMPLES = '$..responses..content.application/json.examples..value',
+    PATH__EXAMPLES = '$..responses..content.application/json.examples.*.value',
     PATH__EXAMPLE__PARAMETER = '$..parameters..example',
-    PATH__EXAMPLES__PARAMETER = '$..parameters..examples..value',
+    PATH__EXAMPLES__PARAMETER = '$..parameters..examples.*.value',
     PATH__EXAMPLE__REQUEST_BODY = '$..requestBody.content.application/json.example',
-    PATH__EXAMPLES__REQUEST_BODY = '$..requestBody.content.application/json.examples..value',
+    PATH__EXAMPLES__REQUEST_BODY = '$..requestBody.content.application/json.examples.*.value',
     PROP__SCHEMA = 'schema',
     PROP__EXAMPLE = 'example',
     PROP__EXAMPLES = 'examples';
