@@ -19,7 +19,7 @@ module.exports = function(config) {
             config: '.mocharc.json',
             package: 'package.json',
             ui: 'bdd',
-            timeoutSeconds: 3,
+            timeout: 3000,
             require: [
                 '@babel/register',
                 './test/util/setup-tests'
