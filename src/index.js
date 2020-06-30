@@ -3,7 +3,9 @@
  */
 
 const
-    _ = require('lodash'),
+    merge = require('lodash.merge'),
+    flatten = require('lodash.flatten'),
+    flatMap = require('lodash.flatmap'),
     fs = require('fs'),
     path = require('path'),
     glob = require('glob'),
@@ -168,7 +170,7 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples, { 
             )
         );
     }
-    return _.merge(
+    return merge(
         responses.reduce((res, response) => {
             if (!res) { return response; }
             return _mergeValidationResponses(res, response);
@@ -276,39 +278,36 @@ function _validate(validationHandler) {
 function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statistics,
     { cwdToMappingFile = false, dirPathMapExternalExamples }
 ) {
-    return _(mapExternalExamples)
-        .entries()
-        .flatMap(([pathSchema, filePathsExample]) => {
-            let schema = null;
-            try {
-                schema = _extractSchema(pathSchema, openapiSpec);
-            } catch (/** @type ErrorJsonPathNotFound */ err) {
-                // If the schema can't be found, don't even attempt to process the examples
-                return ApplicationError.create(err);
+    return flatMap(Object.entries(mapExternalExamples), ([pathSchema, filePathsExample]) => {
+        let schema = null;
+        try {
+            schema = _extractSchema(pathSchema, openapiSpec);
+        } catch (/** @type ErrorJsonPathNotFound */ err) {
+            // If the schema can't be found, don't even attempt to process the examples
+            return ApplicationError.create(err);
+        }
+        return flatMap(
+            flatten([filePathsExample]),
+            filePathExample => {
+                let example = null;
+                try {
+                    const resolvedFilePathExample = cwdToMappingFile
+                        ? path.join(dirPathMapExternalExamples, filePathExample)
+                        : filePathExample;
+                    example = JSON.parse(fs.readFileSync(resolvedFilePathExample, 'utf-8'));
+                } catch (err) {
+                    return [ApplicationError.create(err)];
+                }
+                return _validateExample({
+                    createValidator: _initValidatorFactory(openapiSpec),
+                    schema,
+                    example,
+                    statistics,
+                    filePathExample
+                });
             }
-            return _([filePathsExample])
-                .flatten()
-                .flatMap(filePathExample => {
-                    let example = null;
-                    try {
-                        const resolvedFilePathExample = cwdToMappingFile
-                            ? path.join(dirPathMapExternalExamples, filePathExample)
-                            : filePathExample;
-                        example = JSON.parse(fs.readFileSync(resolvedFilePathExample, 'utf-8'));
-                    } catch (err) {
-                        return ApplicationError.create(err);
-                    }
-                    return _validateExample({
-                        createValidator: _initValidatorFactory(openapiSpec),
-                        schema,
-                        example,
-                        statistics,
-                        filePathExample
-                    });
-                })
-                .value();
-        })
-        .value();
+        );
+    });
 }
 
 /**
@@ -322,7 +321,7 @@ function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statis
 function _mergeValidationResponses(response1, response2) {
     return createValidationResponse({
         errors: response1.errors.concat(response2.errors),
-        statistics: _.entries(response1.statistics)
+        statistics: Object.entries(response1.statistics)
             .reduce((res, [key, val]) => {
                 if (PROP__SCHEMAS_WITH_EXAMPLES === key) {
                     [

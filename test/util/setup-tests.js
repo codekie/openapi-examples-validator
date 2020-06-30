@@ -1,6 +1,6 @@
 const fs = require('fs'),
     path = require('path'),
-    _ = require('lodash'),
+    cloneDeep = require('lodash.clonedeep'),
     chai = require('chai');
 
 // Environment setup (may be used by Babel as well in .babelrc)
@@ -36,7 +36,7 @@ const
 function loadTestData(fileName, asString) {
     return asString
         ? fs.readFileSync(path.join(BASE_PATH__TEST_DATA_STRING, fileName), 'utf-8')
-        : _.cloneDeep(require(BASE_PATH__TEST_DATA + fileName + SUFFIX__JSON));
+        : cloneDeep(require(BASE_PATH__TEST_DATA + fileName + SUFFIX__JSON));
 }
 
 function getPathOfTestData(fileName, asString) {
