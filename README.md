@@ -9,7 +9,8 @@ Validates embedded JSON-examples in OpenAPI-specs (v2 and v3 are supported)
 [![Coverage Status](https://coveralls.io/repos/github/codekie/openapi-examples-validator/badge.svg?branch=master)](https://coveralls.io/github/codekie/openapi-examples-validator?branch=master)
 [![Mutation testing badge](https://badge.stryker-mutator.io/github.com/codekie/openapi-examples-validator/master)](https://stryker-mutator.github.io)
 [![dependencies Status](https://david-dm.org/codekie/openapi-examples-validator/status.svg)](https://david-dm.org/codekie/openapi-examples-validator)
-[![Maintainability](https://api.codeclimate.com/v1/badges/ef493da6c9355a144a29/maintainability)](https://codeclimate.com/github/codekie/openapi-examples-validator/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/codeclimate/codeclimate/maintainability)
+[![Known Vulnerabilities](https://snyk.io/test/github/codekie/openapi-examples-validator/badge.svg)](https://snyk.io/test/github/codekie/openapi-examples-validator)
 
 
 Install
