@@ -1,5 +1,5 @@
 const
-    _ = require('lodash'),
+    merge = require('lodash.merge'),
     { ENOENT } = require('errno').code;
 
 // TYPEDEFINITIONS
@@ -56,11 +56,11 @@ class ApplicationError {
             options = { message };
         if (ErrorType.validation === type || ErrorType.errorAndErrorsMutuallyExclusive === type) {
             // For certain, created error-types, copy all properties
-            _.merge(options, err);
+            merge(options, err);
         } else {
             // Copy certain properties of Javascript-error (but only if available)
-            path && _.merge(options, { params: { path } });
-            cause && _.merge(options, cause);
+            path && merge(options, { params: { path } });
+            cause && merge(options, cause);
         }
         return new ApplicationError(type, options);
     }
