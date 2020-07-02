@@ -40,6 +40,7 @@ Options:
   -c, --cwd-to-mapping-file                  changes to the directory of the mapping-file, before resolving the
                                              example's paths. Use this option, if your mapping-files use relative paths
                                              for the examples
+  -n, --no-additional-properties             don't allow properties that are not described in the schema
   -h, --help                                 output usage information
 ````
 
@@ -88,8 +89,9 @@ Sample output of validation errors:
 Caveat
 ------
 
-The formats `int32`, `float` and `double` are supported for the type `number`. The format `int64` is only available
-for the type `string`, though (due to the precision-limitations of Javascript).
+- The formats `int32`, `float` and `double` are supported for the type `number`. The format `int64` is only available
+  for the type `string`, though (due to the precision-limitations of Javascript).
+- The option `--no-additional-properties` does not work, if `allOf` is used to combine subschemas.
 
 Test
 ----

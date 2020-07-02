@@ -25,27 +25,27 @@ const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
 
 describe('Main-module, for v2 should', () => {
     describe('recognize', () => {
-        it('valid single example', () => {
-            validateExamples(loadTestData('v2/valid-single-example')).valid.should.equal(true);
+        it('valid single example', async() => {
+            (await validateExamples(loadTestData('v2/valid-single-example'))).valid.should.equal(true);
         });
-        it('valid multiple examples', () => {
-            validateExamples(loadTestData('v2/valid-multiple-examples')).valid.should.equal(true);
+        it('valid multiple examples', async() => {
+            (await validateExamples(loadTestData('v2/valid-multiple-examples'))).valid.should.equal(true);
         });
-        it('valid array-example', () => {
-            validateExamples(loadTestData('v2/valid-array-response')).valid.should.equal(true);
+        it('valid array-example', async() => {
+            (await validateExamples(loadTestData('v2/valid-array-response'))).valid.should.equal(true);
         });
     });
     describe('ignore', () => {
-        it('responses without schema', () => {
-            validateExamples(loadTestData('v2/valid-without-schema')).valid.should.equal(true);
+        it('responses without schema', async() => {
+            (await validateExamples(loadTestData('v2/valid-without-schema'))).valid.should.equal(true);
         });
-        it('responses without examples', () => {
-            validateExamples(loadTestData('v2/valid-without-examples')).valid.should.equal(true);
+        it('responses without examples', async() => {
+            (await validateExamples(loadTestData('v2/valid-without-examples'))).valid.should.equal(true);
         });
     });
     describe('find error:', () => {
-        it('invalid type', () => {
-            const result = validateExamples(loadTestData('v2/invalid-type'));
+        it('invalid type', async() => {
+            const result = await validateExamples(loadTestData('v2/invalid-type'));
             result.valid.should.equal(false);
             result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
                 dataPath: '.versions[0].id',
@@ -58,8 +58,8 @@ describe('Main-module, for v2 should', () => {
                 examplePath: '/paths/~1/get/responses/200/examples/application~1json'
             })]);
         });
-        it('multiple errors', () => {
-            const result = validateExamples(loadTestData('v2/multiple-errors'));
+        it('multiple errors', async() => {
+            const result = await validateExamples(loadTestData('v2/multiple-errors'));
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
                 new ApplicationError(ErrorType.validation, {
@@ -95,8 +95,8 @@ describe('Main-module, for v2 should', () => {
             ]);
         });
         describe('In array-response:', () => {
-            it('multiple errors', () => {
-                const result = validateExamples(loadTestData('v2/invalid-array-response'));
+            it('multiple errors', async() => {
+                const result = await validateExamples(loadTestData('v2/invalid-array-response'));
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([
                     new ApplicationError(ErrorType.validation, {
