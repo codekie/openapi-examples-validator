@@ -1,11 +1,11 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import webpack from 'webpack';
-import {
-    PROJECT_ROOT,
-    JS_REGEX,
-    EXCLUDE_REGEX
-} from './constants.babel';
+const fs = require('fs'),
+    path = require('path'),
+    webpack = require('webpack'),
+    {
+        PROJECT_ROOT,
+        JS_REGEX,
+        EXCLUDE_REGEX
+    } = require('./constants.babel');
 
 // CONSTANTS
 
@@ -23,20 +23,7 @@ const BASE_CONFIG = {
             },
             // Regular loaders
             { test: /\.json$/, loader: 'json-loader', type: 'javascript/auto' },
-            { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'babel-loader',
-                query: {
-                    presets: [
-                        [
-                            '@babel/preset-env',
-                            {
-                                'targets': {
-                                    'node': '6'
-                                }
-                            }
-                        ]
-                    ]
-                }
-            }
+            { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'babel-loader' }
         ]
     },
     output: {
@@ -57,7 +44,7 @@ const BASE_CONFIG = {
 
 // PUBLIC API
 
-export default _createConfig();
+module.exports = _createConfig();
 
 // IMPLEMENTATION DETAILS
 

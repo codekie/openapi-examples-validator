@@ -18,7 +18,7 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "npm run build && npm run test:mocha",
     "test-mutations": "stryker run",
-    "test:mocha": "mocha --require \"@babel/register\" --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\"",
+    "test:mocha": "mocha --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\"",
     "release": "npm run build && npm run release:stage-artifacts && standard-version -a",
     "release:stage-artifacts": "git add dist/*"
   },
