@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0-alpha.0](https://github.com/codekie/openapi-examples-validator/compare/v3.0.4...v4.0.0-alpha.0) (2020-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* The entry function `validateExamples` in `src/index.js` is `async` now
+
+### Features
+
+* support the option to disallow properties that have not been defined in the spec ([f63242c](https://github.com/codekie/openapi-examples-validator/commit/f63242c16f33c2ec9da3ac6a2aa7a002002f0320))
+
+
+### Bug Fixes
+
+* upgrade dependencies ([67293ad](https://github.com/codekie/openapi-examples-validator/commit/67293ad07e9bc5a524d88ce64bcf2dbb328c8c4e))
+* upgrade yaml from 1.9.2 to 1.10.0 ([8a68137](https://github.com/codekie/openapi-examples-validator/commit/8a68137824f378e2379583df6a62301e89c5f2fb))
+* upgrade yaml from 1.9.2 to 1.10.0 ([6dad1b8](https://github.com/codekie/openapi-examples-validator/commit/6dad1b85e14630c1c2ba0c05af2c84438b29ab14))
+
 ### [3.0.4](https://github.com/codekie/openapi-examples-validator/compare/v3.0.3...v3.0.4) (2020-06-08)
 
 
