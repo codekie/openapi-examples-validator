@@ -68,7 +68,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "ajv": "^6.12.2",
+    "ajv": "^6.12.3",
     "ajv-oai": "1.2.0",
     "commander": "^5.1.0",
     "errno": "0.1.7",
