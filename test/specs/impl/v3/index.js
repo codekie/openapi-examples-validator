@@ -1,17 +1,39 @@
 const path = require('path'),
+    fs = require('fs'),
+    yaml = require('yaml'),
     { loadTestData } = require('../../../util/setup-tests'),
     { ErrorType } = require('../../../../src/application-error'),
-    { 'default': validateExamples, validateFile } = require('../../../../src/index');
+    { 'default': validateExamples, validateFile, validateExample, validateExamplesByMap }
+        = require('../../../../src/index'),
+    errorsAdditionalProperties
+        = require('../../../data/v3/additional-properties/errors-schema-with-examples.json'),
+    errorsAdditionalPropertiesList
+        = require('../../../data/v3/additional-properties/errors-list.json'),
+    errorsAdditionalPropertiesMap
+        = require('../../../data/v3/additional-properties/errors-map-external-examples.json'),
+    errorsAdditionalPropertiesSingle
+        = require('../../../data/v3/additional-properties/errors-single.json');
 
 const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/content/application~1json',
     REL_PATH__EXAMPLE__SIMPLE = 'v3/simple-api-with-example',
+    REL_PATH__EXAMPLE__INVALID__WITH_INTERNAL_REFS = 'v3/simple-api-with-example-with-refs-invalid',
     REL_PATH__EXAMPLE_AND_EXAMPLES__SIMPLE = 'v3/simple-api-with-example-and-examples',
     REL_PATH__EXAMPLES__SIMPLE = 'v3/simple-api-with-examples',
     REL_PATH__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs',
-    REL_PATH__EXAMPLE__INVALID__WITH_INTERNAL_REFS = 'v3/simple-api-with-example-with-refs-invalid',
     REL_PATH__EXAMPLES__INVALID__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs-invalid',
+    FILE_PATH__EXAMPLE__WITH_ADDITIONAL_PROPERTIES__LIST
+        = path.join(__dirname, '../../../data/v3/additional-properties/example-list-with-additional-properties.json'),
+    FILE_PATH__EXAMPLE__WITH_ADDITIONAL_PROPERTIES__SINGLE
+        = path.join(__dirname, '../../../data/v3/additional-properties/example-single-with-additional-properties.json'),
     FILE_PATH__EXAMPLES_WITH_MISSING_SCHEMA
         = path.join(__dirname, '../../../data/v3/simple-api-with-examples-and-missing-schema.json'),
+    FILE_PATH__MAP__WITH_ADDITIONAL_PROPERTIES = path.join(__dirname,
+        '../../../data/v3/additional-properties/map-external-examples-with-additional-properties.json'
+    ),
+    FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES
+        = path.join(__dirname, '../../../data/v3/additional-properties/schema.yaml'),
+    FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES
+        = path.join(__dirname, '../../../data/v3/additional-properties/schema-with-examples.yaml'),
     FILE_PATH__INVALID__YAML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs-invalid.yaml'),
     FILE_PATH__INVALID__INDENTATION__YAML
         = path.join(__dirname, '../../../data/v3/simple-api-with-examples-invalid-indentation.yml'),
@@ -41,15 +63,15 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
 describe('Main-module, for v3 should', function() {
     describe('recognize', function() {
         describe('`example`-property', function() {
-            it('valid single example', function() {
-                validateExamples(loadTestData(REL_PATH__EXAMPLE__SIMPLE)).valid.should.equal(true);
+            it('valid single example', async function() {
+                (await validateExamples(loadTestData(REL_PATH__EXAMPLE__SIMPLE))).valid.should.equal(true);
             });
-            it('invalid example with internal refs', function() {
-                validateExamples(loadTestData(REL_PATH__EXAMPLE__INVALID__WITH_INTERNAL_REFS))
+            it('invalid example with internal refs', async function() {
+                (await validateExamples(loadTestData(REL_PATH__EXAMPLE__INVALID__WITH_INTERNAL_REFS)))
                     .valid.should.equal(false);
             });
-            it('throw error, if example and examples are defined', function() {
-                const validationResult = validateExamples(loadTestData(REL_PATH__EXAMPLE_AND_EXAMPLES__SIMPLE)),
+            it('throw error, if example and examples are defined', async function() {
+                const validationResult = await validateExamples(loadTestData(REL_PATH__EXAMPLE_AND_EXAMPLES__SIMPLE)),
                     error = validationResult.errors[0];
                 validationResult.valid.should.equal(false);
                 validationResult.errors.length.should.equal(1);
@@ -59,22 +81,22 @@ describe('Main-module, for v3 should', function() {
             });
         });
         describe('`examples`-property', function() {
-            it('statistics for multiple examples', function() {
-                const { statistics } = validateExamples(loadTestData(REL_PATH__EXAMPLES__SIMPLE));
+            it('statistics for multiple examples', async function() {
+                const { statistics } = await validateExamples(loadTestData(REL_PATH__EXAMPLES__SIMPLE));
                 statistics.should.deep.equal({
                     examplesTotal: 3,
                     examplesWithoutSchema: 0,
                     schemasWithExamples: 1
                 });
             });
-            it('valid examples', function() {
-                validateExamples(loadTestData(REL_PATH__EXAMPLES__SIMPLE)).valid.should.equal(true);
+            it('valid examples', async function() {
+                (await validateExamples(loadTestData(REL_PATH__EXAMPLES__SIMPLE))).valid.should.equal(true);
             });
-            it('example with internal refs', function() {
-                validateExamples(loadTestData(REL_PATH__WITH_INTERNAL_REFS)).valid.should.equal(true);
+            it('example with internal refs', async function() {
+                (await validateExamples(loadTestData(REL_PATH__WITH_INTERNAL_REFS))).valid.should.equal(true);
             });
-            it('invalid example with internal refs', function() {
-                validateExamples(loadTestData(REL_PATH__EXAMPLES__INVALID__WITH_INTERNAL_REFS))
+            it('invalid example with internal refs', async function() {
+                (await validateExamples(loadTestData(REL_PATH__EXAMPLES__INVALID__WITH_INTERNAL_REFS)))
                     .valid.should.equal(false);
             });
         });
@@ -257,4 +279,83 @@ describe('Main-module, for v3 should', function() {
                 .statistics.schemasWithExamples.should.equal(2);
         });
     });
+    describe('with additional properties', function() {
+        describe('with flag not set', function() {
+            it('`validateFile` should not show any error', async function() {
+                (await validateFile(FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES))
+                    .valid.should.equal(true);
+            });
+            it('`validateExamples` should not show any error', async function() {
+                (await validateExamples(
+                    yaml.parse(fs.readFileSync(FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES, 'utf-8'))
+                )).valid.should.equal(true);
+            });
+            it('`validateExample` should not show any error', async function() {
+                (await validateExample(
+                    FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES,
+                    '$.paths./pets.get.responses.200.content.application/json.schema',
+                    FILE_PATH__EXAMPLE__WITH_ADDITIONAL_PROPERTIES__LIST
+                )).valid.should.equal(true);
+            });
+            it('`validateExample` should not show any error', async function() {
+                (await validateExample(
+                    FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES,
+                    '$.paths./pets/{petId}.get.responses.200.content.application/json.schema',
+                    FILE_PATH__EXAMPLE__WITH_ADDITIONAL_PROPERTIES__SINGLE
+                )).valid.should.equal(true);
+            });
+            it('`validateExamplesByMap` should not show any error', async function() {
+                (await validateExamplesByMap(
+                    FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES,
+                    FILE_PATH__MAP__WITH_ADDITIONAL_PROPERTIES
+                )).valid.should.equal(true);
+            });
+        });
+        describe('with flag set', function() {
+            it('`validateFile` should throw an error', async function() {
+                (await validateFile(
+                    FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES,
+                    { noAdditionalProperties: true }
+                )).errors.should.deep.equal(errorsAdditionalProperties);
+            });
+            it('`validateExamples` should throw an error', async function() {
+                (await validateExamples(
+                    yaml.parse(fs.readFileSync(FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES, 'utf-8')),
+                    { noAdditionalProperties: true }
+                )).errors.should.deep.equal(errorsAdditionalProperties);
+            });
+            it('`validateExample` for a list should throw an error', async function() {
+                (await validateExample(
+                    FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES,
+                    '$.paths./pets.get.responses.200.content.application/json.schema',
+                    FILE_PATH__EXAMPLE__WITH_ADDITIONAL_PROPERTIES__LIST,
+                    { noAdditionalProperties: true }
+                )).errors.should.deep.equal(_expandFilePathOfErrors(errorsAdditionalPropertiesList, 'exampleFilePath'));
+            });
+            it('`validateExample` for a single example should throw an error', async function() {
+                (await validateExample(
+                    FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES,
+                    '$.paths./pets/{petId}.get.responses.200.content.application/json.schema',
+                    FILE_PATH__EXAMPLE__WITH_ADDITIONAL_PROPERTIES__SINGLE,
+                    { noAdditionalProperties: true }
+                )).errors.should.deep.equal(
+                    _expandFilePathOfErrors(errorsAdditionalPropertiesSingle, 'exampleFilePath')
+                );
+            });
+            it('`validateExamplesByMap` should throw an error', async function() {
+                (await validateExamplesByMap(
+                    FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES,
+                    FILE_PATH__MAP__WITH_ADDITIONAL_PROPERTIES,
+                    { noAdditionalProperties: true }
+                )).errors.should.deep.equal(_expandFilePathOfErrors(errorsAdditionalPropertiesMap, 'mapFilePath'));
+            });
+        });
+    });
 });
+
+function _expandFilePathOfErrors(errors, propertyName) {
+    errors.forEach(error => {
+        error[propertyName] = path.join(__dirname, '../../../..', error[propertyName]);
+    });
+    return errors;
+}

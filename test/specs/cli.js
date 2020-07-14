@@ -88,4 +88,30 @@ describe('CLI-module', function() {
             );
         });
     });
+    describe('with additional properties', function() {
+        it('should show no error without providing the flag', function(done) {
+            const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-examples.yaml', true);
+            exec(`${ CMD__RUN } ${ pathSchema }`,
+                (err, stdout, stderr) => {
+                    stdout.should.not.equal('');
+                    stderr.should.equal('');
+                    done();
+                }
+            );
+        });
+        it('should show error with providing the flag', function(done) {
+            const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-examples.yaml', true);
+            exec(`${ CMD__RUN } -n ${ pathSchema }`,
+                (err, stdout, stderr) => {
+                    stdout.should.equal(require('../data/output/api-with-examples-and-additional-properties').value);
+                    stderr.should.equal(JSON.stringify(
+                        require('../data/v3/additional-properties/errors-schema-with-examples.json'),
+                        null,
+                        '    '
+                    ));
+                    done();
+                }
+            );
+        });
+    });
 });

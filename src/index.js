@@ -11,6 +11,7 @@ const
     glob = require('glob'),
     yaml = require('yaml'),
     { JSONPath: jsonPath } = require('jsonpath-plus'),
+    refParser = require('json-schema-ref-parser'),
     { createError } = require('errno').custom,
     ResultType = require('./const/result-type'),
     { getValidatorFactory, compileValidate } = require('./validator'),
@@ -91,11 +92,13 @@ module.exports = {
 /**
  * Validates OpenAPI-spec with embedded examples.
  * @param {Object}  openapiSpec OpenAPI-spec
+ * @param {boolean} [noAdditionalProperties=false]  Don't allow properties that are not defined in the schema
  * @returns {ValidationResponse}
  */
-function validateExamples(openapiSpec) {
+async function validateExamples(openapiSpec, { noAdditionalProperties } = {}) {
     const impl = Determiner.getImplementation(openapiSpec);
-    openapiSpec = impl.prepare(openapiSpec);
+    openapiSpec = await refParser.dereference(openapiSpec);
+    openapiSpec = impl.prepare(openapiSpec, { noAdditionalProperties });
     let pathsExamples = impl.getJsonPathsToExamples()
         .reduce((res, pathToExamples) => {
             return res.concat(_extractExamplePaths(openapiSpec, pathToExamples));
@@ -105,17 +108,18 @@ function validateExamples(openapiSpec) {
 
 /**
  * Validates OpenAPI-spec with embedded examples.
- * @param {string}  filePath    File-path to the OpenAPI-spec
+ * @param {string}  filePath                        File-path to the OpenAPI-spec
+ * @param {boolean} [noAdditionalProperties=false]  Don't allow properties that are not defined in the schema
  * @returns {ValidationResponse}
  */
-async function validateFile(filePath) {
+async function validateFile(filePath, { noAdditionalProperties } = {}) {
     let openapiSpec = null;
     try {
         openapiSpec = await _parseSpec(filePath);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
-    return validateExamples(openapiSpec);
+    return validateExamples(openapiSpec, { noAdditionalProperties });
 }
 
 /**
@@ -126,9 +130,12 @@ async function validateFile(filePath) {
  *                                              to external examples
  * @param {boolean} [cwdToMappingFile=false]    Change working directory for resolving the example-paths (relative to
  *                                              the mapping-file)
+ * @param {boolean} [noAdditionalProperties=false] Don't allow properties that are not defined in the schema
  * @returns {ValidationResponse}
  */
-async function validateExamplesByMap(filePathSchema, globMapExternalExamples, { cwdToMappingFile } = {}) {
+async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
+    { cwdToMappingFile, noAdditionalProperties } = {}
+) {
     let matchingFilePathsMapping = 0;
     const filePathsMaps = glob.sync(
         globMapExternalExamples,
@@ -145,7 +152,7 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples, { 
             mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
             openapiSpec = await _parseSpec(filePathSchema);
             openapiSpec = Determiner.getImplementation(openapiSpec)
-                .prepare(openapiSpec);
+                .prepare(openapiSpec, { noAdditionalProperties });
         } catch (err) {
             responses.push(createValidationResponse({ errors: [ApplicationError.create(err)] }));
             continue;
@@ -181,12 +188,13 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples, { 
 
 /**
  * Validates a single external example.
- * @param {String}  filePathSchema      File-path to the OpenAPI-spec
- * @param {String}  pathSchema          JSON-path to the schema
- * @param {String}  filePathExample     File-path to the external example-file
+ * @param {String}  filePathSchema                  File-path to the OpenAPI-spec
+ * @param {String}  pathSchema                      JSON-path to the schema
+ * @param {String}  filePathExample                 File-path to the external example-file
+ * @param {boolean} [noAdditionalProperties=false]  Don't allow properties that are not described in the schema
  * @returns {ValidationResponse}
  */
-async function validateExample(filePathSchema, pathSchema, filePathExample) {
+async function validateExample(filePathSchema, pathSchema, filePathExample, { noAdditionalProperties } = {}) {
     let example = null,
         schema = null,
         openapiSpec = null;
@@ -194,7 +202,7 @@ async function validateExample(filePathSchema, pathSchema, filePathExample) {
         example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
         openapiSpec = await _parseSpec(filePathSchema);
         openapiSpec = Determiner.getImplementation(openapiSpec)
-            .prepare(openapiSpec);
+            .prepare(openapiSpec, { noAdditionalProperties });
         schema = _extractSchema(pathSchema, openapiSpec);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });

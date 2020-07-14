@@ -1,0 +1,14 @@
+[
+  {
+    "id": 0,
+    "name": "Herbert",
+    "tag": "Doggo",
+    "owner": "John",
+    "age": 5,
+    "schema": {
+      "properties": {
+        "color": "black"
+      }
+    }
+  }
+]

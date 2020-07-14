@@ -2,7 +2,9 @@
  * Contains validation-logic that is specific to V2 of the OpenAPI-spec
  */
 
-const { JSONPath: jsonPath } = require('jsonpath-plus');
+const { JSONPath: jsonPath } = require('jsonpath-plus'),
+    { setNoAdditionalProperties } = require('../service/disallow-additional-properties'),
+    cloneDeep = require('lodash.clonedeep');
 
 // CONSTANTS
 
@@ -44,12 +46,14 @@ function buildValidationMap(pathsExamples) {
 /**
  * Pre-processes the OpenAPI-spec, for further use.
  * The passed spec won't be modified. If a modification happens, a modified copy will be returned.
- * @param {Object}  openapiSpec     The OpenAPI-spec as JSON-schema
+ * @param {Object}  openapiSpec                     The OpenAPI-spec as JSON-schema
+ * @param {boolean} [noAdditionalProperties=false]  Don't allow properties that are not defined in the schema
  * @return {Object} The prepared OpenAPI-spec
  */
-function prepare(openapiSpec) {
-    // No pre-processing yet, so we return the original
-    return openapiSpec;
+function prepare(openapiSpec, { noAdditionalProperties } = {}) {
+    const openapiSpecCopy = cloneDeep(openapiSpec);
+    noAdditionalProperties && setNoAdditionalProperties(openapiSpecCopy, getJsonPathsToExamples());
+    return openapiSpecCopy;
 }
 
 /**

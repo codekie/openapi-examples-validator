@@ -1,0 +1,7 @@
+{
+  "$.paths./pets.get.responses.200.content.application/json.schema": [
+    "test/data/v3/additional-properties/example-list-with-additional-properties.json"
+  ],
+  "$.paths./pets/{petId}.get.responses.200.content.application/json.schema":
+    "test/data/v3/additional-properties/example-single-with-additional-properties.json"
+}

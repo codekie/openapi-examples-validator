@@ -25,8 +25,8 @@ const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
 describe('Main API', function() {
     describe('validateExamples', function() {
         describe('API version 2', function() {
-            it('should successfully validate the file', function() {
-                validateExamples(loadTestData('v2/valid-single-example')).valid.should.equal(true);
+            it('should successfully validate the file', async function() {
+                (await validateExamples(loadTestData('v2/valid-single-example'))).valid.should.equal(true);
             });
         });
     });

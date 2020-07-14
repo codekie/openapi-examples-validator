@@ -1,0 +1,46 @@
+[
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "",
+    "schemaPath": "#/additionalProperties",
+    "params": {
+      "additionalProperty": "owner"
+    },
+    "examplePath": "/paths/~1pets~1{petId}/get/responses/200/content/application~1json/example"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "[0]",
+    "schemaPath": "#/items/additionalProperties",
+    "params": {
+      "additionalProperty": "owner"
+    },
+    "examplePath": "/paths/~1pets/get/responses/200/content/application~1json/examples/single/value"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "[0]",
+    "schemaPath": "#/items/additionalProperties",
+    "params": {
+      "additionalProperty": "age"
+    },
+    "examplePath": "/paths/~1pets/get/responses/200/content/application~1json/examples/single/value"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "",
+    "schemaPath": "#/additionalProperties",
+    "params": {
+      "additionalProperty": "age"
+    },
+    "examplePath": "/paths/~1pets~1{petId}/get/responses/200/content/application~1json/example"
+  }
+]

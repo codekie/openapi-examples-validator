@@ -24,6 +24,7 @@ program
         + ' file-path(s) to examples as value. If wildcards are used, the parameter has to be put in quotes.')
     .option('-c, --cwd-to-mapping-file', "changes to the directory of the mapping-file, before resolving the example's"
         + ' paths. Use this option, if your mapping-files use relative paths for the examples')
+    .option('-n, --no-additional-properties', 'don\'t allow properties that are not described in the schema')
     .action(processAction);
 program.on('--help', () => {
     console.log('\n\n  Example for external example-file:\n');
@@ -35,17 +36,18 @@ program.parse(process.argv);
 // IMPLEMENTATION DETAILS
 
 async function processAction(filepath, options) {
-    const { schemaJsonpath, exampleFilepath, mappingFilepath, cwdToMappingFile } = options;
+    const { schemaJsonpath, exampleFilepath, mappingFilepath, cwdToMappingFile } = options,
+        noAdditionalProperties = !options.additionalProperties;
     let result;
     if (mappingFilepath) {
         console.log('Validating with mapping file');
-        result = await validateExamplesByMap(filepath, mappingFilepath, { cwdToMappingFile });
+        result = await validateExamplesByMap(filepath, mappingFilepath, { cwdToMappingFile, noAdditionalProperties });
     } else if (schemaJsonpath && exampleFilepath) {
         console.log('Validating single external example');
-        result = await validateExample(filepath, schemaJsonpath, exampleFilepath);
+        result = await validateExample(filepath, schemaJsonpath, exampleFilepath, { noAdditionalProperties });
     } else {
         console.log('Validating examples');
-        result = await validateFile(filepath);
+        result = await validateFile(filepath, { noAdditionalProperties });
     }
     _handleResult(result);
 }
