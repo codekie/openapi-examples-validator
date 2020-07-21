@@ -74,7 +74,7 @@
     "errno": "0.1.7",
     "glob": "^7.1.6",
     "json-pointer": "0.6.0",
-    "json-schema-ref-parser": "^9.0.3",
+    "json-schema-ref-parser": "^9.0.5",
     "jsonpath-plus": "^4.0.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.flatmap": "^4.5.0",
