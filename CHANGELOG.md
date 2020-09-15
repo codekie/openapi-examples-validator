@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.1](https://github.com/codekie/openapi-examples-validator/compare/v4.0.0...v4.0.1) (2020-09-15)
+
+
+### Bug Fixes
+
+* upgrade ajv from 6.12.3 to 6.12.4 ([#98](https://github.com/codekie/openapi-examples-validator/issues/98)) ([6052029](https://github.com/codekie/openapi-examples-validator/commit/6052029cc04bd7332662462e0847e112674623a7))
+* upgrade ajv from 6.12.4 to 6.12.5 ([#99](https://github.com/codekie/openapi-examples-validator/issues/99)) ([fb8efd2](https://github.com/codekie/openapi-examples-validator/commit/fb8efd22d7cfd5b3fb8047080475517a9157c0a3))
+* upgrade json-schema-ref-parser from 9.0.3 to 9.0.5 ([#94](https://github.com/codekie/openapi-examples-validator/issues/94)) ([d4a11f3](https://github.com/codekie/openapi-examples-validator/commit/d4a11f35454a286c451b4135d4be7a43fb277c01))
+* upgrade json-schema-ref-parser from 9.0.5 to 9.0.6 ([#95](https://github.com/codekie/openapi-examples-validator/issues/95)) ([452ca34](https://github.com/codekie/openapi-examples-validator/commit/452ca345c816d97bb52d62c736575b1b39c1d2b9))
+
 ## [4.0.0](https://github.com/codekie/openapi-examples-validator/compare/v3.0.4...v4.0.0) (2020-07-14)
 
 
