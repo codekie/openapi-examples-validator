@@ -73,7 +73,7 @@
     "commander": "^5.1.0",
     "errno": "0.1.7",
     "glob": "^7.1.6",
-    "json-pointer": "0.6.0",
+    "json-pointer": "0.6.1",
     "json-schema-ref-parser": "^9.0.6",
     "jsonpath-plus": "^4.0.0",
     "lodash.clonedeep": "^4.5.0",
