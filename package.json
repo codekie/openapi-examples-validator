@@ -69,7 +69,7 @@
   },
   "dependencies": {
     "ajv": "^6.12.5",
-    "ajv-oai": "1.2.0",
+    "ajv-oai": "1.2.1",
     "commander": "^5.1.0",
     "errno": "0.1.7",
     "glob": "^7.1.6",
