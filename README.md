@@ -11,7 +11,7 @@ Validates embedded JSON-examples in OpenAPI-specs (v2 and v3 are supported)
 [![dependencies Status](https://david-dm.org/codekie/openapi-examples-validator/status.svg)](https://david-dm.org/codekie/openapi-examples-validator)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5094f6ac7754e5a18b1b/maintainability)](https://codeclimate.com/github/codekie/openapi-examples-validator/maintainability)
 [![Known Vulnerabilities](https://snyk.io/test/github/codekie/openapi-examples-validator/badge.svg)](https://snyk.io/test/github/codekie/openapi-examples-validator)
-
+[![Docker Hub](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/codekie/openapi-examples-validator)
 
 Install
 -------
@@ -84,6 +84,19 @@ Sample output of validation errors:
         "examplePath": "/~1/get/responses/200/examples/application~1json"
     }
 ]
+```
+
+Docker
+------
+
+Example usage:
+
+```shell
+$ docker run --rm -i \
+    --user=$(id -u) \
+    -v ${PWD}:/data \
+    codekie/openapi-examples-validator:latest \
+    /data/test/data/v3/simple-api-with-examples-with-refs-invalid.yml
 ```
 
 Caveat
