@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/codekie/openapi-examples-validator/compare/v4.0.1...v4.1.0) (2020-10-01)
+
+
+### Features
+
+* add docker-support ([#104](https://github.com/codekie/openapi-examples-validator/issues/104)) ([74996e0](https://github.com/codekie/openapi-examples-validator/commit/74996e0792b238f203c6fe90feed0c7b381698a7)), closes [#102](https://github.com/codekie/openapi-examples-validator/issues/102)
+
+
+### Bug Fixes
+
+* upgrade ajv-oai from 1.2.0 to 1.2.1 ([#101](https://github.com/codekie/openapi-examples-validator/issues/101)) ([8aa4ce4](https://github.com/codekie/openapi-examples-validator/commit/8aa4ce406e5439fe2720999fc6b769580747bbd0))
+* upgrade json-pointer from 0.6.0 to 0.6.1 ([#100](https://github.com/codekie/openapi-examples-validator/issues/100)) ([c8b48da](https://github.com/codekie/openapi-examples-validator/commit/c8b48da9b1f322b3632b79ade62545fe616111c2))
+
 ### [4.0.1](https://github.com/codekie/openapi-examples-validator/compare/v4.0.0...v4.0.1) (2020-09-15)
 
 
