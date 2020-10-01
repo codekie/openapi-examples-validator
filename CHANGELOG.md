@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.1](https://github.com/codekie/openapi-examples-validator/compare/v4.1.0...v4.1.1) (2020-10-01)
+
+
+### Bug Fixes
+
+* add docker-section in README.md ([581ce88](https://github.com/codekie/openapi-examples-validator/commit/581ce8888888da7f2f1874da73b2e2c7cc706988))
+
 ## [4.1.0](https://github.com/codekie/openapi-examples-validator/compare/v4.0.1...v4.1.0) (2020-10-01)
 
 
