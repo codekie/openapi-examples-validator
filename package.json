@@ -9,6 +9,11 @@
   "bin": {
     "openapi-examples-validator": "dist/cli.js"
   },
+  "standard-version": {
+    "scripts": {
+      "postchangelog": "npm run release:create-dockerfile && npm run release:stage-artifacts"
+    }
+  },
   "scripts": {
     "start-dev": "babel-node src/cli",
     "build": "npm run build:clean && npm run build:webpack",
@@ -19,10 +24,8 @@
     "test": "npm run build && npm run test:mocha",
     "test-mutations": "stryker run",
     "test:mocha": "mocha --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\"",
-    "release": "npm run build && npm run release:bundle-release && npm run release:create-dockerfile && npm run release:stage-artifacts && npm run release:create-release",
-    "release:bundle-release": "node etc/src/bundle-release.js",
+    "release": "npm run build && standard-version -a",
     "release:create-dockerfile": "node etc/src/build-dockerfile.js",
-    "release:create-release": "node etc/src/create-release.js",
     "release:stage-artifacts": "git add dist/*"
   },
   "repository": {
