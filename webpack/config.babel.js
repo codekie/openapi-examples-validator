@@ -11,7 +11,7 @@ const fs = require('fs'),
 
 const BASE_CONFIG = {
     target: 'node',
-    devtool: 'sourcemap',
+    devtool: 'source-map',
     module: {
         rules: [
             // Preloaders
@@ -36,7 +36,6 @@ const BASE_CONFIG = {
     ],
     // NodeJS options
     node: {
-        console: true,
         __dirname: false,
         __filename: false
     }

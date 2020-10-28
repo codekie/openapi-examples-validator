@@ -66,8 +66,8 @@
     "rimraf": "^3.0.2",
     "standard-version": "^8.0.2",
     "stryker-cli": "1.0.0",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12"
+    "webpack": "^5.3.0",
+    "webpack-cli": "^4.1.0"
   },
   "dependencies": {
     "ajv": "^6.12.6",
