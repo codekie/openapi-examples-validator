@@ -1,8 +1,7 @@
 {
+  "spec": ["./test/specs/**/*.js"],
   "require": [
     "./test/util/setup-tests"
   ],
-  "recursive": [
-    "./test/specs/**/*.js"
-  ]
+  "recursive": true
 }
