@@ -1,117 +1,170 @@
-const VERSION = require('../../package').version,
+const util = require('util'),
+    VERSION = require('../../package').version,
     { text: _textHelp } = require('../data/output-help'),
     { text: _textMapExternalExamples } = require('../data/v2/output-map-external-examples'),
-    exec = require('child_process').exec,
+    exec = util.promisify(require('child_process').exec),
     {
         getPathOfTestData
     } = require('../util/setup-tests');
 
-const CMD__RUN = 'node src/cli.js',
+const CMD__RUN = `node ${ require.resolve('../../src/cli.js') }`,   // Resolve path, for mutation-tests
     CMD__RUN_BUILT = 'node dist/cli.js',
     JSON_PATH__SCHEMA = '$.paths./.get.responses.200.schema';
 
 describe('CLI-module', function() {
-    describe('version', function() {
-        it('should print out the current version', function(done) {
-            exec(`${ CMD__RUN } --version`, (err, stdout, stderr) => {
+    before(function() {
+        // Make sure that `commander`'s output will be the same, independent of the console's width
+        this.origColumns = process.stdout.columns;
+        process.stdout.columns = 80;
+    });
+    after(function() {
+        process.stdout.columns = this.origColumns;
+    });
+    describe('spawning a child process', function() {
+        describe('version', function() {
+            it('should print out the current version', async function() {
+                const { stdout, stderr } = await exec(`${ CMD__RUN } --version`);
                 stdout.should.equal(`${ VERSION }\n`);
                 stderr.should.equal('');
-                done();
             });
         });
-    });
-    describe('help', function() {
-        it('should show the right text', function(done) {
-            exec(`${ CMD__RUN } --help`, (err, stdout, stderr) => {
+        describe('help', function() {
+            it('should show the right text', async function() {
+                const { stdout, stderr } = await exec(`${ CMD__RUN } --help`);
                 stdout.should.equal(_textHelp);
                 stderr.should.equal('');
-                done();
             });
         });
-    });
-    describe('file mappings and invalid examples', function() {
-        it('should work with the source code', function(done) {
-            const pathMapExamples = getPathOfTestData('v2/map-external-examples-relative-invalid'),
-                pathSchema = getPathOfTestData('v2/external-examples-schema');
-            exec(`${ CMD__RUN } -m ${ pathMapExamples } -c ${ pathSchema }`,
-                (err, stdout, stderr) => {
+        describe('file mappings and invalid examples', function() {
+            it('should work with the source code', async function() {
+                const pathMapExamples = getPathOfTestData('v2/map-external-examples-relative-invalid'),
+                    pathSchema = getPathOfTestData('v2/external-examples-schema');
+                try {
+                    await exec(`${ CMD__RUN } -m ${ pathMapExamples } -c ${ pathSchema }`);
+                } catch ({ stdout, stderr }) {
                     stdout.should.equal(_textMapExternalExamples);
                     stderr.should.not.equal('');
-                    done();
                 }
-            );
-        });
-        it('should work with the built code', function(done) {
-            const pathMapExamples = getPathOfTestData('v2/map-external-examples-relative-invalid'),
-                pathSchema = getPathOfTestData('v2/external-examples-schema');
-            exec(`${ CMD__RUN_BUILT } -m ${ pathMapExamples } -c ${ pathSchema }`,
-                (err, stdout, stderr) => {
+            });
+            it('should work with the built code', async function() {
+                const pathMapExamples = getPathOfTestData('v2/map-external-examples-relative-invalid'),
+                    pathSchema = getPathOfTestData('v2/external-examples-schema');
+                try {
+                    await exec(`${ CMD__RUN_BUILT } -m ${ pathMapExamples } -c ${ pathSchema }`);
+                } catch ({ stdout, stderr }) {
                     stdout.should.equal(_textMapExternalExamples);
                     stderr.should.not.equal('');
-                    done();
                 }
-            );
+            });
         });
-    });
-    describe('with valid examples', function() {
-        it('should write to stdout, but not into stderr', function(done) {
-            exec(`${ CMD__RUN } ${ getPathOfTestData('v2/simple-example') }`,
-                (err, stdout, stderr) => {
-                    stdout.should.not.equal('');
-                    stderr.should.equal('');
-                    done();
-                }
-            );
+        describe('with valid examples', function() {
+            it('should write to stdout, but not into stderr', async function() {
+                const { stdout, stderr } = await exec(`${ CMD__RUN } ${ getPathOfTestData('v2/simple-example') }`);
+                stdout.should.not.equal('');
+                stderr.should.equal('');
+            });
         });
-    });
-    describe('with invalid examples', function() {
-        it('should write to stdout and stderr', function(done) {
-            exec(`${ CMD__RUN } ${ getPathOfTestData('v2/multiple-errors') }`,
-                (err, stdout, stderr) => {
+        describe('with invalid examples', function() {
+            it('should write to stdout and stderr', async function() {
+                try {
+                    await exec(`${ CMD__RUN } ${ getPathOfTestData('v2/multiple-errors') }`);
+                } catch ({ stdout, stderr }) {
                     stdout.should.not.equal('');
                     stderr.should.not.equal('');
-                    done();
                 }
-            );
+            });
         });
-    });
-    describe('single external example', function() {
-        it('should have no error', function(done) {
-            const pathMapExamples = getPathOfTestData('v2/external-examples-valid-example1'),
-                pathSchema = getPathOfTestData('v2/external-examples-schema');
-            exec(`${ CMD__RUN } -s ${ JSON_PATH__SCHEMA } -e ${ pathMapExamples } ${ pathSchema }`,
-                (err, stdout, stderr) => {
-                    stdout.should.not.equal('');
-                    stderr.should.equal('');
-                    done();
-                }
-            );
+        describe('single external example', function() {
+            it('should have no error', async function() {
+                const pathMapExamples = getPathOfTestData('v2/external-examples-valid-example1'),
+                    pathSchema = getPathOfTestData('v2/external-examples-schema');
+                const { stdout, stderr } = await exec(
+                    `${ CMD__RUN } -s ${ JSON_PATH__SCHEMA } -e ${ pathMapExamples } ${ pathSchema }`
+                );
+                stdout.should.not.equal('');
+                stderr.should.equal('');
+            });
         });
-    });
-    describe('with additional properties', function() {
-        it('should show no error without providing the flag', function(done) {
-            const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-examples.yaml', true);
-            exec(`${ CMD__RUN } ${ pathSchema }`,
-                (err, stdout, stderr) => {
-                    stdout.should.not.equal('');
-                    stderr.should.equal('');
-                    done();
-                }
-            );
-        });
-        it('should show error with providing the flag', function(done) {
-            const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-examples.yaml', true);
-            exec(`${ CMD__RUN } -n ${ pathSchema }`,
-                (err, stdout, stderr) => {
+        describe('with additional properties', function() {
+            it('should show no error without providing the flag', async function() {
+                const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-examples.yaml', true);
+                const { stdout, stderr } = await exec(`${ CMD__RUN } ${ pathSchema }`);
+                stdout.should.not.equal('');
+                stderr.should.equal('');
+            });
+            it('should show error with providing the flag', async function() {
+                const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-examples.yaml', true);
+                try {
+                    await exec(`${ CMD__RUN } -n ${ pathSchema }`);
+                } catch ({ stdout, stderr }) {
                     stdout.should.equal(require('../data/output/api-with-examples-and-additional-properties').value);
                     stderr.should.equal(JSON.stringify(
                         require('../data/v3/additional-properties/errors-schema-with-examples.json'),
                         null,
                         '    '
                     ));
-                    done();
                 }
-            );
+            });
+        });
+    });
+    describe('execute as module, via `require` (for mutation-tests)', function() {
+        before(function() {
+            // Preparations to run the CLI as module and not as child-process
+            this.origArgv = process.argv;
+            process.env.OPENAPI_EXAMPLES_VALIDATOR_TESTS = 'true';
+            // Capture stdout-stream
+            this.output = '';
+            this.origStdoutWrite = process.stdout.write.bind(process.stdout);
+            process.stdout.write = (chunk) => {
+                if (typeof chunk === 'string') {
+                    this.output += chunk;
+                }
+            };
+            // Capture sterr-stream
+            this.error = '';
+            this.origStderrWrite = process.stderr.write.bind(process.stderr);
+            process.stderr.write = (chunk) => {
+                if (typeof chunk === 'string') {
+                    this.error += chunk;
+                }
+            };
+            this.origExit = process.exit;
+            // Prevent commander from exiting the test-process
+            process.exit = () => {};
+        });
+        after(function() {
+            process.argv = this.origArgv;
+            delete process.env.OPENAPI_EXAMPLES_VALIDATOR_TESTS;
+            process.stdout.write = this.origStdoutWrite;
+            process.stderr.write = this.origStderrWrite;
+            process.exit = this.origExit;
+        });
+        beforeEach(function() {
+            // Make sure that commander doesn't keep internal caches
+            delete require.cache[require.resolve('commander')];
+            // Don't cache the CLI-script
+            delete require.cache[require.resolve('../../src/cli')];
+            this.output = '';
+            this.error = '';
+        });
+        it('should show the right help-text', async function() {
+            process.argv = ['node', require.resolve('../../src/cli'), '--help'];
+            // Hack, for `commander` to exit, after the help has been printed
+            process.exit = () => { throw new Error('Exited'); };
+            try {
+                await require('../../src/cli');
+            } catch (e) {
+                e.message.should.equal('Exited');
+                this.output.should.equal(_textHelp);
+            }
+        });
+        it('should show statistics in the error-case', async function() {
+            const pathMapExamples = getPathOfTestData('v2/map-external-examples-relative-invalid'),
+                pathSchema = getPathOfTestData('v2/external-examples-schema');
+            process.argv = ['node', 'cli.js', '-m', pathMapExamples, '-c', pathSchema];
+            await require('../../src/cli');
+            this.output.should.equal(_textMapExternalExamples);
+            this.error.should.not.equal('');
         });
     });
 });

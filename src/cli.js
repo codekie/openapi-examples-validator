@@ -10,6 +10,10 @@ const
     program = require('commander'),
     { validateFile, validateExample, validateExamplesByMap } = require('./index');
 
+// FOR AUTOMATED TESTS
+
+const ENV_TEST = process.env.OPENAPI_EXAMPLES_VALIDATOR_TESTS === 'true';
+
 // DEFINE CLI
 
 program
@@ -31,7 +35,8 @@ program.on('--help', () => {
     console.log('    $ openapi-examples-validator -s $.paths./.get.responses.200.schema -e example.json'
         + ' openapi-spec.json\n\n');
 });
-program.parse(process.argv);
+// Execute and export promise (for automated tests)
+module.exports = program.parseAsync(process.argv);
 
 // IMPLEMENTATION DETAILS
 
@@ -53,14 +58,16 @@ async function processAction(filepath, options) {
 }
 
 function _handleResult(result) {
+    const noExit = ENV_TEST;
     _printStatistics(result.statistics);
     if (result.valid) {
         process.stdout.write('\nNo errors found.\n\n');
-        process.exit(0);
+        !noExit && process.exit(0);
+        return;
     }
     process.stdout.write('\nErrors found.\n\n');
     process.stderr.write(JSON.stringify(result.errors, null, '    '));
-    process.exit(1);
+    !noExit && process.exit(1);
 }
 
 function _printStatistics(statistics) {
