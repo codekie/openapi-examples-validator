@@ -179,7 +179,9 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
     }
     return merge(
         responses.reduce((res, response) => {
-            if (!res) { return response; }
+            if (!res) {
+                return response;
+            }
             return _mergeValidationResponses(res, response);
         }, null),
         { statistics: { matchingFilePathsMapping } }
@@ -235,7 +237,7 @@ async function _parseSpec(filePath) {
             jsonSchema = yaml.parse(fs.readFileSync(filePath, 'utf-8'));
         } catch (e) {
             const { name, message } = e;
-            throw new ApplicationError(ErrorType.parseError, { message: `${ name }: ${ message }` });
+            throw new ApplicationError(ErrorType.parseError, { message: `${name}: ${message}` });
         }
     } else {
         jsonSchema = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -398,8 +400,10 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec) {
     // Start validation
     const schemaPaths = Object.keys(validationMap);
     schemaPaths.forEach(pathSchema => {
-        _validateSchema({ openapiSpec, createValidator, pathSchema, validationMap, statistics,
-            validationResult });
+        _validateSchema({
+            openapiSpec, createValidator, pathSchema, validationMap, statistics,
+            validationResult
+        });
     });
     return validationResult;
 }
@@ -414,8 +418,10 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec) {
  * @param {Object}                  validationResult    Container, for the validation-results
  * @private
  */
-function _validateSchema({ openapiSpec, createValidator, pathSchema, validationMap, statistics,
-    validationResult }) {
+function _validateSchema({
+    openapiSpec, createValidator, pathSchema, validationMap, statistics,
+    validationResult
+}) {
     const errors = validationResult.errors;
     validationMap[pathSchema].forEach(pathExample => {
         const example = _getObjectByPath(pathExample, openapiSpec),
@@ -430,7 +436,9 @@ function _validateSchema({ openapiSpec, createValidator, pathSchema, validationM
                 error.examplePath = jsonPath.toPointer(jsonPath.toPathArray(pathExample));
                 return error;
             });
-        if (!curErrors.length) { return; }
+        if (!curErrors.length) {
+            return;
+        }
         validationResult.valid = false;
         errors.splice(errors.length - 1, 0, ...curErrors);
     });
@@ -497,10 +505,14 @@ function _validateExample({ createValidator, schema, example, statistics, filePa
     }
     statistics[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES].add(schema);
     const validate = compileValidate(createValidator(), schema);
-    if (validate(example)) { return errors; }
+    if (validate(example)) {
+        return errors;
+    }
     return errors.concat(...validate.errors.map(ApplicationError.create))
         .map(error => {
-            if (!filePathExample) { return error; }
+            if (!filePathExample) {
+                return error;
+            }
             error.exampleFilePath = filePathExample;
             return error;
         });
@@ -513,6 +525,7 @@ function _validateExample({ createValidator, schema, example, statistics, filePa
  */
 function _initValidatorFactory(specSchema) {
     return getValidatorFactory(specSchema, {
+        schemaId: 'auto',
         allErrors: true,
         nullable: true
     });
@@ -532,7 +545,7 @@ function _initValidatorFactory(specSchema) {
 function _extractSchema(pathSchema, openapiSpec, suppressErrorIfNotFound = false) {
     const schema = _getObjectByPath(pathSchema, openapiSpec);
     if (!suppressErrorIfNotFound && !schema) {
-        throw new ErrorJsonPathNotFound(`Path to schema can't be found: '${ pathSchema }'`, {
+        throw new ErrorJsonPathNotFound(`Path to schema can't be found: '${pathSchema}'`, {
             params: {
                 path: pathSchema
             }

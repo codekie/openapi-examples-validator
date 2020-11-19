@@ -12,7 +12,9 @@ const path = require('path'),
     errorsAdditionalPropertiesMap
         = require('../../../data/v3/additional-properties/errors-map-external-examples.json'),
     errorsAdditionalPropertiesSingle
-        = require('../../../data/v3/additional-properties/errors-single.json');
+        = require('../../../data/v3/additional-properties/errors-single.json'),
+    errorsExclusiveMinimum
+        = require('../../../data/v3/draft-04-properties/errors-exclusive-minimum.json');
 
 const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/content/application~1json',
     REL_PATH__EXAMPLE__SIMPLE = 'v3/simple-api-with-example',
@@ -58,7 +60,11 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
         = path.join(__dirname, '../../../data/v3/request-invalid-requestbody-examples.json'),
     FILE_PATH__VALID__VALUE_PROPERTY = path.join(__dirname, '../../../data/v3/valid-single-with-value-property.yaml'),
     FILE_PATH__VALID__YAML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs.yaml'),
-    FILE_PATH__VALID__YML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs.yml');
+    FILE_PATH__VALID__YML = path.join(__dirname, '../../../data/v3/simple-api-with-examples-with-refs.yml'),
+    FILE_PATH__VALID_EXAMPLES_EXCLUSIVE_MINIMUM
+        = path.join(__dirname, '../../../data/v3/simple-api-with-examples-exclusive-minimum.json'),
+    FILE_PATH__INVALID_EXAMPLES_EXCLUSIVE_MINIMUM
+        = path.join(__dirname, '../../../data/v3/simple-api-with-examples-exclusive-minimum-invalid.json');
 
 describe('Main-module, for v3 should', function() {
     describe('recognize', function() {
@@ -349,6 +355,15 @@ describe('Main-module, for v3 should', function() {
                     { noAdditionalProperties: true }
                 )).errors.should.deep.equal(_expandFilePathOfErrors(errorsAdditionalPropertiesMap, 'mapFilePath'));
             });
+        });
+    });
+    describe('with draft-04 properties', function() {
+        it('`validateFile` should validate successfully', async function() {
+            (await validateFile(FILE_PATH__VALID_EXAMPLES_EXCLUSIVE_MINIMUM)).valid.should.equal(true);
+        });
+        it('`validateFile` should throw an error', async function() {
+            (await validateFile(FILE_PATH__INVALID_EXAMPLES_EXCLUSIVE_MINIMUM))
+                .errors.should.deep.equal(errorsExclusiveMinimum);
         });
     });
 });
