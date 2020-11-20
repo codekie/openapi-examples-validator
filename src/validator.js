@@ -5,12 +5,13 @@
 const { JSONPath: jsonPath } = require('jsonpath-plus'),
     JsonPointer = require('json-pointer'),
     Ajv = require('ajv'),
-    FormatValidator = require('ajv-oai/lib/format-validator');
+    FormatValidator = require('ajv-oai/lib/format-validator'),
+    draft4MetaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
 
 const PROP__ID = '$id',
     JSON_PATH__REFS = '$..\$ref',
     ID__SPEC_SCHEMA = 'https://www.npmjs.com/package/openapi-examples-validator/defs.json',
-    ID__REPSONSE_SCHEMA = 'https://www.npmjs.com/package/openapi-examples-validator/schema.json';
+    ID__RESPONSE_SCHEMA = 'https://www.npmjs.com/package/openapi-examples-validator/schema.json';
 
 module.exports = {
     getValidatorFactory,
@@ -27,8 +28,11 @@ function getValidatorFactory(specSchema, options) {
     const preparedSpecSchema = _createReferenceSchema(specSchema);
     return () => {
         const validator = new Ajv(options);
-        validator.addSchema(preparedSpecSchema);
+        _applyDraft04Schema(validator);
         _addFormatValidators(validator);
+
+        validator.addSchema(preparedSpecSchema);
+
         return validator;
     };
 }
@@ -40,7 +44,7 @@ function getValidatorFactory(specSchema, options) {
  * @returns {ajv.ValidateFunction}
  */
 function compileValidate(validator, responseSchema) {
-    const preparedResponseSchema = _prepareResponseSchema(responseSchema, ID__REPSONSE_SCHEMA);
+    const preparedResponseSchema = _prepareResponseSchema(responseSchema, ID__RESPONSE_SCHEMA);
     _replaceRefsToPreparedSpecSchema(preparedResponseSchema);
     return validator.compile(preparedResponseSchema);
 }
@@ -108,4 +112,17 @@ function _addFormatValidators(validator) {
     validator.addFormat('float', { type: 'number', validate: FormatValidator.float });
     validator.addFormat('double', { type: 'number', validate: FormatValidator.double });
     validator.addFormat('byte', { type: 'string', validate: FormatValidator.byte });
+}
+
+/**
+ * Adds the JSON schema draft-04 schema as default to the validator.
+ * The OpenAPI specifications rely on draft-04 and draft-05.
+ * Draft-04 is used here because of recommendations made here: https://json-schema.org/draft-05/README.html
+ * @param {ajv.Ajv} validator
+ * @private
+ */
+function _applyDraft04Schema(validator) {
+    validator.removeSchema('');
+    validator.addMetaSchema(draft4MetaSchema, draft4MetaSchema.id);
+    validator._opts.defaultMeta = draft4MetaSchema.id;
 }
