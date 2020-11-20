@@ -72,10 +72,8 @@ function _replaceRefsToPreparedSpecSchema(schema) {
         path: JSON_PATH__REFS,
         json: schema,
         callback(value, type, payload) {
-            if (!value.startsWith('#')) {
-                return;
-            }
-            payload.parent[payload.parentProperty] = `${ID__SPEC_SCHEMA}${value}`;
+            if (!value.startsWith('#')) { return; }
+            payload.parent[payload.parentProperty] = `${ ID__SPEC_SCHEMA }${ value }`;
         }
     });
 }
@@ -94,9 +92,7 @@ function _createReferenceSchema(specSchema) {
         path: JSON_PATH__REFS,
         json: specSchema,
         callback(value) {
-            if (!value.startsWith('#')) {
-                return;
-            }
+            if (!value.startsWith('#')) { return; }
             const pointer = value.substring(1),
                 definition = JsonPointer.get(specSchema, pointer);
             JsonPointer.set(refSchema, pointer, definition);

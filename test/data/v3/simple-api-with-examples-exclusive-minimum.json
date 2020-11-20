@@ -40,7 +40,7 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "code": 500,
+                  "code": 10,
                   "message": "An unexpected error has occurred."
                 }
               }
@@ -61,7 +61,7 @@
           "code": {
             "type": "number",
             "minimum": 10,
-            "exclusiveMinimum": true
+            "exclusiveMinimum": false
           },
           "message": {
             "type": "string"

@@ -40,7 +40,7 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "code": 5,
+                  "code": 10,
                   "message": "An unexpected error has occurred."
                 }
               }
