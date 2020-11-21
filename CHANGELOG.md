@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.0](https://github.com/codekie/openapi-examples-validator/compare/v4.1.1...v4.2.0) (2020-11-21)
+
+
+### Features
+
+* implement JSON schema draft-04 as default ([#110](https://github.com/codekie/openapi-examples-validator/issues/110)) ([94d6880](https://github.com/codekie/openapi-examples-validator/commit/94d6880e515039c3e9b3a0e81729cdf830dd8b7a))
+
+
+### Bug Fixes
+
+* upgrade dependencies ([#109](https://github.com/codekie/openapi-examples-validator/issues/109)) ([991c4c8](https://github.com/codekie/openapi-examples-validator/commit/991c4c809cc8b182e01332da40fd23904e1a77a6))
+
 ### [4.1.1](https://github.com/codekie/openapi-examples-validator/compare/v4.1.0...v4.1.1) (2020-10-01)
 
 
