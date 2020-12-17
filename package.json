@@ -73,7 +73,7 @@
     "ajv": "^6.12.6",
     "ajv-oai": "1.2.1",
     "commander": "^6.2.1",
-    "errno": "0.1.7",
+    "errno": "0.1.8",
     "glob": "^7.1.6",
     "json-pointer": "0.6.1",
     "json-schema-ref-parser": "^9.0.6",
