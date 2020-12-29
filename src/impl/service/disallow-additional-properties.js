@@ -6,6 +6,13 @@ const JSON_PATHS__OBJECTS = [
     '$..schema..[?(@.properties && (@property === "schema" || @property === "items" || @.type === "object"))]'
 ];
 
+const JSON_SCHEMA_COMBINERS = [
+    'oneOf',
+    'allOf',
+    'anyOf',
+    'not'
+];
+
 module.exports = {
     setNoAdditionalProperties
 };
@@ -43,7 +50,12 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
     const paths = new Set();
     JSON_PATHS__OBJECTS.forEach(jsPath => {
         _find(openApiSpec, jsPath)
-            .forEach(match => paths.add(match));
+            .forEach(match => {
+                // remove all references to paths including any of the JSON schema combiners
+                if (!JSON_SCHEMA_COMBINERS.some((combiner) => match.includes(`['${combiner}']`))) {
+                    paths.add(match);
+                }
+            });
     });
     // Exclude examples
     _excludeExamples(openApiSpec, paths, examplePaths);
@@ -59,7 +71,11 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
  * @private
  */
 function _callbackObjectTypeForNoAdditionalProperties(value) {
-    value.additionalProperties = false;
+    const asString = JSON.stringify(value);
+    // any schema's that use JSON schema combiners should also be excluded
+    if (!JSON_SCHEMA_COMBINERS.some((combiner) => asString.includes(`"${combiner}"`))) {
+        value.additionalProperties = false;
+    }
 }
 
 /**

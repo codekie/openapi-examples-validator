@@ -7,7 +7,7 @@ const util = require('util'),
         getPathOfTestData
     } = require('../util/setup-tests');
 
-const CMD__RUN = `node ${ require.resolve('../../src/cli.js') }`,   // Resolve path, for mutation-tests
+const CMD__RUN = `node ${require.resolve('../../src/cli.js')}`,   // Resolve path, for mutation-tests
     CMD__RUN_BUILT = 'node dist/cli.js',
     JSON_PATH__SCHEMA = '$.paths./.get.responses.200.schema';
 
@@ -23,14 +23,14 @@ describe('CLI-module', function() {
     describe('spawning a child process', function() {
         describe('version', function() {
             it('should print out the current version', async function() {
-                const { stdout, stderr } = await exec(`${ CMD__RUN } --version`);
-                stdout.should.equal(`${ VERSION }\n`);
+                const { stdout, stderr } = await exec(`${CMD__RUN} --version`);
+                stdout.should.equal(`${VERSION}\n`);
                 stderr.should.equal('');
             });
         });
         describe('help', function() {
             it('should show the right text', async function() {
-                const { stdout, stderr } = await exec(`${ CMD__RUN } --help`);
+                const { stdout, stderr } = await exec(`${CMD__RUN} --help`);
                 stdout.should.equal(_textHelp);
                 stderr.should.equal('');
             });
@@ -40,7 +40,7 @@ describe('CLI-module', function() {
                 const pathMapExamples = getPathOfTestData('v2/map-external-examples-relative-invalid'),
                     pathSchema = getPathOfTestData('v2/external-examples-schema');
                 try {
-                    await exec(`${ CMD__RUN } -m ${ pathMapExamples } -c ${ pathSchema }`);
+                    await exec(`${CMD__RUN} -m ${pathMapExamples} -c ${pathSchema}`);
                 } catch ({ stdout, stderr }) {
                     stdout.should.equal(_textMapExternalExamples);
                     stderr.should.not.equal('');
@@ -50,7 +50,7 @@ describe('CLI-module', function() {
                 const pathMapExamples = getPathOfTestData('v2/map-external-examples-relative-invalid'),
                     pathSchema = getPathOfTestData('v2/external-examples-schema');
                 try {
-                    await exec(`${ CMD__RUN_BUILT } -m ${ pathMapExamples } -c ${ pathSchema }`);
+                    await exec(`${CMD__RUN_BUILT} -m ${pathMapExamples} -c ${pathSchema}`);
                 } catch ({ stdout, stderr }) {
                     stdout.should.equal(_textMapExternalExamples);
                     stderr.should.not.equal('');
@@ -59,7 +59,7 @@ describe('CLI-module', function() {
         });
         describe('with valid examples', function() {
             it('should write to stdout, but not into stderr', async function() {
-                const { stdout, stderr } = await exec(`${ CMD__RUN } ${ getPathOfTestData('v2/simple-example') }`);
+                const { stdout, stderr } = await exec(`${CMD__RUN} ${getPathOfTestData('v2/simple-example')}`);
                 stdout.should.not.equal('');
                 stderr.should.equal('');
             });
@@ -67,7 +67,7 @@ describe('CLI-module', function() {
         describe('with invalid examples', function() {
             it('should write to stdout and stderr', async function() {
                 try {
-                    await exec(`${ CMD__RUN } ${ getPathOfTestData('v2/multiple-errors') }`);
+                    await exec(`${CMD__RUN} ${getPathOfTestData('v2/multiple-errors')}`);
                 } catch ({ stdout, stderr }) {
                     stdout.should.not.equal('');
                     stderr.should.not.equal('');
@@ -79,7 +79,7 @@ describe('CLI-module', function() {
                 const pathMapExamples = getPathOfTestData('v2/external-examples-valid-example1'),
                     pathSchema = getPathOfTestData('v2/external-examples-schema');
                 const { stdout, stderr } = await exec(
-                    `${ CMD__RUN } -s ${ JSON_PATH__SCHEMA } -e ${ pathMapExamples } ${ pathSchema }`
+                    `${CMD__RUN} -s ${JSON_PATH__SCHEMA} -e ${pathMapExamples} ${pathSchema}`
                 );
                 stdout.should.not.equal('');
                 stderr.should.equal('');
@@ -88,14 +88,14 @@ describe('CLI-module', function() {
         describe('with additional properties', function() {
             it('should show no error without providing the flag', async function() {
                 const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-examples.yaml', true);
-                const { stdout, stderr } = await exec(`${ CMD__RUN } ${ pathSchema }`);
+                const { stdout, stderr } = await exec(`${CMD__RUN} ${pathSchema}`);
                 stdout.should.not.equal('');
                 stderr.should.equal('');
             });
             it('should show error with providing the flag', async function() {
                 const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-examples.yaml', true);
                 try {
-                    await exec(`${ CMD__RUN } -n ${ pathSchema }`);
+                    await exec(`${CMD__RUN} -n ${pathSchema}`);
                 } catch ({ stdout, stderr }) {
                     stdout.should.equal(require('../data/output/api-with-examples-and-additional-properties').value);
                     stderr.should.equal(JSON.stringify(
@@ -104,6 +104,22 @@ describe('CLI-module', function() {
                         '    '
                     ));
                 }
+            });
+            it('should show no error with schema combiner in schema', async function() {
+                const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner.yaml', true);
+                try {
+                    await exec(`${CMD__RUN} -n ${pathSchema}`);
+                } catch ({ stdout, stderr }) {
+                    stdout.should.include('Errors found.');
+                    stderr.should.include('"message": "should NOT have additional properties"');
+                    stderr.should.include('extra_property');
+                }
+            });
+            it('should show no error when additional properties are allowed', async function() {
+                const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner.yaml', true);
+                const { stdout, stderr } = await exec(`${CMD__RUN} ${pathSchema}`);
+                stdout.should.include('No errors found.');
+                stderr.should.equal('');
             });
         });
     });
@@ -150,7 +166,9 @@ describe('CLI-module', function() {
         it('should show the right help-text', async function() {
             process.argv = ['node', require.resolve('../../src/cli'), '--help'];
             // Hack, for `commander` to exit, after the help has been printed
-            process.exit = () => { throw new Error('Exited'); };
+            process.exit = () => {
+                throw new Error('Exited');
+            };
             try {
                 await require('../../src/cli');
             } catch (e) {
