@@ -54,6 +54,9 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
                 // remove all references to paths including any of the JSON schema combiners
                 if (!JSON_SCHEMA_COMBINERS.some((combiner) => match.includes(`['${combiner}']`))) {
                     paths.add(match);
+                } else {
+                    console.warn('"additionalProperties" flag not set'
+                        + `for ${match} because it contains JSON-schema combiner keywords.`);
                 }
             });
     });
@@ -75,6 +78,9 @@ function _callbackObjectTypeForNoAdditionalProperties(value) {
     // any schema's that use JSON schema combiners should also be excluded
     if (!JSON_SCHEMA_COMBINERS.some((combiner) => asString.includes(`"${combiner}"`))) {
         value.additionalProperties = false;
+    } else {
+        console.warn('"additionalProperties" flag not set'
+            + `for ${asString} because it contains JSON-schema combiner keywords.`);
     }
 }
 
