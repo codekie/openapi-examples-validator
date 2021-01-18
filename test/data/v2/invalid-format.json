@@ -1,0 +1,68 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Simple API overview",
+    "version": "v2"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "listVersionsv2",
+        "summary": "List API versions",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "examples": {
+              "application/json": {
+                "versions": [
+                  {
+                    "status": "CURRENT",
+                    "updated": "2016-01-21T11:33:21Z",
+                    "occurred": "2020-01-01"
+                  }
+                ]
+              }
+            },
+            "schema": {
+              "type": "object",
+              "required": [
+                "versions"
+              ],
+              "properties": {
+                "versions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "status",
+                      "id",
+                      "links"
+                    ],
+                    "properties": {
+                      "status": {
+                        "type": "string"
+                      },
+                      "updated": {
+                        "type": "string"
+                      },
+                      "occurred": {
+                        "type": "string",
+                        "format": "timestamp"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "consumes": [
+    "application/json"
+  ]
+}

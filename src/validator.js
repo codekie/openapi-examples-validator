@@ -46,7 +46,14 @@ function getValidatorFactory(specSchema, options) {
 function compileValidate(validator, responseSchema) {
     const preparedResponseSchema = _prepareResponseSchema(responseSchema, ID__RESPONSE_SCHEMA);
     _replaceRefsToPreparedSpecSchema(preparedResponseSchema);
-    return validator.compile(preparedResponseSchema);
+    let result;
+    try {
+        result = validator.compile(preparedResponseSchema);
+    } catch (e) {
+        result = () => {};
+        result.errors = [e];
+    }
+    return result;
 }
 
 /**
