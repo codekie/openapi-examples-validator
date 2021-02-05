@@ -1,0 +1,24 @@
+[
+  {
+    "type": "Validation",
+    "message": "should be number",
+    "keyword": "type",
+    "dataPath": "[0].id",
+    "schemaPath": "#/items/properties/id/type",
+    "params": {
+      "type": "number"
+    },
+    "examplePath": "/paths/~1pets/get/responses/200/content/application~1json/examples/`mrcat/value"
+  },
+  {
+    "type": "Validation",
+    "message": "should be number",
+    "keyword": "type",
+    "dataPath": "[0].id",
+    "schemaPath": "#/items/properties/id/type",
+    "params": {
+      "type": "number"
+    },
+    "examplePath": "/paths/~1pets/get/responses/200/content/application~1json/examples/herbert,doggo/value"
+  }
+]

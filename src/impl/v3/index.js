@@ -28,8 +28,10 @@ const ExampleType = {
 
 module.exports = {
     buildValidationMap,
+    escapeExampleName,
     getJsonPathsToExamples,
-    prepare
+    prepare,
+    unescapeExampleNames
 };
 
 // IMPLEMENTATION DETAILS
@@ -83,6 +85,25 @@ function prepare(openapiSpec, { noAdditionalProperties } = {}) {
     const openapiSpecCopy = cloneDeep(openapiSpec);
     noAdditionalProperties && setNoAdditionalProperties(openapiSpecCopy, getJsonPathsToExamples());
     return openapiSpecCopy;
+}
+
+/**
+ * Escapes the name of the example. In order to do that, a backtick has to be added to the beginning of the key.
+ * @param {string} rawPath  Unescaped path
+ * @returns {string} Escaped path
+ * @private
+ */
+function escapeExampleName(rawPath) {
+    return rawPath.replace(/\['examples'\]\['(.*)\]\['value'\]$/, "['examples']['`$1]['value']");
+}
+
+/**
+ * Escaped example-names reflect in the result (where they shouldn't). This function reverts it.
+ * @param {string} rawPath  Escaped path
+ * @returns {string} Unescaped path
+ */
+function unescapeExampleNames(rawPath) {
+    return rawPath && rawPath.replace(/\/examples\/`(.*)\/value$/, '/examples/$1/value');
 }
 
 /**

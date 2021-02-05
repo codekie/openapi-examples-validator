@@ -77,6 +77,21 @@ describe('CLI-module', function() {
                     stderr.should.not.equal('');
                 }
             });
+            it('should capture invalid references from ajv', async function() {
+                await exec(`${CMD__RUN} ${getPathOfTestData('v2/invalid-format')}`)
+                    .then(() => {
+                        // should never reach this
+                        throw { stdout: 'unreachable', stderr: 'unreachable' };
+                    })
+                    .catch(({ stdout, stderr }) => {
+                        stdout.should.contain('Errors found.', 'Stdout did not contain "Errors found." message');
+                        stderr.should.contain(
+                            'unknown format \\"timestamp\\" is used in schema at '
+                            + 'path \\"#/properties/versions/items/properties/occurred',
+                            'Stderr did not contain unknown format errors'
+                        );
+                    });
+            });
         });
         describe('single external example', function() {
             it('should have no error', async function() {
@@ -160,7 +175,8 @@ describe('CLI-module', function() {
             };
             this.origExit = process.exit;
             // Prevent commander from exiting the test-process
-            process.exit = () => {};
+            process.exit = () => {
+            };
         });
         after(function() {
             process.argv = this.origArgv;

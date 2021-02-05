@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.2.1](https://github.com/codekie/openapi-examples-validator/compare/v4.2.0...v4.2.1) (2021-01-18)
+
+
+### Bug Fixes
+
+* fail on unhandled promise rejections ([#120](https://github.com/codekie/openapi-examples-validator/issues/120)) ([41e347f](https://github.com/codekie/openapi-examples-validator/commit/41e347f8cd6349446b496f99c57a770236b15e78))
+* upgrade dependencies ([#122](https://github.com/codekie/openapi-examples-validator/issues/122)) ([ba92a99](https://github.com/codekie/openapi-examples-validator/commit/ba92a99f4013aa8a2f027bd03b391f7d2103d273))
+
 ## [4.2.0](https://github.com/codekie/openapi-examples-validator/compare/v4.1.1...v4.2.0) (2020-11-21)
 
 

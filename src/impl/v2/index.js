@@ -14,8 +14,10 @@ const PATH__EXAMPLES = '$..examples.application/json',
 
 module.exports = {
     buildValidationMap,
+    escapeExampleName,
     getJsonPathsToExamples,
-    prepare
+    prepare,
+    unescapeExampleNames
 };
 
 // IMPLEMENTATION DETAILS
@@ -54,6 +56,27 @@ function prepare(openapiSpec, { noAdditionalProperties } = {}) {
     const openapiSpecCopy = cloneDeep(openapiSpec);
     noAdditionalProperties && setNoAdditionalProperties(openapiSpecCopy, getJsonPathsToExamples());
     return openapiSpecCopy;
+}
+
+/**
+ * Escapes the name of the example.
+ * @param {string} rawPath  Unescaped path
+ * @returns {string} Escaped path
+ * @private
+ */
+function escapeExampleName(rawPath) {
+    // No escaping necessary in v2, as there are no named-examples
+    return rawPath;
+}
+
+/**
+ * Escaped example-names reflect in the result (where they shouldn't). This function reverts it.
+ * @param {string} rawPath  Escaped path
+ * @returns {string} Unescaped path
+ */
+function unescapeExampleNames(rawPath) {
+    // No unescaping necessary in v2, as there are no named-examples
+    return rawPath;
 }
 
 /**
