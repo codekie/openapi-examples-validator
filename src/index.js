@@ -102,7 +102,8 @@ async function validateExamples(openapiSpec, { noAdditionalProperties } = {}) {
     let pathsExamples = impl.getJsonPathsToExamples()
         .reduce((res, pathToExamples) => {
             return res.concat(_extractExamplePaths(openapiSpec, pathToExamples));
-        }, []);
+        }, [])
+        .map(impl.escapeExampleName);
     return _validateExamplesPaths({ impl }, pathsExamples, openapiSpec);
 }
 
@@ -404,6 +405,10 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec) {
             openapiSpec, createValidator, pathSchema, validationMap, statistics,
             validationResult
         });
+    });
+    // Revert escaped example names from the results
+    validationResult.errors.forEach((example) => {
+        example.examplePath = impl.unescapeExampleNames(example.examplePath);
     });
     return validationResult;
 }
