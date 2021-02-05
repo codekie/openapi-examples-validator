@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.2.2](https://github.com/codekie/openapi-examples-validator/compare/v4.2.1...v4.2.2) (2021-02-05)
+
+
+### Bug Fixes
+
+* detect examples with names that have to be escaped ([#126](https://github.com/codekie/openapi-examples-validator/issues/126)) ([40b8ea4](https://github.com/codekie/openapi-examples-validator/commit/40b8ea491da4d71d557974d26e79b6fec68abc55))
+
 ### [4.2.1](https://github.com/codekie/openapi-examples-validator/compare/v4.2.0...v4.2.1) (2021-01-18)
 
 
