@@ -14,7 +14,9 @@ const path = require('path'),
     errorsAdditionalPropertiesSingle
         = require('../../../data/v3/additional-properties/errors-single.json'),
     errorsExclusiveMinimum
-        = require('../../../data/v3/draft-04-properties/errors-exclusive-minimum.json');
+        = require('../../../data/v3/draft-04-properties/errors-exclusive-minimum.json'),
+    errorsEscapedErrorNames
+        = require('../../../data/v3/errors/simple-api-with-example-names-to-be-escaped.json');
 
 const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/content/application~1json',
     REL_PATH__EXAMPLE__SIMPLE = 'v3/simple-api-with-example',
@@ -64,7 +66,9 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     FILE_PATH__VALID_EXAMPLES_EXCLUSIVE_MINIMUM
         = path.join(__dirname, '../../../data/v3/simple-api-with-examples-exclusive-minimum.json'),
     FILE_PATH__INVALID_EXAMPLES_EXCLUSIVE_MINIMUM
-        = path.join(__dirname, '../../../data/v3/simple-api-with-examples-exclusive-minimum-invalid.json');
+        = path.join(__dirname, '../../../data/v3/simple-api-with-examples-exclusive-minimum-invalid.json'),
+    FILE_PATH__EXAMPLE_NAMES_TO_BE_ESCAPED
+        = path.join(__dirname, '../../../data/v3/simple-api-with-example-names-to-be-escaped.json');
 
 describe('Main-module, for v3 should', function() {
     describe('recognize', function() {
@@ -364,6 +368,12 @@ describe('Main-module, for v3 should', function() {
         it('`validateFile` should throw an error', async function() {
             (await validateFile(FILE_PATH__INVALID_EXAMPLES_EXCLUSIVE_MINIMUM))
                 .errors.should.deep.equal(errorsExclusiveMinimum);
+        });
+    });
+    describe('escape example names, to make sure they can be selected by JSONpath', function() {
+        it('`validateFile` should throw an error', async function() {
+            (await validateFile(FILE_PATH__EXAMPLE_NAMES_TO_BE_ESCAPED))
+                .errors.should.deep.equal(errorsEscapedErrorNames);
         });
     });
 });
