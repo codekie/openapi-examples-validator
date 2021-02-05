@@ -4,7 +4,8 @@ const util = require('util'),
     { text: _textMapExternalExamples } = require('../data/v2/output-map-external-examples'),
     exec = util.promisify(require('child_process').exec),
     {
-        getPathOfTestData
+        getPathOfTestData,
+        should
     } = require('../util/setup-tests');
 
 const CMD__RUN = `node ${require.resolve('../../src/cli.js')}`,   // Resolve path, for mutation-tests
@@ -41,6 +42,7 @@ describe('CLI-module', function() {
                     pathSchema = getPathOfTestData('v2/external-examples-schema');
                 try {
                     await exec(`${CMD__RUN} -m ${pathMapExamples} -c ${pathSchema}`);
+                    should.fail('Expected to throw an error');
                 } catch ({ stdout, stderr }) {
                     stdout.should.equal(_textMapExternalExamples);
                     stderr.should.not.equal('');
@@ -51,6 +53,7 @@ describe('CLI-module', function() {
                     pathSchema = getPathOfTestData('v2/external-examples-schema');
                 try {
                     await exec(`${CMD__RUN_BUILT} -m ${pathMapExamples} -c ${pathSchema}`);
+                    should.fail('Expected to throw an error');
                 } catch ({ stdout, stderr }) {
                     stdout.should.equal(_textMapExternalExamples);
                     stderr.should.not.equal('');
@@ -68,6 +71,7 @@ describe('CLI-module', function() {
             it('should write to stdout and stderr', async function() {
                 try {
                     await exec(`${CMD__RUN} ${getPathOfTestData('v2/multiple-errors')}`);
+                    should.fail('Expected to throw an error');
                 } catch ({ stdout, stderr }) {
                     stdout.should.not.equal('');
                     stderr.should.not.equal('');
@@ -96,6 +100,7 @@ describe('CLI-module', function() {
                 const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-examples.yaml', true);
                 try {
                     await exec(`${CMD__RUN} -n ${pathSchema}`);
+                    should.fail('Expected to throw an error');
                 } catch ({ stdout, stderr }) {
                     stdout.should.equal(require('../data/output/api-with-examples-and-additional-properties').value);
                     stderr.should.equal(JSON.stringify(
@@ -109,6 +114,7 @@ describe('CLI-module', function() {
                 const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner.yaml', true);
                 try {
                     await exec(`${CMD__RUN} -n ${pathSchema}`);
+                    should.fail('Expected to throw an error');
                 } catch ({ stdout, stderr }) {
                     stdout.should.include('Errors found.');
                     stderr.should.include('"message": "should NOT have additional properties"');
@@ -171,6 +177,7 @@ describe('CLI-module', function() {
             };
             try {
                 await require('../../src/cli');
+                should.fail('Expected to throw an error');
             } catch (e) {
                 e.message.should.equal('Exited');
                 this.output.should.equal(_textHelp);
