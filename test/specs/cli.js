@@ -110,8 +110,9 @@ describe('CLI-module', function() {
                     ));
                 }
             });
-            it('should show no error with schema combiner in schema', async function() {
-                const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner.yaml', true);
+            it('should show no errors due to the `allOf`-combiner in schema', async function() {
+                const pathSchema
+                    = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner-invalid.yaml', true);
                 try {
                     await exec(`${CMD__RUN} -n ${pathSchema}`);
                     should.fail('Expected to throw an error');
@@ -121,8 +122,15 @@ describe('CLI-module', function() {
                     stderr.should.include('extra_property');
                 }
             });
+            it('should show no errors with `allOf`-combiner in schema', async function() {
+                const pathSchema
+                    = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner-valid.yaml', true);
+                const { stdout } = await exec(`${CMD__RUN} -n ${pathSchema}`);
+                stdout.should.include('\nNo errors found.\n');
+            });
             it('should show no error when additional properties are allowed', async function() {
-                const pathSchema = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner.yaml', true);
+                const pathSchema
+                    = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner-invalid.yaml', true);
                 const { stdout, stderr } = await exec(`${CMD__RUN} ${pathSchema}`);
                 stdout.should.include('No errors found.');
                 stderr.should.equal('');
