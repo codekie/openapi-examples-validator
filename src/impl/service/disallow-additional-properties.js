@@ -6,12 +6,7 @@ const JSON_PATHS__OBJECTS = [
     '$..schema..[?(@.properties && (@property === "schema" || @property === "items" || @.type === "object"))]'
 ];
 
-const JSON_SCHEMA_COMBINERS = [
-    'oneOf',
-    'allOf',
-    'anyOf',
-    'not'
-];
+const COMBINER__ALL_OF = 'allOf';
 
 module.exports = {
     setNoAdditionalProperties
@@ -51,12 +46,12 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
     JSON_PATHS__OBJECTS.forEach(jsPath => {
         _find(openApiSpec, jsPath)
             .forEach(match => {
-                // remove all references to paths including any of the JSON schema combiners
-                if (!JSON_SCHEMA_COMBINERS.some((combiner) => match.includes(`['${combiner}']`))) {
+                // remove all references to paths including the `allOf`-combiner
+                if (!match.includes(`['${COMBINER__ALL_OF}']`)) {
                     paths.add(match);
                 } else {
-                    console.warn('"additionalProperties" flag not set'
-                        + `for ${match} because it contains JSON-schema combiner keywords.`);
+                    console.warn('"additionalProperties" flag not set '
+                        + `for ${match} because it contains the "allOf" combiner keyword.`);
                 }
             });
     });
@@ -75,12 +70,12 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
  */
 function _callbackObjectTypeForNoAdditionalProperties(value) {
     const asString = JSON.stringify(value);
-    // any schema's that use JSON schema combiners should also be excluded
-    if (!JSON_SCHEMA_COMBINERS.some((combiner) => asString.includes(`"${combiner}"`))) {
+    // any schema's that use the `allOf`-combiner should also be excluded
+    if (!asString.includes(`"${COMBINER__ALL_OF}"`)) {
         value.additionalProperties = false;
     } else {
         console.warn('"additionalProperties" flag not set'
-            + `for ${asString} because it contains JSON-schema combiner keywords.`);
+            + `for ${asString} because it contains the "allOf" combiner keyword.`);
     }
 }
 

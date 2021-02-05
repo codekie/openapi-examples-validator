@@ -24,7 +24,7 @@ paths:
           content:
             application/json:
               schema:
-                anyOf:
+                oneOf:
                   - $ref: '#/components/schemas/Cat'
                   - $ref: '#/components/schemas/Dog'
               examples:
@@ -47,7 +47,7 @@ paths:
               example:
                 code: 1000
                 message: 'could not find pet'
-                extra_property: 'test' # not allowed and outside of JSON schema combiner, should be picked up
+                extra_property: 'test' # not allowed and outside of `allOf` schema combiner, should be picked up
 components:
   schemas:
     Error:
@@ -68,6 +68,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/Pet'
         - type: object
+          required:
+            - bark
+            - breed
           properties:
             bark:
               type: boolean
@@ -78,6 +81,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/Pet'
         - type: object
+          required:
+            - hunts
+            - age
           properties:
             hunts:
               type: boolean
