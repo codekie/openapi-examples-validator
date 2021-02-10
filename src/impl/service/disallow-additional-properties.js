@@ -6,6 +6,8 @@ const JSON_PATHS__OBJECTS = [
     '$..schema..[?(@.properties && (@property === "schema" || @property === "items" || @.type === "object"))]'
 ];
 
+const COMBINER__ALL_OF = 'allOf';
+
 module.exports = {
     setNoAdditionalProperties
 };
@@ -43,7 +45,15 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
     const paths = new Set();
     JSON_PATHS__OBJECTS.forEach(jsPath => {
         _find(openApiSpec, jsPath)
-            .forEach(match => paths.add(match));
+            .forEach(match => {
+                // remove all references to paths including the `allOf`-combiner
+                if (!match.includes(`['${COMBINER__ALL_OF}']`)) {
+                    paths.add(match);
+                } else {
+                    console.warn('"additionalProperties" flag not set '
+                        + `for ${match} because it contains the "allOf" combiner keyword.`);
+                }
+            });
     });
     // Exclude examples
     _excludeExamples(openApiSpec, paths, examplePaths);
@@ -59,7 +69,14 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
  * @private
  */
 function _callbackObjectTypeForNoAdditionalProperties(value) {
-    value.additionalProperties = false;
+    const asString = JSON.stringify(value);
+    // any schema's that use the `allOf`-combiner should also be excluded
+    if (!asString.includes(`"${COMBINER__ALL_OF}"`)) {
+        value.additionalProperties = false;
+    } else {
+        console.warn('"additionalProperties" flag not set'
+            + `for ${asString} because it contains the "allOf" combiner keyword.`);
+    }
 }
 
 /**
