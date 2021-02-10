@@ -24,7 +24,7 @@
     "test": "npm run build && npm run test:mocha",
     "test-mutations": "stryker run",
     "test:mocha": "mocha --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\"",
-    "release": "npm run build && standard-version -a",
+    "release": "npm run build && standard-version -a && npm run build",
     "release:create-dockerfile": "node etc/src/build-dockerfile.js",
     "release:stage-artifacts": "git add dist/*"
   },
