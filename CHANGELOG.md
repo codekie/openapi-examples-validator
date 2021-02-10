@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.3.1](https://github.com/codekie/openapi-examples-validator/compare/v4.3.0...v4.3.1) (2021-02-10)
+
+
+### Bug Fixes
+
+* re-build module after release-job, to update version in build-artifact ([99fc59a](https://github.com/codekie/openapi-examples-validator/commit/99fc59ab0a9043e9e5aa1bfbacfb4aa2cacddd3a))
+
 ## [4.3.0](https://github.com/codekie/openapi-examples-validator/compare/v4.2.2...v4.3.0) (2021-02-10)
 
 
