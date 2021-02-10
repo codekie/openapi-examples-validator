@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.3.0](https://github.com/codekie/openapi-examples-validator/compare/v4.2.2...v4.3.0) (2021-02-10)
+
+
+### Features
+
+* do not set noAdditionalProperties on schemas containing JSON schema combiners ([#121](https://github.com/codekie/openapi-examples-validator/issues/121)) ([14e01dc](https://github.com/codekie/openapi-examples-validator/commit/14e01dc1fe2ed5f1d382cf386e83c7eee8bc58c4))
+
+
+### Bug Fixes
+
+* upgrade dependencies ([#131](https://github.com/codekie/openapi-examples-validator/issues/131)) ([2ff3ca8](https://github.com/codekie/openapi-examples-validator/commit/2ff3ca8d44903fe9e2cbc01ea724590983e492e7))
+
 ### [4.2.2](https://github.com/codekie/openapi-examples-validator/compare/v4.2.1...v4.2.2) (2021-02-05)
 
 
