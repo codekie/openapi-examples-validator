@@ -64,7 +64,7 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
     _excludeExamples(openApiSpec, paths, examplePaths);
     // Set flag
     for (const jsPath of paths) {
-        _find(openApiSpec, jsPath, ResultType.value, callback);
+        _find(openApiSpec, jsPath, ResultType.value, callback(jsPath));
     }
 }
 
@@ -73,15 +73,17 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
  * @type JsonPathMatchCallback
  * @private
  */
-function _callbackObjectTypeForNoAdditionalProperties(value) {
-    const asString = JSON.stringify(value);
-    // any schema's that use JSON schema combiners should also be excluded
-    if (!JSON_SCHEMA_COMBINERS.some((combiner) => asString.includes(`"${combiner}"`))) {
-        value.additionalProperties = false;
-    } else {
-        console.warn('"additionalProperties" flag not set'
-            + `for ${asString} because it contains JSON-schema combiner keywords.`);
-    }
+function _callbackObjectTypeForNoAdditionalProperties(path) {
+    return (value) => {
+        const asString = JSON.stringify(value);
+        // any schema's that use JSON schema combiners should also be excluded
+        if (!JSON_SCHEMA_COMBINERS.some((combiner) => asString.includes(`"${combiner}"`))) {
+            value.additionalProperties = false;
+        } else {
+            console.warn('"additionalProperties" flag not set '
+                + `for ${path} because it contains JSON-schema combiner keywords.`);
+        }
+    };
 }
 
 /**
