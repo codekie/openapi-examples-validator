@@ -39,12 +39,12 @@ module.exports = {
  * Sets the flag to indicate that it doesn't allow properties that are not described in the schema
  * @param {Object}                  openApiSpec         The to-be-modified schema
  * @param {Array.<String>}          [examplePaths=[]]   The paths to the examples, which's content must not be modified
- * @param {JsonPathMatchCallback}   [callback=_callbackObjectTypeForNoAdditionalProperties] Function to be called on a
- *                                                      match
+ * @param {JsonPathMatchCallback}   [createCallback=_createCallbackObjectTypeForNoAdditionalProperties] Function that
+ *                                                      creates a callback to be called on a match
  * @private
  */
 function setNoAdditionalProperties(openApiSpec, examplePaths = [],
-    callback = _callbackObjectTypeForNoAdditionalProperties
+    createCallback = _createCallbackObjectTypeForNoAdditionalProperties
 ) {
     // Find all matches
     const paths = new Set();
@@ -64,7 +64,7 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
     _excludeExamples(openApiSpec, paths, examplePaths);
     // Set flag
     for (const jsPath of paths) {
-        _find(openApiSpec, jsPath, ResultType.value, callback);
+        _find(openApiSpec, jsPath, ResultType.value, createCallback(jsPath));
     }
 }
 
@@ -73,15 +73,17 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
  * @type JsonPathMatchCallback
  * @private
  */
-function _callbackObjectTypeForNoAdditionalProperties(value) {
-    const asString = JSON.stringify(value);
-    // any schema's that use JSON schema combiners should also be excluded
-    if (!JSON_SCHEMA_COMBINERS.some((combiner) => asString.includes(`"${combiner}"`))) {
-        value.additionalProperties = false;
-    } else {
-        console.warn('"additionalProperties" flag not set'
-            + `for ${asString} because it contains JSON-schema combiner keywords.`);
-    }
+function _createCallbackObjectTypeForNoAdditionalProperties(path) {
+    return (value) => {
+        const asString = JSON.stringify(value);
+        // any schema's that use JSON schema combiners should also be excluded
+        if (!JSON_SCHEMA_COMBINERS.some((combiner) => asString.includes(`"${combiner}"`))) {
+            value.additionalProperties = false;
+        } else {
+            console.warn('"additionalProperties" flag not set '
+                + `for ${path} because it contains JSON-schema combiner keywords.`);
+        }
+    };
 }
 
 /**

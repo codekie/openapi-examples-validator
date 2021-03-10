@@ -7,7 +7,7 @@ const SCHEMA = _getSchema(),
 describe('The schema extender', function() {
     it('should find the right matches', function() {
         const paths = [];
-        setNoAdditionalProperties(SCHEMA, getJsonPathsToExamples(), (value, resultType, data) => {
+        setNoAdditionalProperties(SCHEMA, getJsonPathsToExamples(), () => (value, resultType, data) => {
             paths.push(data.path);
         });
         paths.sort().should.deep.equal(JSON_PATHS__OBJECTS.sort());
