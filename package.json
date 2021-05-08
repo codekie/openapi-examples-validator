@@ -74,7 +74,7 @@
     "ajv-oai": "1.2.1",
     "commander": "^6.2.1",
     "errno": "^1.0.0",
-    "glob": "^7.1.6",
+    "glob": "^7.1.7",
     "json-pointer": "0.6.1",
     "json-schema-ref-parser": "^9.0.7",
     "jsonpath-plus": "^5.0.4",
