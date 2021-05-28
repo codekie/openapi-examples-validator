@@ -1,0 +1,58 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Sample number formats",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://example.com/v1"
+    }
+  ],
+  "paths": {
+    "/get-numbers": {
+      "get": {
+        "summary": "Gets some big numbers",
+        "operationId": "getNumbers",
+        "responses": {
+          "200": {
+            "description": "Some big numbers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "format": "continental-status"
+                    },
+                    "licensePlate": {
+                      "type": "string",
+                      "format": "license-plate"
+                    },
+                    "country": {
+                      "type": "string",
+                      "format": "country-code-2"
+                    }
+                  }
+                },
+                "example": {
+                  "name": "John Wick",
+                  "status": "Excommunicado",
+                  "licensePlate": "XAB 235",
+                  "country": "US"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

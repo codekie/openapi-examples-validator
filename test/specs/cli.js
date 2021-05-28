@@ -152,6 +152,35 @@ describe('CLI-module', function() {
             });
         });
     });
+    describe('ignore datatype formats', function() {
+        it('should errors when no formats have been passed', async function() {
+            const pathSchema = getPathOfTestData('v3/unknown-formats.json', true);
+            try {
+                await exec(
+                    `${CMD__RUN} --ignore-formats country-code-2 continental-status license-plate -- ${pathSchema}`
+                );
+            } catch ({ stdout, stderr }) {
+                stdout.should.not.equal('');
+                stderr.should.not.equal('');
+            }
+        });
+        it('should show no error when formats have been passed', async function() {
+            const pathSchema = getPathOfTestData('v3/unknown-formats.json', true);
+            const { stdout, stderr } = await exec(
+                `${CMD__RUN} --ignore-formats country-code-2 continental-status license-plate -- ${pathSchema}`
+            );
+            stdout.should.not.equal('');
+            stderr.should.equal('');
+        });
+        it('should show no error when formats have been passed, with newline separated', async function() {
+            const pathSchema = getPathOfTestData('v3/unknown-formats.json', true);
+            const { stdout, stderr } = await exec(
+                `${CMD__RUN} --ignore-formats "country-code-2\ncontinental-status\nlicense-plate" -- ${pathSchema}`
+            );
+            stdout.should.not.equal('');
+            stderr.should.equal('');
+        });
+    });
     describe('execute as module, via `require` (for mutation-tests)', function() {
         before(function() {
             // Preparations to run the CLI as module and not as child-process
