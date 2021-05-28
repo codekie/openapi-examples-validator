@@ -153,12 +153,10 @@ describe('CLI-module', function() {
         });
     });
     describe('ignore datatype formats', function() {
-        it('should errors when no formats have been passed', async function() {
+        it('should show an error when no formats have been passed', async function() {
             const pathSchema = getPathOfTestData('v3/unknown-formats.json', true);
             try {
-                await exec(
-                    `${CMD__RUN} --ignore-formats country-code-2 continental-status license-plate -- ${pathSchema}`
-                );
+                await exec(`${CMD__RUN} ${pathSchema}`);
             } catch ({ stdout, stderr }) {
                 stdout.should.not.equal('');
                 stderr.should.not.equal('');
@@ -243,6 +241,34 @@ describe('CLI-module', function() {
             await require('../../src/cli');
             this.output.should.equal(_textMapExternalExamples);
             this.error.should.not.equal('');
+        });
+        describe('ignore datatype formats', function() {
+            it('should errors when no formats have been passed', async function() {
+                const pathSchema = getPathOfTestData('v3/unknown-formats.json', true);
+                try {
+                    process.argv = ['node', 'cli.js', pathSchema];
+                    await require('../../src/cli');
+                } catch ({ stdout, stderr }) {
+                    stdout.should.not.equal('');
+                    stderr.should.not.equal('');
+                }
+            });
+            it('should show no error when formats have been passed', async function() {
+                const pathSchema = getPathOfTestData('v3/unknown-formats.json', true);
+                process.argv = ['node', 'cli.js', '--ignore-formats', 'country-code-2', 'continental-status',
+                    'license-plate', '--', pathSchema];
+                await require('../../src/cli');
+                this.output.should.not.equal('');
+                this.error.should.equal('');
+            });
+            it('should show no error when formats have been passed, with newline separated', async function() {
+                const pathSchema = getPathOfTestData('v3/unknown-formats.json', true);
+                process.argv = ['node', 'cli.js', '--ignore-formats',
+                    'country-code-2\ncontinental-status\nlicense-plate', '--', pathSchema];
+                await require('../../src/cli');
+                this.output.should.not.equal('');
+                this.error.should.equal('');
+            });
         });
     });
 });
