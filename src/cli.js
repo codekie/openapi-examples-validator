@@ -29,6 +29,8 @@ program
     .option('-c, --cwd-to-mapping-file', "changes to the directory of the mapping-file, before resolving the example's"
         + ' paths. Use this option, if your mapping-files use relative paths for the examples')
     .option('-n, --no-additional-properties', 'don\'t allow properties that are not described in the schema')
+    .option('-o, --ignore-formats <ignored-formats...>', 'Datatype formats to ignore '
+        + '(to prevent "unknown format" errors.)')
     .action(processAction);
 program.on('--help', () => {
     console.log('\n\n  Example for external example-file:\n');
@@ -42,17 +44,28 @@ module.exports = program.parseAsync(process.argv);
 
 async function processAction(filepath, options) {
     const { schemaJsonpath, exampleFilepath, mappingFilepath, cwdToMappingFile } = options,
-        noAdditionalProperties = !options.additionalProperties;
+        noAdditionalProperties = !options.additionalProperties,
+        ignoreFormats = _prepareIgnoreFormats(options.ignoreFormats);
     let result;
     if (mappingFilepath) {
         console.log('Validating with mapping file');
-        result = await validateExamplesByMap(filepath, mappingFilepath, { cwdToMappingFile, noAdditionalProperties });
+        result = await validateExamplesByMap(filepath, mappingFilepath, {
+            cwdToMappingFile,
+            noAdditionalProperties,
+            ignoreFormats
+        });
     } else if (schemaJsonpath && exampleFilepath) {
         console.log('Validating single external example');
-        result = await validateExample(filepath, schemaJsonpath, exampleFilepath, { noAdditionalProperties });
+        result = await validateExample(filepath, schemaJsonpath, exampleFilepath, {
+            noAdditionalProperties,
+            ignoreFormats
+        });
     } else {
         console.log('Validating examples');
-        result = await validateFile(filepath, { noAdditionalProperties });
+        result = await validateFile(filepath, {
+            noAdditionalProperties,
+            ignoreFormats
+        });
     }
     _handleResult(result);
 }
@@ -86,4 +99,12 @@ function _printStatistics(statistics) {
         strStatistics.push(`Matching mapping files found: ${ matchingFilePathsMapping }`);
     }
     process.stdout.write(`${ strStatistics.join('\n') }\n`);
+}
+
+function _prepareIgnoreFormats(ignoreFormats) {
+    if (ignoreFormats == null || !Array.isArray(ignoreFormats)) { return ignoreFormats; }
+    if (ignoreFormats.length !== 1) { return ignoreFormats; }
+    // If only one argument has been passed, with all formats separated by newlines
+    if (ignoreFormats[0].indexOf('\n') === -1) { return ignoreFormats; }
+    return ignoreFormats[0].split('\n').filter(entry => !entry.match(/^\s*$/));
 }
