@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.4.0](https://github.com/codekie/openapi-examples-validator/compare/v4.3.3...v4.4.0) (2021-05-28)
+
+
+### Features
+
+* add option to ignore (unknown) data type formats ([#145](https://github.com/codekie/openapi-examples-validator/issues/145)) ([1f1e353](https://github.com/codekie/openapi-examples-validator/commit/1f1e3533670b3c873fc7835019fa2d9def8ad5c9))
+
+
+### Bug Fixes
+
+* upgrade dependencies ([#147](https://github.com/codekie/openapi-examples-validator/issues/147)) ([49355e9](https://github.com/codekie/openapi-examples-validator/commit/49355e9026928c092d5ba3db58ea49f6a0f3b4e0))
+
 ### [4.3.3](https://github.com/codekie/openapi-examples-validator/compare/v4.3.2...v4.3.3) (2021-03-10)
 
 
