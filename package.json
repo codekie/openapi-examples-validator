@@ -1,6 +1,6 @@
 {
   "name": "openapi-examples-validator",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "description": "Validates embedded examples in OpenAPI-JSONs",
   "main": "dist/index.js",
   "engines": {
