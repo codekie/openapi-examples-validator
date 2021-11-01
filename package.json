@@ -46,11 +46,11 @@
   },
   "homepage": "https://github.com/codekie/openapi-examples-validator#readme",
   "devDependencies": {
-    "@babel/cli": "^7.15.7",
-    "@babel/core": "^7.15.8",
-    "@babel/node": "^7.15.8",
-    "@babel/preset-env": "^7.15.8",
-    "@babel/register": "^7.15.3",
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/node": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@babel/register": "^7.16.0",
     "@stryker-mutator/core": "^4.5.0",
     "@stryker-mutator/mocha-runner": "^4.5.0",
     "babel-eslint": "^10.1.0",
@@ -66,7 +66,7 @@
     "rimraf": "^3.0.2",
     "standard-version": "^9.3.2",
     "stryker-cli": "^1.0.2",
-    "webpack": "^5.59.1",
+    "webpack": "^5.61.0",
     "webpack-cli": "^4.9.1"
   },
   "dependencies": {
