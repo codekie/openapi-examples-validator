@@ -50,12 +50,22 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Build and run tests with coverage
         run: npm run coverage
-      - name: Create "coverage report"-artifact
-        uses: actions/upload-artifact@v2
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@v1.1.2
         with:
-          name: coverage-report
-          path: ./coverage/lcov.info
-          retention-days: 1
+          github-token: ${{ secrets.github_token }}
+          flag-name: run-${{ matrix.node-version }}
+          parallel: true
+
+  finish-send-coveralls:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push coverage to coveralls
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
 
   test-mutations:
     needs: build
@@ -78,18 +88,3 @@ jobs:
           path: ./dist/
       - name: Run mutation tests
         run: npm run test-mutations
-
-  finish-send-coveralls:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download "coverage report"-artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: coverage-report
-          path: ./coverage/
-      - name: Push coverage to coveralls
-        uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel: true
