@@ -119,5 +119,5 @@ jobs:
           context: .
           file: ${{ env.PATH_DOCKERFILE }}
           push: true
-          tags: latest
+          tags: ${{ env.DOCKER_IMAGE }}:latest
           labels: ${{ steps.meta.outputs.labels }}
