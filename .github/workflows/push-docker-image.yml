@@ -1,0 +1,37 @@
+name: Push docker image
+
+on:
+  workflow_run:
+    workflows:
+      - "Run tests"
+    branches:
+      - master
+    types:
+      - completed
+
+env:
+  DOCKER_IMAGE: codekie/openapi-examples-validator
+  DOCKER_IMAGE_TEST: codekie/openapi-examples-validator:test
+  PATH_IMAGE_ARTIFACT: /tmp/myimage.tar
+
+jobs:
+  # Build image and create artifact
+  build:
+    # Only run this job, if the workflows that this one depends on, has been successful
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          load: true
+          tags: ${{ env.DOCKER_IMAGE_TEST }}
+          outputs: type=docker,dest=${{ env.PATH_IMAGE_ARTIFACT }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: myimage
+          path: ${{ env.PATH_IMAGE_ARTIFACT }}
