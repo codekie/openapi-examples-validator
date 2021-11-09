@@ -98,6 +98,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # Prepare Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
       # Push, based on tags
       - name: Build and push for tags
         if: startsWith(github.ref, 'refs/tags/')
