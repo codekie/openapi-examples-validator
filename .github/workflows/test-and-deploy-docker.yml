@@ -1,14 +1,6 @@
-# CAUTION: Workflows that are dependent on other workflows, work only properly on the default-branch (`master`)
+name: Run tests
 
-name: Push docker image
-
-on:
-  workflow_run:
-    workflows: ["Run tests"]
-    branches:
-      - master
-    tags:
-      - '**'
+on: [push]
 
 env:
   DOCKER_IMAGE: codekie/openapi-examples-validator
@@ -17,10 +9,97 @@ env:
   PATH_IMAGE_ARTIFACT: /tmp/myimage.tar
 
 jobs:
-  # Build image and create artifact
+  install:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare NodeJS environment
+        uses: ./.github/actions/setup-js
+        with:
+          node-version: ${{ matrix.node-version }}
+
   build:
-    # Only run this job, if the workflows that it's depending on, has been successful
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: install
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare NodeJS environment
+        uses: ./.github/actions/setup-js
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Build
+        run: npm run build
+      - name: Create build-artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-${{ matrix.node-version }}
+          path: ./dist/
+          retention-days: 1
+
+  test:
+    needs: install
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare NodeJS environment
+        uses: ./.github/actions/setup-js
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Build and run tests with coverage
+        run: npm run coverage
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.github_token }}
+          flag-name: run-${{ matrix.node-version }}
+          parallel: true
+
+  finish-send-coveralls:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push coverage to coveralls
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
+
+  test-mutations:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+    env:
+      STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare NodeJS environment
+        uses: ./.github/actions/setup-js
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Download build-artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-${{ matrix.node-version }}
+          path: ./dist/
+      - name: Run mutation tests
+        run: npm run test-mutations
+
+  # Build image and create artifact
+  docker-build:
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
+    needs:
+      - test
     runs-on: ubuntu-latest
     steps:
       # An explicit checkout is required, due to the `file`- and `context`-option, in the "Build and export to Docker"
@@ -44,9 +123,9 @@ jobs:
           path: ${{ env.PATH_IMAGE_ARTIFACT }}
 
   # Test built image
-  test:
+  docker-test:
     needs:
-      - build
+      - docker-build
     runs-on: ubuntu-latest
     steps:
       # Get the docker-image from the artifacts and load it
@@ -64,9 +143,9 @@ jobs:
         run: docker run --rm ${{ env.DOCKER_IMAGE_TEST }}
 
   # Push image `latest` for every push on the default-branch and for every tag
-  push-docker-image:
+  docker-push-image:
     needs:
-      - test
+      - docker-test
     runs-on: ubuntu-latest
     steps:
       # An explicit checkout is required, due to the `file`- and `context`-option, in the "Build and export to Docker"
