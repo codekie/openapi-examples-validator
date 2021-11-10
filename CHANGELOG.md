@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.5.0](https://github.com/codekie/openapi-examples-validator/compare/v4.4.1...v4.5.0) (2021-11-10)
+
+
+### Features
+
+* automatically push docker-images to Docker-Hub for new versions ([#154](https://github.com/codekie/openapi-examples-validator/issues/154)) ([1f225e6](https://github.com/codekie/openapi-examples-validator/commit/1f225e610e085d0abc24aa4afc7a98b12cc9f501))
+
 ### [4.4.1](https://github.com/codekie/openapi-examples-validator/compare/v4.4.0...v4.4.1) (2021-11-01)
 
 
