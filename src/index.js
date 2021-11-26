@@ -537,7 +537,8 @@ function _validateExample({ createValidator, schema, example, statistics, filePa
         return errors;
     }
     statistics[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES].add(schema);
-    const validate = compileValidate(createValidator(), schema);
+    validat = createValidator()
+    const validate = compileValidate(validat, schema);
     if (validate(example)) {
         return errors;
     }
@@ -557,15 +558,17 @@ function _validateExample({ createValidator, schema, example, statistics, filePa
  * @private
  */
 function _initValidatorFactory(specSchema, { ignoreFormats }) {
-    return getValidatorFactory(specSchema, {
-        schemaId: 'auto',
+    a = getValidatorFactory(specSchema, {
+        schemaId: "auto",
+    discriminator: true,
+    strict: false,
         allErrors: true,
-        nullable: true,
         formats: ignoreFormats && ignoreFormats.reduce((result, entry) => {
             result[entry] = () => true;
             return result;
         }, {})
     });
+    return a;
 }
 
 /**

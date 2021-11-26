@@ -4,9 +4,8 @@
 
 const { JSONPath: jsonPath } = require('jsonpath-plus'),
     JsonPointer = require('json-pointer'),
-    Ajv = require('ajv'),
-    FormatValidator = require('ajv-oai/lib/format-validator'),
-    draft4MetaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
+    Ajv = require('ajv-draft-04'),
+    FormatValidator = require('ajv-oai/lib/format-validator');
 
 const PROP__ID = '$id',
     JSON_PATH__REFS = '$..\$ref',
@@ -28,11 +27,10 @@ function getValidatorFactory(specSchema, options) {
     const preparedSpecSchema = _createReferenceSchema(specSchema);
     return () => {
         const validator = new Ajv(options);
-        _applyDraft04Schema(validator);
         _addFormatValidators(validator);
 
         validator.addSchema(preparedSpecSchema);
-
+        
         return validator;
     };
 }
@@ -46,6 +44,7 @@ function getValidatorFactory(specSchema, options) {
 function compileValidate(validator, responseSchema) {
     const preparedResponseSchema = _prepareResponseSchema(responseSchema, ID__RESPONSE_SCHEMA);
     _replaceRefsToPreparedSpecSchema(preparedResponseSchema);
+    
     let result;
     try {
         result = validator.compile(preparedResponseSchema);
@@ -119,17 +118,4 @@ function _addFormatValidators(validator) {
     validator.addFormat('float', { type: 'number', validate: FormatValidator.float });
     validator.addFormat('double', { type: 'number', validate: FormatValidator.double });
     validator.addFormat('byte', { type: 'string', validate: FormatValidator.byte });
-}
-
-/**
- * Adds the JSON schema draft-04 schema as default to the validator.
- * The OpenAPI specifications rely on draft-04 and draft-05.
- * Draft-04 is used here because of recommendations made here: https://json-schema.org/draft-05/README.html
- * @param {ajv.Ajv} validator
- * @private
- */
-function _applyDraft04Schema(validator) {
-    validator.removeSchema('');
-    validator.addMetaSchema(draft4MetaSchema, draft4MetaSchema.id);
-    validator._opts.defaultMeta = draft4MetaSchema.id;
 }

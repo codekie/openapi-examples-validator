@@ -1,50 +1,63 @@
 {
-  "name": "openapi-examples-validator",
-  "version": "4.5.0",
-  "description": "Validates embedded examples in OpenAPI-JSONs",
-  "main": "dist/index.js",
-  "engines": {
-    "node": ">=8"
+  "_from": "openapi-examples-validator@4.5.0",
+  "_id": "openapi-examples-validator@4.5.0",
+  "_inBundle": false,
+  "_integrity": "sha512-gej2igjXbRsXMKYbFQHXMSx2crKWiC3XAhBy0oiixy3DXwt78qc8k1OyZxKUDyqCQxl0it8qvt8DzF05VEUaag==",
+  "_location": "/openapi-examples-validator",
+  "_phantomChildren": {
+    "fs.realpath": "1.0.0",
+    "inflight": "1.0.6",
+    "inherits": "2.0.3",
+    "minimatch": "3.0.4",
+    "once": "1.4.0",
+    "path-is-absolute": "1.0.1"
+  },
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "openapi-examples-validator@4.5.0",
+    "name": "openapi-examples-validator",
+    "escapedName": "openapi-examples-validator",
+    "rawSpec": "4.5.0",
+    "saveSpec": null,
+    "fetchSpec": "4.5.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/openapi-examples-validator/-/openapi-examples-validator-4.5.0.tgz",
+  "_shasum": "d95178488d86563ed50b31578b0920d0bd5a2c37",
+  "_spec": "openapi-examples-validator@4.5.0",
+  "_where": "D:\\Developpement\\openapi-dev-tool",
+  "author": {
+    "name": "Josua Amann"
   },
   "bin": {
     "openapi-examples-validator": "dist/cli.js"
   },
-  "standard-version": {
-    "scripts": {
-      "postchangelog": "npm run release:create-dockerfile && npm run release:stage-artifacts"
-    }
-  },
-  "scripts": {
-    "start-dev": "babel-node src/cli",
-    "build": "npm run build:clean && npm run build:webpack",
-    "build:clean": "rimraf dist",
-    "build:webpack": "webpack --bail --progress --profile --mode production --config ./webpack/config.babel.js",
-    "coverage": "rimraf ./coverage && nyc --reporter=lcov --reporter=text -x \"dist/**/*\" -x \"test/**/*.js\" npm test",
-    "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "test": "npm run build && npm run test:mocha",
-    "test-mutations": "stryker run",
-    "test:mocha": "mocha --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\"",
-    "release": "npm run build && standard-version -a",
-    "release:create-dockerfile": "npm run build && node etc/src/build-dockerfile.js",
-    "release:stage-artifacts": "git add dist/*"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/codekie/openapi-examples-validator.git"
-  },
-  "keywords": [
-    "swagger",
-    "openapi",
-    "json",
-    "validate",
-    "examples"
-  ],
-  "author": "Josua Amann",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/codekie/openapi-examples-validator/issues"
   },
-  "homepage": "https://github.com/codekie/openapi-examples-validator#readme",
+  "bundleDependencies": false,
+  "dependencies": {
+    "ajv": "^8.8.2",
+    "ajv-draft-04": "^1.0.0",
+    "ajv-oai": "1.2.1",
+    "ajv-openapi": "^2.0.0",
+    "commander": "^6.2.1",
+    "errno": "^1.0.0",
+    "glob": "^7.2.0",
+    "json-pointer": "0.6.1",
+    "json-schema-ref-parser": "^9.0.9",
+    "jsonpath-plus": "^6.0.1",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.flatmap": "^4.5.0",
+    "lodash.flatten": "^4.4.0",
+    "lodash.merge": "^4.6.2",
+    "yaml": "^1.10.2"
+  },
+  "deprecated": false,
+  "description": "Validates embedded examples in OpenAPI-JSONs",
   "devDependencies": {
     "@babel/cli": "^7.16.0",
     "@babel/core": "^7.16.0",
@@ -69,19 +82,42 @@
     "webpack": "^5.61.0",
     "webpack-cli": "^4.9.1"
   },
-  "dependencies": {
-    "ajv": "^6.12.6",
-    "ajv-oai": "1.2.1",
-    "commander": "^6.2.1",
-    "errno": "^1.0.0",
-    "glob": "^7.2.0",
-    "json-pointer": "0.6.1",
-    "json-schema-ref-parser": "^9.0.9",
-    "jsonpath-plus": "^6.0.1",
-    "lodash.clonedeep": "^4.5.0",
-    "lodash.flatmap": "^4.5.0",
-    "lodash.flatten": "^4.4.0",
-    "lodash.merge": "^4.6.2",
-    "yaml": "^1.10.2"
-  }
+  "engines": {
+    "node": ">=8"
+  },
+  "homepage": "https://github.com/codekie/openapi-examples-validator#readme",
+  "keywords": [
+    "swagger",
+    "openapi",
+    "json",
+    "validate",
+    "examples"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "name": "openapi-examples-validator",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codekie/openapi-examples-validator.git"
+  },
+  "scripts": {
+    "build": "npm run build:clean && npm run build:webpack",
+    "build:clean": "rimraf dist",
+    "build:webpack": "webpack --bail --progress --profile --mode production --config ./webpack/config.babel.js",
+    "coverage": "rimraf ./coverage && nyc --reporter=lcov --reporter=text -x \"dist/**/*\" -x \"test/**/*.js\" npm test",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "release": "npm run build && standard-version -a",
+    "release:create-dockerfile": "npm run build && node etc/src/build-dockerfile.js",
+    "release:stage-artifacts": "git add dist/*",
+    "start-dev": "babel-node src/cli",
+    "test": "npm run build && npm run test:mocha",
+    "test-mutations": "stryker run",
+    "test:mocha": "mocha --require \"./test/util/setup-tests\" --recursive \"./test/specs/**/*.js\""
+  },
+  "standard-version": {
+    "scripts": {
+      "postchangelog": "npm run release:create-dockerfile && npm run release:stage-artifacts"
+    }
+  },
+  "version": "4.5.0"
 }
