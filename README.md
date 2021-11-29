@@ -74,7 +74,7 @@ Sample output of validation errors:
 [
     {
         "keyword": "type",
-        "dataPath": ".versions[0].id",
+        "instancePath": "/versions/0/id",
         "schemaPath": "#/properties/versions/items/properties/id/type",
         "params": {
             "type": "string"

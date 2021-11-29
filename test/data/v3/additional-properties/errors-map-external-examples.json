@@ -1,11 +1,11 @@
 [
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
+    "message": "must NOT have additional properties",
     "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
-    "dataPath": "[0]",
+    "instancePath": "/0",
     "schemaPath": "#/items/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "owner"
     },
@@ -13,11 +13,11 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
+    "message": "must NOT have additional properties",
     "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
-    "dataPath": "[0]",
+    "instancePath": "/0",
     "schemaPath": "#/items/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "age"
     },
@@ -25,11 +25,11 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
+    "message": "must NOT have additional properties",
     "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
-    "dataPath": "",
+    "instancePath": "",
     "schemaPath": "#/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "owner"
     },
@@ -37,11 +37,11 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
+    "message": "must NOT have additional properties",
     "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
-    "dataPath": "",
+    "instancePath": "",
     "schemaPath": "#/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "age"
     },

@@ -1,10 +1,10 @@
 [
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": "",
+    "message": "must NOT have additional properties",
+    "instancePath": "",
     "schemaPath": "#/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "owner"
     },
@@ -12,10 +12,10 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": "",
+    "message": "must NOT have additional properties",
+    "instancePath": "",
     "schemaPath": "#/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "age"
     },

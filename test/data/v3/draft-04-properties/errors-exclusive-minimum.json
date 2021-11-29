@@ -1,15 +1,14 @@
 [
   {
-    "dataPath": ".code",
+    "instancePath": "/code",
     "examplePath": "/paths/~1pets/get/responses/default/content/application~1json/example",
-    "keyword": "exclusiveMinimum",
-    "message": "should be > 10",
+    "keyword": "minimum",
+    "message": "must be > 10",
     "params": {
       "comparison": ">",
-      "exclusive": true,
       "limit": 10
     },
-    "schemaPath": "#/properties/code/exclusiveMinimum",
+    "schemaPath": "#/properties/code/minimum",
     "type": "Validation"
   }
 ]

@@ -67,9 +67,9 @@ describe('Main API', function() {
                 const result = await validateFile(getPathOfTestData('v2/invalid-type'));
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
-                    dataPath: '.versions[0].id',
+                    instancePath: '/versions/0/id',
                     keyword: 'type',
-                    message: 'should be string',
+                    message: 'must be string',
                     params: {
                         type: 'string'
                     },

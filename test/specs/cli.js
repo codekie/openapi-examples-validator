@@ -86,8 +86,8 @@ describe('CLI-module', function() {
                     .catch(({ stdout, stderr }) => {
                         stdout.should.contain('Errors found.', 'Stdout did not contain "Errors found." message');
                         stderr.should.contain(
-                            'unknown format \\"timestamp\\" is used in schema at '
-                            + 'path \\"#/properties/versions/items/properties/occurred',
+                            'unknown format "timestamp" ignored in schema at '
+                            + 'path "#/properties/versions/items/properties/occurred',
                             'Stderr did not contain unknown format errors'
                         );
                     });
@@ -133,7 +133,7 @@ describe('CLI-module', function() {
                     should.fail('Expected to throw an error');
                 } catch ({ stdout, stderr }) {
                     stdout.should.include('Errors found.');
-                    stderr.should.include('"message": "should NOT have additional properties"');
+                    stderr.should.include('"message": "must NOT have additional properties"');
                     stderr.should.include('extra_property');
                 }
             });
