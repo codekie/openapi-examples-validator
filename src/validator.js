@@ -113,9 +113,15 @@ function _createReferenceSchema(specSchema) {
  * @private
  */
 function _addFormatValidators(validator) {
+    // eslint-disable-next-line max-len
+    const dateTimeRegex = new RegExp('^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?Z$');
+
     validator.addFormat('int32', { type: 'number', validate: FormatValidator.int32 });
     validator.addFormat('int64', { type: 'string', validate: FormatValidator.int64 });
     validator.addFormat('float', { type: 'number', validate: FormatValidator.float });
     validator.addFormat('double', { type: 'number', validate: FormatValidator.double });
     validator.addFormat('byte', { type: 'string', validate: FormatValidator.byte });
+    validator.addFormat('date-time', {
+        validate: (dateTimeString) => dateTimeRegex.test(dateTimeString)
+    });
 }
