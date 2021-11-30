@@ -79,7 +79,7 @@ Sample output of validation errors:
         "params": {
             "type": "string"
         },
-        "message": "should be string",
+        "message": "must be string",
         "examplePath": "/~1/get/responses/200/examples/application~1json"
     }
 ]
