@@ -53,10 +53,12 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
         = path.join(__dirname, '../../../data/v3/request-invalid-parameter-examples.json'),
     FILE_PATH__VALID__NULLABLE = path.join(__dirname, '../../../data/v3/response-valid-nullable.json'),
     FILE_PATH__VALID__NUMBER_FORMATS = path.join(__dirname, '../../../data/v3/response-valid-number-formats.json'),
+    FILE_PATH__VALID__DATE_TIME_FORMATS = path.join(__dirname, '../../../data/v3/response-valid-date-time-format.json'),
     FILE_PATH__VALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-valid-requestbody.json'),
     FILE_PATH__VALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-valid-requestbody-examples.json'),
     FILE_PATH__INVALID__NUMBER_FORMATS = path.join(__dirname, '../../../data/v3/response-invalid-number-formats.json'),
+    FILE_PATH__INVALID__DATE_TIME_FORMAT = path.join(__dirname, '../../../data/v3/response-invalid-date-time-format.json'),
     FILE_PATH__INVALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-invalid-requestbody.json'),
     FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-invalid-requestbody-examples.json'),
@@ -273,6 +275,24 @@ describe('Main-module, for v3 should', function() {
             });
         });
     });
+    describe('be able to handle date-time formats', function() {
+        it('with valid examples', async function() {
+            (await validateFile(FILE_PATH__VALID__NUMBER_FORMATS)).valid.should.equal(true);
+        });
+        describe('invalid examples', function() {
+            before(async function() {
+                this.validationResults = await validateFile(FILE_PATH__INVALID__DATE_TIME_FORMAT);
+            });
+
+            it('invalid date-time', function() {
+                const error = this.validationResults.errors[0];
+                error.message.should.equal('should match format "date-time"');
+                error.keyword.should.equal('format');
+                error.params.format.should.equal('date-time');
+            });
+        });
+    });
+
     describe('example with `value`s as properties', function() {
         it('should not be recognized as separate example', async function() {
             const { valid, statistics } = (await validateFile(FILE_PATH__VALID__VALUE_PROPERTY));
