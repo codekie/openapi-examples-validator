@@ -62,7 +62,8 @@
                         "type": "string"
                       },
                       "age": {
-                        "nullable": true
+                        "nullable": true,
+                        "type": "number"
                       }
                     }
                   }
