@@ -74,12 +74,12 @@ Sample output of validation errors:
 [
     {
         "keyword": "type",
-        "instancePath": "/versions/0/id",
+        "dataPath": ".versions[0].id",
         "schemaPath": "#/properties/versions/items/properties/id/type",
         "params": {
             "type": "string"
         },
-        "message": "must be string",
+        "message": "should be string",
         "examplePath": "/~1/get/responses/200/examples/application~1json"
     }
 ]

@@ -48,9 +48,9 @@ describe('Main-module, for v2 should', () => {
             const result = await validateExamples(loadTestData('v2/invalid-type'));
             result.valid.should.equal(false);
             result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
-                instancePath: '/versions/0/id',
+                dataPath: '.versions[0].id',
                 keyword: 'type',
-                message: 'must be string',
+                message: 'should be string',
                 params: {
                     type: 'string'
                 },
@@ -64,32 +64,32 @@ describe('Main-module, for v2 should', () => {
             result.errors.should.deep.equal([
                 new ApplicationError(ErrorType.validation, {
                     keyword: 'type',
-                    instancePath: '/versions/0/id',
+                    dataPath: '.versions[0].id',
                     schemaPath: '#/properties/versions/items/properties/id/type',
                     params: {
                         type: 'string'
                     },
-                    message: 'must be string',
+                    message: 'should be string',
                     examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                 }),
                 new ApplicationError(ErrorType.validation, {
                     keyword: 'required',
-                    instancePath: '/versions/0',
+                    dataPath: '.versions[0]',
                     schemaPath: '#/properties/versions/items/required',
                     params: {
                         missingProperty: 'links'
                     },
-                    message: "must have required property 'links'",
+                    message: "should have required property 'links'",
                     examplePath: '/paths/~1/get/responses/300/examples/application~1json'
                 }),
                 new ApplicationError(ErrorType.validation, {
                     keyword: 'type',
-                    instancePath: '/versions/1/id',
+                    dataPath: '.versions[1].id',
                     schemaPath: '#/properties/versions/items/properties/id/type',
                     params: {
                         type: 'string'
                     },
-                    message: 'must be string',
+                    message: 'should be string',
                     examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                 })
             ]);
@@ -101,22 +101,22 @@ describe('Main-module, for v2 should', () => {
                 result.errors.should.deep.equal([
                     new ApplicationError(ErrorType.validation, {
                         keyword: 'required',
-                        instancePath: '/0',
+                        dataPath: '[0]',
                         schemaPath: '#/items/required',
                         params: {
                             missingProperty: 'id'
                         },
-                        message: "must have required property 'id'",
+                        message: "should have required property 'id'",
                         examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                     }),
                     new ApplicationError(ErrorType.validation, {
                         keyword: 'type',
-                        instancePath: '/1/links',
+                        dataPath: '[1].links',
                         schemaPath: '#/items/properties/links/type',
                         params: {
                             type: 'array'
                         },
-                        message: 'must be array',
+                        message: 'should be array',
                         examplePath: '/paths/~1/get/responses/200/examples/application~1json'
                     })
                 ]);
@@ -145,9 +145,9 @@ describe('Main-module, for v2 should', () => {
                 );
                 result.valid.should.equal(false);
                 result.errors.should.deep.equal([new ApplicationError(ErrorType.validation, {
-                    instancePath: '/versions/0/id',
+                    dataPath: '.versions[0].id',
                     keyword: 'type',
-                    message: 'must be string',
+                    message: 'should be string',
                     params: {
                         type: 'string'
                     },
@@ -163,9 +163,9 @@ describe('Main-module, for v2 should', () => {
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
                 new ApplicationError(ErrorType.validation, {
-                    instancePath: '/versions/0/id',
+                    dataPath: '.versions[0].id',
                     keyword: 'type',
-                    message: 'must be string',
+                    message: 'should be string',
                     params: {
                         type: 'string'
                     },
@@ -174,9 +174,9 @@ describe('Main-module, for v2 should', () => {
                     exampleFilePath: path.normalize('test/data/v2/external-examples-invalid-type.json')
                 }),
                 new ApplicationError(ErrorType.validation, {
-                    instancePath: '/versions/0',
+                    dataPath: '.versions[0]',
                     keyword: 'required',
-                    message: "must have required property 'links'",
+                    message: "should have required property 'links'",
                     params: {
                         missingProperty: 'links'
                     },
@@ -217,9 +217,9 @@ describe('Main-module, for v2 should', () => {
                         }
                     }),
                     new ApplicationError(ErrorType.validation, {
-                        instancePath: '/versions/0',
+                        dataPath: '.versions[0]',
                         keyword: 'required',
-                        message: "must have required property 'links'",
+                        message: "should have required property 'links'",
                         params: {
                             missingProperty: 'links'
                         },
@@ -291,9 +291,9 @@ describe('Main-module, for v2 should', () => {
             result.valid.should.equal(false);
             result.errors.should.deep.equal([
                 new ApplicationError(ErrorType.validation, {
-                    message: "must have required property 'links'",
+                    message: "should have required property 'links'",
                     keyword: 'required',
-                    instancePath: '/versions/0',
+                    dataPath: '.versions[0]',
                     schemaPath: '#/properties/versions/items/required',
                     params: {
                         missingProperty: 'links'
@@ -302,9 +302,9 @@ describe('Main-module, for v2 should', () => {
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID1
                 }),
                 new ApplicationError(ErrorType.validation, {
-                    message: 'must be string',
+                    message: 'should be string',
                     keyword: 'type',
-                    instancePath: '/versions/0/id',
+                    dataPath: '.versions[0].id',
                     schemaPath: '#/properties/versions/items/properties/id/type',
                     params: {
                         type: 'string'
@@ -313,9 +313,9 @@ describe('Main-module, for v2 should', () => {
                     mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID1
                 }),
                 new ApplicationError(ErrorType.validation, {
-                    message: "must have required property 'links'",
+                    message: "should have required property 'links'",
                     keyword: 'required',
-                    instancePath: '/versions/0',
+                    dataPath: '.versions[0]',
                     schemaPath: '#/properties/versions/items/required',
                     params: {
                         missingProperty: 'links'

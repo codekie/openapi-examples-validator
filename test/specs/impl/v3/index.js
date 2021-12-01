@@ -243,31 +243,31 @@ describe('Main-module, for v3 should', function() {
             });
             it('number represented as string', function() {
                 const error = this.validationResults.errors[0];
-                error.message.should.equal('must be number');
+                error.message.should.equal('should be number');
                 error.keyword.should.equal('type');
                 error.params.type.should.equal('number');
             });
             it('invalid int32', function() {
                 const error = this.validationResults.errors[1];
-                error.message.should.equal('must match format "int32"');
+                error.message.should.equal('should match format "int32"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('int32');
             });
             it('invalid int64', function() {
                 const error = this.validationResults.errors[2];
-                error.message.should.equal('must match format "int64"');
+                error.message.should.equal('should match format "int64"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('int64');
             });
             it('invalid float', function() {
                 const error = this.validationResults.errors[3];
-                error.message.should.equal('must match format "float"');
+                error.message.should.equal('should match format "float"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('float');
             });
             it('invalid double', function() {
                 const error = this.validationResults.errors[4];
-                error.message.should.equal('must match format "double"');
+                error.message.should.equal('should match format "double"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('double');
             });

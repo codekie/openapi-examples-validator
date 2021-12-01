@@ -27,9 +27,9 @@ describe('Main-module, for v2 should', () => {
                         errors: [
                             {
                                 type: 'Validation',
-                                message: 'must be string',
+                                message: 'should be string',
                                 keyword: 'type',
-                                instancePath: '/versions/0/id',
+                                dataPath: '.versions[0].id',
                                 schemaPath: '#/properties/versions/items/properties/id/type',
                                 params: {
                                     type: 'string'
@@ -69,9 +69,9 @@ describe('Main-module, for v2 should', () => {
                     errors: [
                         {
                             type: 'Validation',
-                            message: 'must be string',
+                            message: 'should be string',
                             keyword: 'type',
-                            instancePath: '/versions/0/id',
+                            dataPath: '.versions[0].id',
                             schemaPath: '#/properties/versions/items/properties/id/type',
                             params: {
                                 type: 'string'
@@ -81,9 +81,9 @@ describe('Main-module, for v2 should', () => {
                         },
                         {
                             type: 'Validation',
-                            message: "must have required property 'links'",
+                            message: "should have required property 'links'",
                             keyword: 'required',
-                            instancePath: '/versions/0',
+                            dataPath: '.versions[0]',
                             schemaPath: '#/properties/versions/items/required',
                             params: {
                                 missingProperty: 'links'

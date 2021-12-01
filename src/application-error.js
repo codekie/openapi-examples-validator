@@ -12,7 +12,7 @@ const
 /**
  * ApplicationErrorOptions
  * @typedef {{
- *      [instancePath]: string,
+ *      [dataPath]: string,
  *      [examplePath]: string,
  *      [exampleFilePath]: string,
  *      [keyword]: string,

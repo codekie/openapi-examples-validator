@@ -1,9 +1,9 @@
 [
   {
     "type": "Validation",
-    "message": "must be number",
+    "message": "should be number",
     "keyword": "type",
-    "instancePath": "/0/id",
+    "dataPath": "[0].id",
     "schemaPath": "#/items/properties/id/type",
     "params": {
       "type": "number"
@@ -12,9 +12,9 @@
   },
   {
     "type": "Validation",
-    "message": "must be number",
+    "message": "should be number",
     "keyword": "type",
-    "instancePath": "/0/id",
+    "dataPath": "[0].id",
     "schemaPath": "#/items/properties/id/type",
     "params": {
       "type": "number"

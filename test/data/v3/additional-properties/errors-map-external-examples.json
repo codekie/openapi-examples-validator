@@ -1,11 +1,11 @@
 [
   {
     "type": "Validation",
-    "message": "must NOT have additional properties",
-    "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
-    "instancePath": "/0",
-    "schemaPath": "#/items/additionalProperties",
+    "message": "should NOT have additional properties",
     "keyword": "additionalProperties",
+    "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
+    "dataPath": "[0]",
+    "schemaPath": "#/items/additionalProperties",
     "params": {
       "additionalProperty": "owner"
     },
@@ -13,11 +13,11 @@
   },
   {
     "type": "Validation",
-    "message": "must NOT have additional properties",
-    "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
-    "instancePath": "/0",
-    "schemaPath": "#/items/additionalProperties",
+    "message": "should NOT have additional properties",
     "keyword": "additionalProperties",
+    "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
+    "dataPath": "[0]",
+    "schemaPath": "#/items/additionalProperties",
     "params": {
       "additionalProperty": "age"
     },
@@ -25,11 +25,11 @@
   },
   {
     "type": "Validation",
-    "message": "must NOT have additional properties",
-    "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
-    "instancePath": "",
-    "schemaPath": "#/additionalProperties",
+    "message": "should NOT have additional properties",
     "keyword": "additionalProperties",
+    "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
+    "dataPath": "",
+    "schemaPath": "#/additionalProperties",
     "params": {
       "additionalProperty": "owner"
     },
@@ -37,11 +37,11 @@
   },
   {
     "type": "Validation",
-    "message": "must NOT have additional properties",
-    "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
-    "instancePath": "",
-    "schemaPath": "#/additionalProperties",
+    "message": "should NOT have additional properties",
     "keyword": "additionalProperties",
+    "mapFilePath": "/test/data/v3/additional-properties/map-external-examples-with-additional-properties.json",
+    "dataPath": "",
+    "schemaPath": "#/additionalProperties",
     "params": {
       "additionalProperty": "age"
     },
