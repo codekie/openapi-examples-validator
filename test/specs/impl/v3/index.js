@@ -293,7 +293,24 @@ describe('Main-module, for v3 should', function() {
             });
         });
     });
-
+    describe('unknown formats', function() {
+        describe('without ignoring unknown formats', function() {
+            it('should throw an error', async function() {
+                (await validateFile(FILE_PATH__UNKNOWN_FORMATS)).valid.should.equal(false);
+            });
+        });
+        describe('with passing the argument to ignore unknown formats', function() {
+            it('should throw an error', async function() {
+                (await validateFile(FILE_PATH__UNKNOWN_FORMATS, {
+                    ignoreFormats: [
+                        'country-code-2',
+                        'continental-status',
+                        'license-plate'
+                    ]
+                })).valid.should.equal(true);
+            });
+        });
+    });
     describe('example with `value`s as properties', function() {
         it('should not be recognized as separate example', async function() {
             const { valid, statistics } = (await validateFile(FILE_PATH__VALID__VALUE_PROPERTY));
