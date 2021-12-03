@@ -58,7 +58,8 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     FILE_PATH__VALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-valid-requestbody-examples.json'),
     FILE_PATH__INVALID__NUMBER_FORMATS = path.join(__dirname, '../../../data/v3/response-invalid-number-formats.json'),
-    FILE_PATH__INVALID__DATE_TIME_FORMAT = path.join(__dirname, '../../../data/v3/response-invalid-date-time-format.json'),
+    FILE_PATH__INVALID__DATE_TIME_FORMAT
+        = path.join(__dirname, '../../../data/v3/response-invalid-date-time-format.json'),
     FILE_PATH__INVALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-invalid-requestbody.json'),
     FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-invalid-requestbody-examples.json'),
@@ -277,7 +278,7 @@ describe('Main-module, for v3 should', function() {
     });
     describe('be able to handle date-time formats', function() {
         it('with valid examples', async function() {
-            (await validateFile(FILE_PATH__VALID__NUMBER_FORMATS)).valid.should.equal(true);
+            (await validateFile(FILE_PATH__VALID__DATE_TIME_FORMATS)).valid.should.equal(true);
         });
         describe('invalid examples', function() {
             before(async function() {
