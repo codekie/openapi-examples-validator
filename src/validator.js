@@ -7,6 +7,7 @@ const { JSONPath: jsonPath } = require('jsonpath-plus'),
     Ajv = require('ajv'),
     FormatValidator = require('ajv-oai/lib/format-validator'),
     draft4MetaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
+const { validateDateTime } = require('./validators/date-time');
 
 const PROP__ID = '$id',
     JSON_PATH__REFS = '$..\$ref',
@@ -119,6 +120,7 @@ function _addFormatValidators(validator) {
     validator.addFormat('float', { type: 'number', validate: FormatValidator.float });
     validator.addFormat('double', { type: 'number', validate: FormatValidator.double });
     validator.addFormat('byte', { type: 'string', validate: FormatValidator.byte });
+    validator.addFormat('date-time', { type: 'string', validate: validateDateTime });
 }
 
 /**
