@@ -12,6 +12,11 @@ Validates embedded JSON-examples in OpenAPI-specs (v2 and v3 are supported)
 [![Known Vulnerabilities](https://snyk.io/test/github/codekie/openapi-examples-validator/badge.svg)](https://snyk.io/test/github/codekie/openapi-examples-validator)
 [![Docker Hub](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/codekie/openapi-examples-validator)
 
+Prerequisites
+------------
+
+[Node.js](https://nodejs.org/) (^10, ^12, or ^14).
+
 Install
 -------
 
