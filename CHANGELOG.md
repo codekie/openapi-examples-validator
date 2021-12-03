@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.6.0](https://github.com/codekie/openapi-examples-validator/compare/v4.5.0...v4.6.0) (2021-12-03)
+
+
+### Features
+
+* add date-time validator, according to `RFC 3339` ([#159](https://github.com/codekie/openapi-examples-validator/issues/159)) ([7055763](https://github.com/codekie/openapi-examples-validator/commit/7055763a4ea62c9091ae8b598aefead38aeed6f6))
+
+
+### Bug Fixes
+
+* upgrade dependencies ([#162](https://github.com/codekie/openapi-examples-validator/issues/162)) ([693c6a6](https://github.com/codekie/openapi-examples-validator/commit/693c6a6f87cf299e12258ae90b51bbb9b13a4f71))
+
 ## [4.5.0](https://github.com/codekie/openapi-examples-validator/compare/v4.4.1...v4.5.0) (2021-11-10)
 
 
