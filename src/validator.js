@@ -7,14 +7,12 @@ const { JSONPath: jsonPath } = require('jsonpath-plus'),
     Ajv = require('ajv'),
     FormatValidator = require('ajv-oai/lib/format-validator'),
     draft4MetaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
+const { validateDateTime } = require('./validators/date-time');
 
 const PROP__ID = '$id',
     JSON_PATH__REFS = '$..\$ref',
     ID__SPEC_SCHEMA = 'https://www.npmjs.com/package/openapi-examples-validator/defs.json',
-    ID__RESPONSE_SCHEMA = 'https://www.npmjs.com/package/openapi-examples-validator/schema.json',
-    // From https://gist.github.com/marcelotmelo/b67f58a08bee6c2468f8
-    // eslint-disable-next-line max-len
-    REGEX_DATE_TIME = '^(\d+)-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])\s([01]\d|2[0-3]):([0-5]\d):([0-5]\d|60)(\.\d+)?(([Zz])|([\+|\-]([01]\d|2[0-3])))$';
+    ID__RESPONSE_SCHEMA = 'https://www.npmjs.com/package/openapi-examples-validator/schema.json';
 
 module.exports = {
     getValidatorFactory,
@@ -117,16 +115,12 @@ function _createReferenceSchema(specSchema) {
  * @private
  */
 function _addFormatValidators(validator) {
-    const dateTimeRegex = new RegExp(REGEX_DATE_TIME);
-
     validator.addFormat('int32', { type: 'number', validate: FormatValidator.int32 });
     validator.addFormat('int64', { type: 'string', validate: FormatValidator.int64 });
     validator.addFormat('float', { type: 'number', validate: FormatValidator.float });
     validator.addFormat('double', { type: 'number', validate: FormatValidator.double });
     validator.addFormat('byte', { type: 'string', validate: FormatValidator.byte });
-    validator.addFormat('date-time', {
-        validate: (dateTimeString) => dateTimeRegex.test(dateTimeString)
-    });
+    validator.addFormat('date-time', { type: 'string', validate: validateDateTime });
 }
 
 /**
