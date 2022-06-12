@@ -13,7 +13,8 @@ const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID1 = path.join(FILE_PATH__DATA, 'map-external-examples-glob-invalid1.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID2 = path.join(FILE_PATH__DATA, 'map-external-examples-glob-invalid2.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP = path.join(FILE_PATH__DATA, 'map-external-examples.json'),
-    FILE_PATH__EXTERNAL_EXAMPLES_MAP__RELATIVE = path.join(FILE_PATH__DATA, 'map-external-examples-relative.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_MAP_RELATIVE = path.join(FILE_PATH__DATA, 'map-external-examples-relative.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_MAP_WILDCARDS = path.join(FILE_PATH__DATA, 'map-external-examples-wildcards.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH = path.join(FILE_PATH__DATA,
         'map-external-examples-map-with-wrong-schema-path.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE = path.join(FILE_PATH__DATA,
@@ -186,6 +187,18 @@ describe('Main-module, for v2 should', () => {
                 })
             ]);
         });
+        it('should be able to expand examples wildcards', async() => {
+            const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                FILE_PATH__EXTERNAL_EXAMPLES_MAP_WILDCARDS);
+            console.log(result);
+            result.valid.should.equal(true);
+            result.statistics.should.deep.equal({
+                examplesTotal: 5,
+                examplesWithoutSchema: 0,
+                matchingFilePathsMapping: 1,
+                schemasWithExamples: 2
+            });
+        });
     });
     describe('should throw errors', () => {
         describe("when files can't be found:", () => {
@@ -210,7 +223,7 @@ describe('Main-module, for v2 should', () => {
                 result.errors.should.deep.equal([
                     new ApplicationError(ErrorType.jsENOENT, {
                         mapFilePath: FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE,
-                        message: "ENOENT: no such file or directory, open 'test/data/v2/blegh forgot the sugar in the"
+                        message: "No such file or directory: 'test/data/v2/blegh forgot the sugar in the"
                             + " coffee'",
                         params: {
                             path: 'test/data/v2/blegh forgot the sugar in the coffee'
@@ -338,7 +351,7 @@ describe('Main-module, for v2 should', () => {
     describe('with set `cwd-to-mapping-file`-flag', () => {
         it('resolve the relative paths in the mapping-files', async() => {
             const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
-                FILE_PATH__EXTERNAL_EXAMPLES_MAP__RELATIVE, { cwdToMappingFile: true });
+                FILE_PATH__EXTERNAL_EXAMPLES_MAP_RELATIVE, { cwdToMappingFile: true });
             result.valid.should.equal(true);
             result.statistics.should.deep.equal({
                 schemasWithExamples: 2,

@@ -324,22 +324,32 @@ function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statis
         return flatMap(
             flatten([filePathsExample]),
             filePathExample => {
-                let example = null;
+                let examples = [];
                 try {
                     const resolvedFilePathExample = cwdToMappingFile
                         ? path.join(dirPathMapExternalExamples, filePathExample)
                         : filePathExample;
-                    example = JSON.parse(fs.readFileSync(resolvedFilePathExample, 'utf-8'));
+                    const globResolvedFilePathExample = glob.sync(resolvedFilePathExample);
+                    if (globResolvedFilePathExample.length === 0) {
+                        return [ApplicationError.create({
+                            type: ErrorType.jsENOENT,
+                            message: `No such file or directory: '${resolvedFilePathExample}'`,
+                            path: resolvedFilePathExample
+                        })];
+                    }
+                    for (const filePathExample of globResolvedFilePathExample) {
+                        examples.push(JSON.parse(fs.readFileSync(filePathExample, 'utf-8')));
+                    }
                 } catch (err) {
                     return [ApplicationError.create(err)];
                 }
-                return _validateExample({
+                return flatMap(examples, example => _validateExample({
                     createValidator: _initValidatorFactory(openapiSpec, { ignoreFormats }),
                     schema,
                     example,
                     statistics,
                     filePathExample
-                });
+                }));
             }
         );
     });
