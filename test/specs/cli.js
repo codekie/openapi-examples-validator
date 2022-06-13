@@ -1,4 +1,5 @@
-const util = require('util'),
+const { platform } = require('os'),
+    util = require('util'),
     VERSION = require('../../package').version,
     { text: _textHelp } = require('../data/output-help'),
     { text: _textMapExternalExamples } = require('../data/v2/output-map-external-examples'),
@@ -17,6 +18,9 @@ describe('CLI-module', function() {
         // Make sure that `commander`'s output will be the same, independent of the console's width
         this.origColumns = process.stdout.columns;
         process.stdout.columns = 80;
+        if (platform() === 'win32') {
+            process.env.ComSpec = 'PowerShell.exe';
+        }
     });
     after(function() {
         process.stdout.columns = this.origColumns;

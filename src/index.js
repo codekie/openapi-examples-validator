@@ -158,7 +158,7 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
     let responses = [];
     // for..of here, to support sequential execution of async calls. This is required, since dereferencing the
     // `openapiSpec` is not concurrency-safe
-    for (let filePathMapExternalExamples of filePathsMaps) {
+    for (const filePathMapExternalExamples of filePathsMaps) {
         let mapExternalExamples = null,
             openapiSpec = null;
         try {
@@ -170,7 +170,7 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
             responses.push(createValidationResponse({ errors: [ApplicationError.create(err)] }));
             continue;
         }
-        // Not using `glob`'s response-length, becuse it is `1` if there's no match for `globMapExternalExamples`.
+        // Not using `glob`'s response-length, because it is `1` if there's no match for `globMapExternalExamples`.
         // Instead, increment on every match
         matchingFilePathsMapping++;
         responses.push(
@@ -184,7 +184,7 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
                         }
                     ).map(
                         (/** @type ApplicationError */ error) => Object.assign(error, {
-                            mapFilePath: filePathMapExternalExamples
+                            mapFilePath: path.normalize(filePathMapExternalExamples)
                         })
                     );
                 }
