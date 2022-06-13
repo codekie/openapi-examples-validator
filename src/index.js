@@ -338,7 +338,10 @@ function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statis
                         })];
                     }
                     for (const filePathExample of globResolvedFilePathExample) {
-                        examples.push(JSON.parse(fs.readFileSync(filePathExample, 'utf-8')));
+                        examples.push({
+                            path: path.normalize(filePathExample),
+                            content: JSON.parse(fs.readFileSync(filePathExample, 'utf-8'))
+                        });
                     }
                 } catch (err) {
                     return [ApplicationError.create(err)];
@@ -346,9 +349,9 @@ function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statis
                 return flatMap(examples, example => _validateExample({
                     createValidator: _initValidatorFactory(openapiSpec, { ignoreFormats }),
                     schema,
-                    example,
+                    example: example.content,
                     statistics,
-                    filePathExample
+                    filePathExample: example.path
                 }));
             }
         );

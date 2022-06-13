@@ -190,14 +190,38 @@ describe('Main-module, for v2 should', () => {
         it('should be able to expand examples wildcards', async() => {
             const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                 FILE_PATH__EXTERNAL_EXAMPLES_MAP_WILDCARDS);
-            console.log(result);
-            result.valid.should.equal(true);
+            result.valid.should.equal(false);
             result.statistics.should.deep.equal({
-                examplesTotal: 5,
+                examplesTotal: 7,
                 examplesWithoutSchema: 0,
                 matchingFilePathsMapping: 1,
                 schemasWithExamples: 2
             });
+            result.errors.should.deep.equal([{
+                type: 'Validation',
+                message: "should have required property 'links'",
+                keyword: 'required',
+                dataPath: '.versions[0]',
+                schemaPath: '#/properties/versions/items/required',
+                exampleFilePath: path.normalize('test/data/v2/external-examples-invalid-missing-link.json'),
+                mapFilePath: path.normalize(
+                    path.join(__dirname, '../../../../test/data/v2/map-external-examples-wildcards.json')),
+                params: {
+                    missingProperty: 'links'
+                }
+            }, {
+                type: 'Validation',
+                message: 'should be string',
+                keyword: 'type',
+                dataPath: '.versions[0].id',
+                schemaPath: '#/properties/versions/items/properties/id/type',
+                exampleFilePath: path.normalize('test/data/v2/external-examples-invalid-type.json'),
+                mapFilePath: path.normalize(
+                    path.join(__dirname, '../../../../test/data/v2/map-external-examples-wildcards.json')),
+                params: {
+                    type: 'string'
+                }
+            }]);
         });
     });
     describe('should throw errors', () => {

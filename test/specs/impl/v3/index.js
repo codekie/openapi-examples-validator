@@ -396,7 +396,10 @@ describe('Main-module, for v3 should', function() {
                     FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES,
                     FILE_PATH__MAP__WITH_ADDITIONAL_PROPERTIES,
                     { noAdditionalProperties: true }
-                )).errors.should.deep.equal(_expandFilePathOfErrors(errorsAdditionalPropertiesMap, 'mapFilePath'));
+                )).errors.should.deep.equal(
+                    _normalizeFilePathOfErrors(
+                        _expandFilePathOfErrors(errorsAdditionalPropertiesMap, 'mapFilePath'), 'exampleFilePath')
+                );
             });
         });
     });
@@ -419,7 +422,14 @@ describe('Main-module, for v3 should', function() {
 
 function _expandFilePathOfErrors(errors, propertyName) {
     errors.forEach(error => {
-        error[propertyName] = path.join(__dirname, '../../../..', error[propertyName]);
+        error[propertyName] = path.normalize(path.join(__dirname, '../../../..', error[propertyName]));
+    });
+    return errors;
+}
+
+function _normalizeFilePathOfErrors(errors, propertyName) {
+    errors.forEach(error => {
+        error[propertyName] = path.normalize(error[propertyName]);
     });
     return errors;
 }
