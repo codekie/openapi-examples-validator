@@ -45,6 +45,7 @@ Options:
                                              example's paths. Use this option, if your mapping-files use relative paths
                                              for the examples
   -n, --no-additional-properties             don't allow properties that are not described in the schema
+  -r, --all-properties-required              make all the properties in the schema required
   -h, --help                                 output usage information
 ````
 
@@ -108,10 +109,7 @@ Caveat
 
 - The formats `int32`, `float` and `double` are supported for the type `number`. The format `int64` is only available
   for the type `string`, though (due to the precision-limitations of Javascript).
-- The option `--no-additional-properties` does not work, if `allOf` is used to combine subschemas.
-  - Enabling this flag will not apply `additionalProperties` to any subschemas that use
-    [these](https://json-schema.org/understanding-json-schema/reference/combining.html) combiner keywords.
-  - A warning will be logged if setting the `additionalProperties` flag has been skipped.
+- The options `--no-additional-properties` and `--all-properties-required` are not compatible with [sub-schemas combiner keyword](https://json-schema.org/understanding-json-schema/reference/combining.html). A warning will be logged if one model is skipped because it contains a combiner keyword.
 
 Test
 ----
