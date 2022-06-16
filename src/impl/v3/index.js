@@ -5,7 +5,7 @@
 const { JSONPath: jsonPath } = require('jsonpath-plus'),
     cloneDeep = require('lodash.clonedeep'),
     { ApplicationError, ErrorType } = require('../../application-error'),
-    { setNoAdditionalProperties } = require('../service/disallow-additional-properties');
+    { setNoAdditionalProperties, setAllPropertiesRequired } = require('../service');
 
 // CONSTANTS
 
@@ -79,11 +79,13 @@ function buildValidationMap(pathsExamples) {
  * The passed spec won't be modified. If a modification happens, a modified copy will be returned.
  * @param {Object}  openapiSpec     The OpenAPI-spec as JSON-schema
  * @param {boolean} [noAdditionalProperties=false]  Don't allow properties that are not defined in the schema
+ * @param {boolean} [allPropertiesRequired=false]   Make all properties required
  * @return {Object} The prepared OpenAPI-spec
  */
-function prepare(openapiSpec, { noAdditionalProperties } = {}) {
+function prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired } = {}) {
     const openapiSpecCopy = cloneDeep(openapiSpec);
     noAdditionalProperties && setNoAdditionalProperties(openapiSpecCopy, getJsonPathsToExamples());
+    allPropertiesRequired && setAllPropertiesRequired(openapiSpecCopy, getJsonPathsToExamples());
     return openapiSpecCopy;
 }
 

@@ -14,8 +14,30 @@ const JSON_SCHEMA_COMBINERS = [
 ];
 
 module.exports = {
-    setNoAdditionalProperties
+    setNoAdditionalProperties,
+    setAllPropertiesRequired,
+    applyCallbackToAllObjectModels
 };
+
+/**
+ * Sets the flag to indicate that it doesn't allow properties that are not described in the schema
+ * @param {Object}                  openApiSpec         The to-be-modified schema
+ * @param {Array.<String>}          [examplePaths=[]]   The paths to the examples, which's content must not be modified
+ */
+function setNoAdditionalProperties(openApiSpec, examplePaths = []) {
+    applyCallbackToAllObjectModels(openApiSpec, examplePaths,
+        _matchCallbackObjectTypeForNoAdditionalProperties);
+}
+
+/**
+ * Sets all properties of each object to required
+ * @param {Object}                  openApiSpec         The to-be-modified schema
+ * @param {Array.<String>}          [examplePaths=[]]   The paths to the examples, which's content must not be modified
+ */
+function setAllPropertiesRequired(openApiSpec, examplePaths = []) {
+    applyCallbackToAllObjectModels(openApiSpec, examplePaths,
+        _matchCallbackObjectTypeForAllPropertiesRequired);
+}
 
 /**
  * @typedef {{
@@ -36,16 +58,12 @@ module.exports = {
  */
 
 /**
- * Sets the flag to indicate that it doesn't allow properties that are not described in the schema
+ * Apply the input rule to all models of type object in the input openApiSpec
  * @param {Object}                  openApiSpec         The to-be-modified schema
  * @param {Array.<String>}          [examplePaths=[]]   The paths to the examples, which's content must not be modified
- * @param {JsonPathMatchCallback}   [createCallback=_createCallbackObjectTypeForNoAdditionalProperties] Function that
- *                                                      creates a callback to be called on a match
- * @private
+ * @param {JsonPathMatchCallback}   [matchCallback]     Callback to be called on each match
  */
-function setNoAdditionalProperties(openApiSpec, examplePaths = [],
-    createCallback = _createCallbackObjectTypeForNoAdditionalProperties
-) {
+function applyCallbackToAllObjectModels(openApiSpec, examplePaths = [], matchCallback) {
     // Find all matches
     const paths = new Set();
     JSON_PATHS__OBJECTS.forEach(jsPath => {
@@ -64,7 +82,7 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
     _excludeExamples(openApiSpec, paths, examplePaths);
     // Set flag
     for (const jsPath of paths) {
-        _find(openApiSpec, jsPath, ResultType.value, createCallback(jsPath));
+        _find(openApiSpec, jsPath, ResultType.value, matchCallback(jsPath));
     }
 }
 
@@ -73,7 +91,7 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = [],
  * @type JsonPathMatchCallback
  * @private
  */
-function _createCallbackObjectTypeForNoAdditionalProperties(path) {
+function _matchCallbackObjectTypeForNoAdditionalProperties(path) {
     return (value) => {
         const asString = JSON.stringify(value);
         // any schema's that use JSON schema combiners should also be excluded
@@ -81,6 +99,24 @@ function _createCallbackObjectTypeForNoAdditionalProperties(path) {
             value.additionalProperties = false;
         } else {
             console.warn('"additionalProperties" flag not set '
+                + `for ${path} because it contains JSON-schema combiner keywords.`);
+        }
+    };
+}
+
+/**
+ * Callback, to set all the properties required to the object-schemas
+ * @type JsonPathMatchCallback
+ * @private
+ */
+function _matchCallbackObjectTypeForAllPropertiesRequired(path) {
+    return (value) => {
+        const asString = JSON.stringify(value);
+        // any schema's that use JSON schema combiners should also be excluded
+        if (!JSON_SCHEMA_COMBINERS.some((combiner) => asString.includes(`"${combiner}"`))) {
+            value.required = Object.keys(value.properties);
+        } else {
+            console.warn('all fields to required not applied '
                 + `for ${path} because it contains JSON-schema combiner keywords.`);
         }
     };
