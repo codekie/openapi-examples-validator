@@ -14,7 +14,10 @@ const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     FILE_PATH__EXTERNAL_EXAMPLES_GLOB_INVALID2 = path.join(FILE_PATH__DATA, 'map-external-examples-glob-invalid2.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP = path.join(FILE_PATH__DATA, 'map-external-examples.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP_RELATIVE = path.join(FILE_PATH__DATA, 'map-external-examples-relative.json'),
-    FILE_PATH__EXTERNAL_EXAMPLES_MAP_WILDCARDS = path.join(FILE_PATH__DATA, 'map-external-examples-wildcards.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WILDCARDS = path.join(FILE_PATH__DATA,
+        'map-external-examples-with-wildcards.json'),
+    FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITHOUT_WILDCARDS = path.join(FILE_PATH__DATA,
+        'map-external-examples-without-wildcards.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WRONG_SCHEMA_PATH = path.join(FILE_PATH__DATA,
         'map-external-examples-map-with-wrong-schema-path.json'),
     FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_MISSING_EXAMPLE = path.join(FILE_PATH__DATA,
@@ -189,7 +192,7 @@ describe('Main-module, for v2 should', () => {
         });
         it('should be able to expand examples wildcards', async() => {
             const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
-                FILE_PATH__EXTERNAL_EXAMPLES_MAP_WILDCARDS);
+                FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WILDCARDS);
             result.valid.should.equal(false);
             result.statistics.should.deep.equal({
                 examplesTotal: 7,
@@ -205,7 +208,7 @@ describe('Main-module, for v2 should', () => {
                 schemaPath: '#/properties/versions/items/required',
                 exampleFilePath: path.normalize('test/data/v2/external-examples-invalid-missing-link.json'),
                 mapFilePath: path.normalize(
-                    path.join(__dirname, '../../../../test/data/v2/map-external-examples-wildcards.json')),
+                    path.join(__dirname, '../../../../test/data/v2/map-external-examples-with-wildcards.json')),
                 params: {
                     missingProperty: 'links'
                 }
@@ -217,11 +220,21 @@ describe('Main-module, for v2 should', () => {
                 schemaPath: '#/properties/versions/items/properties/id/type',
                 exampleFilePath: path.normalize('test/data/v2/external-examples-invalid-type.json'),
                 mapFilePath: path.normalize(
-                    path.join(__dirname, '../../../../test/data/v2/map-external-examples-wildcards.json')),
+                    path.join(__dirname, '../../../../test/data/v2/map-external-examples-with-wildcards.json')),
                 params: {
                     type: 'string'
                 }
             }]);
+        });
+        it('map of examples with wildcards should be equal to without wildcards', async() => {
+            const resultWithWildcards = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WILDCARDS);
+            const resultWithoutWildcards = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WILDCARDS);
+            resultWithWildcards.valid.should.equal(resultWithoutWildcards.valid);
+            resultWithWildcards.statistics.should.deep.equal(resultWithoutWildcards.statistics);
+            removeMapFilePath(resultWithWildcards.errors).should.deep.equal(
+                removeMapFilePath(resultWithoutWildcards.errors));
         });
     });
     describe('should throw errors', () => {
@@ -386,3 +399,10 @@ describe('Main-module, for v2 should', () => {
         });
     });
 });
+
+function removeMapFilePath(errors) {
+    return errors.map(error => {
+        delete error.mapFilePath;
+        return error;
+    });
+}
