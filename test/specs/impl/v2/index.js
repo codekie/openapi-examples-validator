@@ -230,7 +230,7 @@ describe('Main-module, for v2 should', () => {
             const resultWithWildcards = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
                 FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WILDCARDS);
             const resultWithoutWildcards = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
-                FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WILDCARDS);
+                FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITHOUT_WILDCARDS);
             resultWithWildcards.valid.should.equal(resultWithoutWildcards.valid);
             resultWithWildcards.statistics.should.deep.equal(resultWithoutWildcards.statistics);
             removeMapFilePath(resultWithWildcards.errors).should.deep.equal(
