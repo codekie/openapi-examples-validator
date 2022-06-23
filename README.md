@@ -67,9 +67,11 @@ To validate multiple external examples, pass a mapping file with a similar struc
     "test/data/external-examples-valid-example2.json",
     "test/data/external-examples-invalid-type.json"
   ],
-  "$.paths./.get.responses.300.schema": "test/data/external-examples-invalid-missing-link.json"
+  "$.paths./.get.responses.300.schema": "test/data/external-examples-invalid-missing-link.json",
+  "$.paths./.post.parameters[?(@.in==="body")].schema": "test/data/v2/post-request/*.json"
 }
 ```
+It is possible to use wildcards in the command line to select multiple mapping files, and it is possible to use wildcards inside the mapping file to select multiple examples.
 
 Errors will be written to `stderr`.
 
