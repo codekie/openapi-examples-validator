@@ -141,6 +141,21 @@ describe('CLI-module', function() {
                     stderr.should.include('extra_property');
                 }
             });
+            it('should show error even if inside an object with a property called \'allOf\'', async function() {
+                const pathSchema = getPathOfTestData(
+                    'v3/additional-properties/schema-with-schema-combiner-as-property-invalid.yaml', true);
+                try {
+                    await exec(`${CMD__RUN} -n ${pathSchema}`);
+                    should.fail('Expected to throw an error');
+                } catch ({ stdout, stderr }) {
+                    stdout.should.include('Errors found.');
+                    stderr.should.equal(JSON.stringify(
+                        require('../data/v3/additional-properties/errors-schema-with-schema-combiner-as-property.json'),
+                        null,
+                        4
+                    ));
+                }
+            });
             it('should show no errors with `allOf`-combiner in schema', async function() {
                 const pathSchema
                     = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner-valid.yaml', true);
