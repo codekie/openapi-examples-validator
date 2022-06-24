@@ -328,8 +328,8 @@ describe('Main-module, for v3 should', function() {
                 .statistics.schemasWithExamples.should.equal(2);
         });
     });
-    describe('with additional properties', function() {
-        describe('with flag not set', function() {
+    describe('with noAdditionalProperties option', function() {
+        describe('with option not set', function() {
             it('`validateFile` should not show any error', async function() {
                 (await validateFile(FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES))
                     .valid.should.equal(true);
@@ -360,7 +360,7 @@ describe('Main-module, for v3 should', function() {
                 )).valid.should.equal(true);
             });
         });
-        describe('with flag set', function() {
+        describe('with option set', function() {
             it('`validateFile` should throw an error', async function() {
                 (await validateFile(
                     FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES,

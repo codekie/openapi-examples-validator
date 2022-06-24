@@ -141,7 +141,7 @@ describe('CLI-module', function() {
                     stderr.should.include('extra_property');
                 }
             });
-            it('should show error even if inside an object with a property called \'allOf\'', async function() {
+            it('should show error even if inside an object with a property called "allOf"', async function() {
                 const pathSchema = getPathOfTestData(
                     'v3/additional-properties/schema-with-schema-combiner-as-property-invalid.yaml', true);
                 try {
