@@ -5,7 +5,8 @@
 const { JSONPath: jsonPath } = require('jsonpath-plus'),
     cloneDeep = require('lodash.clonedeep'),
     { ApplicationError, ErrorType } = require('../../application-error'),
-    { setNoAdditionalProperties, setAllPropertiesRequired } = require('../service');
+    { setAllPropertiesRequired } = require('../service/all-properties-required'),
+    { setNoAdditionalProperties } = require('../service/no-additional-properties');
 
 // CONSTANTS
 

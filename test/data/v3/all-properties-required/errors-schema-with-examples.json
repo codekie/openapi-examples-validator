@@ -1,0 +1,46 @@
+[
+    {
+        "type": "Validation",
+        "message": "should have required property 'age'",
+        "keyword": "required",
+        "dataPath": "",
+        "schemaPath": "#/oneOf/0/allOf/1/required",
+        "params": {
+            "missingProperty": "age"
+        },
+        "examplePath": "/paths/~1pets~1{petId}/get/responses/200/content/application~1json/examples/Cat example/value"
+    },
+    {
+        "type": "Validation",
+        "message": "should have required property 'bark'",
+        "keyword": "required",
+        "dataPath": "",
+        "schemaPath": "#/oneOf/1/allOf/1/required",
+        "params": {
+            "missingProperty": "bark"
+        },
+        "examplePath": "/paths/~1pets~1{petId}/get/responses/200/content/application~1json/examples/Cat example/value"
+    },
+    {
+        "type": "Validation",
+        "message": "should have required property 'breed'",
+        "keyword": "required",
+        "dataPath": "",
+        "schemaPath": "#/oneOf/1/allOf/1/required",
+        "params": {
+            "missingProperty": "breed"
+        },
+        "examplePath": "/paths/~1pets~1{petId}/get/responses/200/content/application~1json/examples/Cat example/value"
+    },
+    {
+        "type": "Validation",
+        "message": "should match exactly one schema in oneOf",
+        "keyword": "oneOf",
+        "dataPath": "",
+        "schemaPath": "#/oneOf",
+        "params": {
+            "passingSchemas": null
+        },
+        "examplePath": "/paths/~1pets~1{petId}/get/responses/200/content/application~1json/examples/Cat example/value"
+    }
+]

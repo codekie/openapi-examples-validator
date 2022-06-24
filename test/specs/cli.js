@@ -125,11 +125,11 @@ describe('CLI-module', function() {
                     stderr.should.equal(JSON.stringify(
                         require('../data/v3/additional-properties/errors-schema-with-examples.json'),
                         null,
-                        '    '
+                        4
                     ));
                 }
             });
-            it('should show no errors due to the `allOf`-combiner in schema', async function() {
+            it('should show error even if `allOf`-combiner in another example', async function() {
                 const pathSchema
                     = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner-invalid.yaml', true);
                 try {
@@ -154,6 +154,29 @@ describe('CLI-module', function() {
                 stdout.should.include('No errors found.');
                 stderr.should.equal('');
             });
+        });
+    });
+    describe('with all properties required', function() {
+        it('should show no error when properties not required are allowed', async function() {
+            const pathSchema
+                = getPathOfTestData('v3/all-properties-required/schema-with-examples.yaml', true);
+            const { stdout, stderr } = await exec(`${CMD__RUN} ${pathSchema}`);
+            stdout.should.include('No errors found.');
+            stderr.should.equal('');
+        });
+        it('should show error with providing the flag', async function() {
+            const pathSchema = getPathOfTestData('v3/all-properties-required/schema-with-examples.yaml', true);
+            try {
+                await exec(`${CMD__RUN} -r ${pathSchema}`);
+                should.fail('Expected to throw an error');
+            } catch ({ stdout, stderr }) {
+                stdout.should.equal(require('../data/output/api-with-examples-and-all-properties-required').value);
+                stderr.should.equal(JSON.stringify(
+                    require('../data/v3/all-properties-required/errors-schema-with-examples.json'),
+                    null,
+                    4
+                ));
+            }
         });
     });
     describe('ignore datatype formats', function() {
@@ -196,7 +219,7 @@ describe('CLI-module', function() {
                     this.output += chunk;
                 }
             };
-            // Capture sterr-stream
+            // Capture stderr-stream
             this.error = '';
             this.origStderrWrite = process.stderr.write.bind(process.stderr);
             process.stderr.write = (chunk) => {

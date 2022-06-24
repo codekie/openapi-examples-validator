@@ -3,8 +3,9 @@
  */
 
 const { JSONPath: jsonPath } = require('jsonpath-plus'),
-    { setNoAdditionalProperties, setAllPropertiesRequired } = require('../service'),
-    cloneDeep = require('lodash.clonedeep');
+    cloneDeep = require('lodash.clonedeep'),
+    { setAllPropertiesRequired } = require('../service/all-properties-required'),
+    { setNoAdditionalProperties } = require('../service/no-additional-properties');
 
 // CONSTANTS
 

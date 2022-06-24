@@ -1,4 +1,4 @@
-const { applyCallbackToAllObjectModels } = require('../../../../src/impl/service/index'),
+const { applyCallbackToAllObjectModels } = require('../../../../src/impl/service/common'),
     { getJsonPathsToExamples } = require('../../../../src/impl/v3/index');
 
 const SCHEMA = _getSchema(),
