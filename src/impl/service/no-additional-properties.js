@@ -37,7 +37,21 @@ function setNoAdditionalProperties(openApiSpec, examplePaths = []) {
                         + `for ${path} because it contains JSON-schema combiner keyword.`);
                     return;
                 }
+                // Exclude schema that already contains additionalProperties
+                if (schema.hasOwnProperty('additionalProperties')) {
+                    return;
+                }
+                // Exclude schema that are not objects
+                if (!isAnObjectSchema(schema)) {
+                    return;
+                }
                 schema.additionalProperties = false;
             };
         });
+}
+
+function isAnObjectSchema(schema) {
+    return schema.hasOwnProperty('properties')
+        || schema.hasOwnProperty('additionalProperties')
+        || (schema.hasOwnProperty('type') && schema.type === 'object');
 }

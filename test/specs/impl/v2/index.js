@@ -2,6 +2,7 @@ const path = require('path'),
     { loadTestData, normalizeValidationResultPaths } = require('../../../util/setup-tests'),
     { validateExample, 'default': validateExamples, validateExamplesByMap } = require('../../../../src/index'),
     { ApplicationError, ErrorType } = require('../../../../src/application-error');
+const { prepare } = require('../../../../src/impl/v2');
 
 const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID = '$.hmm.what.am.i.gonna.get.for.lunch',
@@ -346,6 +347,22 @@ describe('Main-module, for v2 should', () => {
                 examplesTotal: 3,
                 matchingFilePathsMapping: 1
             });
+        });
+    });
+    describe('prepare', () => {
+        it('should set noAdditionalProperties in the openapiSpec, if flag provided', async() => {
+            const preparedOpenapi = prepare(
+                loadTestData('v2/valid-without-examples'),
+                { noAdditionalProperties: true }
+            );
+            preparedOpenapi.should.deep.equal(loadTestData('v2/valid-with-no-additional-properties'));
+        });
+        it('should set allPropertiesRequired in the openapiSpec, if flag provided', async() => {
+            const preparedOpenapi = prepare(
+                loadTestData('v2/valid-without-examples'),
+                { allPropertiesRequired: true }
+            );
+            preparedOpenapi.should.deep.equal(loadTestData('v2/valid-with-all-properties-required'));
         });
     });
 });
