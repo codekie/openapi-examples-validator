@@ -1,4 +1,4 @@
-const { setNoAdditionalProperties } = require('../../../../src/impl/service/disallow-additional-properties'),
+const { applyCallbackToAllObjectModels } = require('../../../../src/impl/service/common'),
     { getJsonPathsToExamples } = require('../../../../src/impl/v3/index');
 
 const SCHEMA = _getSchema(),
@@ -7,7 +7,7 @@ const SCHEMA = _getSchema(),
 describe('The schema extender', function() {
     it('should find the right matches', function() {
         const paths = [];
-        setNoAdditionalProperties(SCHEMA, getJsonPathsToExamples(), () => (value, resultType, data) => {
+        applyCallbackToAllObjectModels(SCHEMA, getJsonPathsToExamples(), () => (value, resultType, data) => {
             paths.push(data.path);
         });
         paths.sort().should.deep.equal(JSON_PATHS__OBJECTS.sort());

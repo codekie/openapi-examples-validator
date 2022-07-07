@@ -6,15 +6,8 @@ const JSON_PATHS__OBJECTS = [
     '$..schema..[?(@.properties && (@property === "schema" || @property === "items" || @.type === "object"))]'
 ];
 
-const JSON_SCHEMA_COMBINERS = [
-    'oneOf',
-    'allOf',
-    'anyOf',
-    'not'
-];
-
 module.exports = {
-    setNoAdditionalProperties
+    applyCallbackToAllObjectModels
 };
 
 /**
@@ -36,54 +29,34 @@ module.exports = {
  */
 
 /**
- * Sets the flag to indicate that it doesn't allow properties that are not described in the schema
- * @param {Object}                  openApiSpec         The to-be-modified schema
- * @param {Array.<String>}          [examplePaths=[]]   The paths to the examples, which's content must not be modified
- * @param {JsonPathMatchCallback}   [createCallback=_createCallbackObjectTypeForNoAdditionalProperties] Function that
- *                                                      creates a callback to be called on a match
- * @private
+ * Function to build a callback that is applied to a JSONPath-match.
+ * @callback JsonPathMatchCallbackBuilder
+ * @param {string}                 jsPath  Path to the property that matched
+ * @return {JsonPathMatchCallback}         Callback that is applied to a JSONPath-match
  */
-function setNoAdditionalProperties(openApiSpec, examplePaths = [],
-    createCallback = _createCallbackObjectTypeForNoAdditionalProperties
-) {
+
+/**
+ * Apply the input rule to all models of type object in the input openApiSpec
+ * @param {Object}                 openApiSpec           The to-be-modified schema
+ * @param {Array.<String>}         [examplePaths]        The paths to the examples, which's content must not be modified
+ * @param {JsonPathMatchCallbackBuilder}  [matchCallbackBuilder]  Function to build a callback
+ *                                                                that will be called on each match
+ */
+function applyCallbackToAllObjectModels(openApiSpec, examplePaths, matchCallbackBuilder) {
     // Find all matches
     const paths = new Set();
     JSON_PATHS__OBJECTS.forEach(jsPath => {
         _find(openApiSpec, jsPath)
             .forEach(match => {
-                // remove all references to paths including any of the JSON schema combiners
-                if (!JSON_SCHEMA_COMBINERS.some((combiner) => match.includes(`['${combiner}']`))) {
-                    paths.add(match);
-                } else {
-                    console.warn('"additionalProperties" flag not set '
-                        + `for ${match} because it contains JSON-schema combiner keywords.`);
-                }
+                paths.add(match);
             });
     });
     // Exclude examples
     _excludeExamples(openApiSpec, paths, examplePaths);
     // Set flag
     for (const jsPath of paths) {
-        _find(openApiSpec, jsPath, ResultType.value, createCallback(jsPath));
+        _find(openApiSpec, jsPath, ResultType.value, matchCallbackBuilder(jsPath));
     }
-}
-
-/**
- * Callback, to set the `additionalProperties` to `false` the object-schemas
- * @type JsonPathMatchCallback
- * @private
- */
-function _createCallbackObjectTypeForNoAdditionalProperties(path) {
-    return (value) => {
-        const asString = JSON.stringify(value);
-        // any schema's that use JSON schema combiners should also be excluded
-        if (!JSON_SCHEMA_COMBINERS.some((combiner) => asString.includes(`"${combiner}"`))) {
-            value.additionalProperties = false;
-        } else {
-            console.warn('"additionalProperties" flag not set '
-                + `for ${path} because it contains JSON-schema combiner keywords.`);
-        }
-    };
 }
 
 /**

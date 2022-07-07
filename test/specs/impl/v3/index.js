@@ -17,6 +17,7 @@ const path = require('path'),
         = require('../../../data/v3/draft-04-properties/errors-exclusive-minimum.json'),
     errorsEscapedErrorNames
         = require('../../../data/v3/errors/simple-api-with-example-names-to-be-escaped.json');
+const { prepare } = require('../../../../src/impl/v3');
 
 const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/content/application~1json',
     REL_PATH__EXAMPLE__SIMPLE = 'v3/simple-api-with-example',
@@ -328,8 +329,8 @@ describe('Main-module, for v3 should', function() {
                 .statistics.schemasWithExamples.should.equal(2);
         });
     });
-    describe('with additional properties', function() {
-        describe('with flag not set', function() {
+    describe('with noAdditionalProperties option', function() {
+        describe('with option not set', function() {
             it('`validateFile` should not show any error', async function() {
                 (await validateFile(FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES))
                     .valid.should.equal(true);
@@ -360,7 +361,7 @@ describe('Main-module, for v3 should', function() {
                 )).valid.should.equal(true);
             });
         });
-        describe('with flag set', function() {
+        describe('with option set', function() {
             it('`validateFile` should throw an error', async function() {
                 (await validateFile(
                     FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES,
@@ -416,6 +417,24 @@ describe('Main-module, for v3 should', function() {
         it('`validateFile` should throw an error', async function() {
             (await validateFile(FILE_PATH__EXAMPLE_NAMES_TO_BE_ESCAPED))
                 .errors.should.deep.equal(errorsEscapedErrorNames);
+        });
+    });
+    describe('prepare', () => {
+        it('should set noAdditionalProperties in the openapiSpec, if flag provided', async() => {
+            const preparedOpenapi = prepare(
+                loadTestData('v3/simple-api-with-example'),
+                { noAdditionalProperties: true }
+            );
+            preparedOpenapi.should.deep.equal(
+                loadTestData('v3/additional-properties/simple-api-with-no-additional-properties'));
+        });
+        it('should set allPropertiesRequired in the openapiSpec, if flag provided', async() => {
+            const preparedOpenapi = prepare(
+                loadTestData('v3/simple-api-with-example'),
+                { allPropertiesRequired: true }
+            );
+            preparedOpenapi.should.deep.equal(
+                loadTestData('v3/all-properties-required/simple-api-with-all-properties-required'));
         });
     });
 });

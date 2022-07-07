@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  license:
+    name: MIT
+servers:
+  - url: 'http://petstore.swagger.io/v1'
+paths:
+  '/pets/{petId}':
+    get:
+      summary: Info for a specific pet
+      operationId: showPetById
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              example:
+                id: 0
+                name: Marco
+                allOf:
+                  anyOf:
+                    oneOf:
+                      not:
+                        color: black
+                        anotherProperty: 'This property will be marked as error in case of --no-additional-properties'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Pet:
+      required:
+        - id
+        - name
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        # This intentionally is a property called `allOf`
+        allOf:
+          type: object
+          properties:
+            # This intentionally is a property called `anyOf`
+            anyOf:
+              type: object
+              properties:
+                # This intentionally is a property called `oneOf`
+                oneOf:
+                  type: object
+                  properties:
+                    # This intentionally is a property called `not`
+                    not:
+                      # This should be extended with an `additionalProperties: false`
+                      type: object
+                      properties:
+                        color:
+                          type: string
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: number
+        message:
+          type: string

@@ -93,16 +93,17 @@ module.exports = {
  * Validates OpenAPI-spec with embedded examples.
  * @param {Object}  openapiSpec OpenAPI-spec
  * @param {boolean} [noAdditionalProperties=false]  Don't allow properties that are not defined in the schema
+ * @param {boolean} [allPropertiesRequired=false]   Make all properties required
  * @param {Array.<string>} [ignoreFormats]          List of datatype formats that shall be ignored (to prevent
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
  *                                                  will be expanded to a new array containing all entries.
  * @returns {ValidationResponse}
  */
-async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFormats } = {}) {
+async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFormats, allPropertiesRequired } = {}) {
     const impl = Determiner.getImplementation(openapiSpec);
     openapiSpec = await refParser.dereference(openapiSpec);
-    openapiSpec = impl.prepare(openapiSpec, { noAdditionalProperties });
+    openapiSpec = impl.prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired });
     let pathsExamples = impl.getJsonPathsToExamples()
         .reduce((res, pathToExamples) => {
             return res.concat(_extractExamplePaths(openapiSpec, pathToExamples));
@@ -115,20 +116,21 @@ async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFor
  * Validates OpenAPI-spec with embedded examples.
  * @param {string}  filePath                        File-path to the OpenAPI-spec
  * @param {boolean} [noAdditionalProperties=false]  Don't allow properties that are not defined in the schema
+ * @param {boolean} [allPropertiesRequired=false]   Make all properties required
  * @param {Array.<string>} [ignoreFormats]          List of datatype formats that shall be ignored (to prevent
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
  *                                                  will be expanded to a new array containing all entries.
  * @returns {ValidationResponse}
  */
-async function validateFile(filePath, { noAdditionalProperties, ignoreFormats } = {}) {
+async function validateFile(filePath, { noAdditionalProperties, ignoreFormats, allPropertiesRequired } = {}) {
     let openapiSpec = null;
     try {
         openapiSpec = await _parseSpec(filePath);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
-    return validateExamples(openapiSpec, { noAdditionalProperties, ignoreFormats });
+    return validateExamples(openapiSpec, { noAdditionalProperties, ignoreFormats, allPropertiesRequired });
 }
 
 /**
@@ -140,6 +142,7 @@ async function validateFile(filePath, { noAdditionalProperties, ignoreFormats } 
  * @param {boolean} [cwdToMappingFile=false]    Change working directory for resolving the example-paths (relative to
  *                                              the mapping-file)
  * @param {boolean} [noAdditionalProperties=false] Don't allow properties that are not defined in the schema
+ * @param {boolean} [allPropertiesRequired=false]  Make all properties required
  * @param {Array.<string>} [ignoreFormats]      List of datatype formats that shall be ignored (to prevent
  *                                              "unsupported format" errors). If an Array with only one string is
  *                                              provided where the formats are separated with `\n`, the entries
@@ -147,7 +150,7 @@ async function validateFile(filePath, { noAdditionalProperties, ignoreFormats } 
  * @returns {ValidationResponse}
  */
 async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
-    { cwdToMappingFile, noAdditionalProperties, ignoreFormats } = {}
+    { cwdToMappingFile, noAdditionalProperties, ignoreFormats, allPropertiesRequired } = {}
 ) {
     let matchingFilePathsMapping = 0;
     const filePathsMaps = glob.sync(
@@ -165,7 +168,7 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
             mapExternalExamples = JSON.parse(fs.readFileSync(filePathMapExternalExamples, 'utf-8'));
             openapiSpec = await _parseSpec(filePathSchema);
             openapiSpec = Determiner.getImplementation(openapiSpec)
-                .prepare(openapiSpec, { noAdditionalProperties });
+                .prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired });
         } catch (err) {
             responses.push(createValidationResponse({ errors: [ApplicationError.create(err)] }));
             continue;
@@ -208,6 +211,7 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
  * @param {String}  pathSchema                      JSON-path to the schema
  * @param {String}  filePathExample                 File-path to the external example-file
  * @param {boolean} [noAdditionalProperties=false]  Don't allow properties that are not described in the schema
+ * @param {boolean} [allPropertiesRequired=false]   Make all properties required
  * @param {Array.<string>} [ignoreFormats]          List of datatype formats that shall be ignored (to prevent
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
@@ -216,7 +220,8 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
  */
 async function validateExample(filePathSchema, pathSchema, filePathExample, {
     noAdditionalProperties,
-    ignoreFormats
+    ignoreFormats,
+    allPropertiesRequired
 } = {}) {
     let example = null,
         schema = null,
@@ -225,7 +230,7 @@ async function validateExample(filePathSchema, pathSchema, filePathExample, {
         example = JSON.parse(fs.readFileSync(filePathExample, 'utf-8'));
         openapiSpec = await _parseSpec(filePathSchema);
         openapiSpec = Determiner.getImplementation(openapiSpec)
-            .prepare(openapiSpec, { noAdditionalProperties });
+            .prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired });
         schema = _extractSchema(pathSchema, openapiSpec);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
@@ -585,7 +590,7 @@ function _initValidatorFactory(specSchema, { ignoreFormats }) {
  * Extracts the schema in the OpenAPI-spec at the given JSON-path.
  * @param   {string}    pathSchema                          JSON-path to the schema
  * @param   {Object}    openapiSpec                         OpenAPI-spec
- * @param   {boolean}   [suppressErrorIfNotFound=false]     Don't throw `ErrorJsonPathNotFound` if the repsonse does not
+ * @param   {boolean}   [suppressErrorIfNotFound=false]     Don't throw `ErrorJsonPathNotFound` if the response does not
  *                                                          exist at the given JSON-path
  * @returns {Object|Array.<Object>|undefined} Matching schema(s)
  * @throws  {ErrorJsonPathNotFound} Thrown, when there is no schema at the given path and

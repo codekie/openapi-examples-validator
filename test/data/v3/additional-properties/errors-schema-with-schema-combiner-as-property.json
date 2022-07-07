@@ -1,0 +1,13 @@
+[
+    {
+        "type": "Validation",
+        "message": "should NOT have additional properties",
+        "keyword": "additionalProperties",
+        "dataPath": ".allOf.anyOf.oneOf.not",
+        "schemaPath": "#/properties/allOf/properties/anyOf/properties/oneOf/properties/not/additionalProperties",
+        "params": {
+            "additionalProperty": "anotherProperty"
+        },
+        "examplePath": "/paths/~1pets~1{petId}/get/responses/200/content/application~1json/example"
+    }
+]
