@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.7.0](https://github.com/codekie/openapi-examples-validator/compare/v4.6.0...v4.7.0) (2022-07-07)
+
+
+### Features
+
+* add "all properties required"-option [#169](https://github.com/codekie/openapi-examples-validator/issues/169) ([#173](https://github.com/codekie/openapi-examples-validator/issues/173)) ([0ffb49f](https://github.com/codekie/openapi-examples-validator/commit/0ffb49fc5540a4d402a4f42b887ca7be432345e0))
+* add support for wildcards in the map file [#170](https://github.com/codekie/openapi-examples-validator/issues/170) ([#172](https://github.com/codekie/openapi-examples-validator/issues/172)) ([ac57260](https://github.com/codekie/openapi-examples-validator/commit/ac572608861ee6d4f7c48422f9deaed44ffcae3a))
+
+
+### Bug Fixes
+
+* fix tests for Windows platform ([#171](https://github.com/codekie/openapi-examples-validator/issues/171)) ([918c788](https://github.com/codekie/openapi-examples-validator/commit/918c7881370502be908fcfa86855f2b4a7d0be7d))
+* upgrade dependencies ([#175](https://github.com/codekie/openapi-examples-validator/issues/175)) ([a23a35b](https://github.com/codekie/openapi-examples-validator/commit/a23a35b8b3ef10b627f4968cf469f2192ec88365))
+
 ## [4.6.0](https://github.com/codekie/openapi-examples-validator/compare/v4.5.0...v4.6.0) (2021-12-03)
 
 
