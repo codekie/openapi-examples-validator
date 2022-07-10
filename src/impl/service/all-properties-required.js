@@ -12,9 +12,9 @@ module.exports = {
 function setAllPropertiesRequired(openApiSpec, examplePaths = []) {
     applyCallbackToAllObjectModels(openApiSpec, examplePaths,
         () => {
-            return (value) => {
-                if (value.hasOwnProperty('properties')) {
-                    value.required = Object.keys(value.properties);
+            return (schema) => {
+                if (schema.hasOwnProperty('properties')) {
+                    schema.required = Object.keys(schema.properties);
                 }
             };
         });

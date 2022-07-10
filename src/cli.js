@@ -30,6 +30,8 @@ program
         + ' paths. Use this option, if your mapping-files use relative paths for the examples')
     .option('-n, --no-additional-properties', 'don\'t allow properties that are not described in the schema')
     .option('-r, --all-properties-required', 'make all the properties in the schema required')
+    .option('-a, --merge-allof-definitions', 'enable the --no-additional-properties to support allOf-definitions'
+        + ' by merging them before validating the examples')
     .option('-o, --ignore-formats <ignored-formats...>', 'Datatype formats to ignore '
         + '(to prevent "unknown format" errors.)')
     .action(processAction);
@@ -44,7 +46,12 @@ module.exports = program.parseAsync(process.argv);
 // IMPLEMENTATION DETAILS
 
 async function processAction(filepath, options) {
-    const { schemaJsonpath, exampleFilepath, mappingFilepath, cwdToMappingFile, allPropertiesRequired } = options,
+    const { schemaJsonpath,
+            exampleFilepath,
+            mappingFilepath,
+            cwdToMappingFile,
+            allPropertiesRequired,
+            mergeAllofDefinitions } = options,
         noAdditionalProperties = !options.additionalProperties,
         ignoreFormats = _prepareIgnoreFormats(options.ignoreFormats);
     let result;
@@ -54,21 +61,24 @@ async function processAction(filepath, options) {
             cwdToMappingFile,
             noAdditionalProperties,
             ignoreFormats,
-            allPropertiesRequired
+            allPropertiesRequired,
+            mergeAllofDefinitions
         });
     } else if (schemaJsonpath && exampleFilepath) {
         console.log('Validating single external example');
         result = await validateExample(filepath, schemaJsonpath, exampleFilepath, {
             noAdditionalProperties,
             ignoreFormats,
-            allPropertiesRequired
+            allPropertiesRequired,
+            mergeAllofDefinitions
         });
     } else {
         console.log('Validating examples');
         result = await validateFile(filepath, {
             noAdditionalProperties,
             ignoreFormats,
-            allPropertiesRequired
+            allPropertiesRequired,
+            mergeAllofDefinitions
         });
     }
     _handleResult(result);
@@ -88,21 +98,19 @@ function _handleResult(result) {
 }
 
 function _printStatistics(statistics) {
-    const {
-            schemasWithExamples,
+    const { schemasWithExamples,
             examplesWithoutSchema,
             examplesTotal,
-            matchingFilePathsMapping
-        } = statistics,
+            matchingFilePathsMapping } = statistics,
         strStatistics = [
-            `Schemas with examples found: ${ schemasWithExamples }`,
-            `Examples without schema found: ${ examplesWithoutSchema }`,
-            `Total examples found: ${ examplesTotal }`
+            `Schemas with examples found: ${schemasWithExamples}`,
+            `Examples without schema found: ${examplesWithoutSchema}`,
+            `Total examples found: ${examplesTotal}`
         ];
     if (matchingFilePathsMapping != null) {
-        strStatistics.push(`Matching mapping files found: ${ matchingFilePathsMapping }`);
+        strStatistics.push(`Matching mapping files found: ${matchingFilePathsMapping}`);
     }
-    process.stdout.write(`${ strStatistics.join('\n') }\n`);
+    process.stdout.write(`${strStatistics.join('\n')}\n`);
 }
 
 function _prepareIgnoreFormats(ignoreFormats) {

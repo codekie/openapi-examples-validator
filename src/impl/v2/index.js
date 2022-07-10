@@ -5,7 +5,8 @@
 const { JSONPath: jsonPath } = require('jsonpath-plus'),
     cloneDeep = require('lodash.clonedeep'),
     { setAllPropertiesRequired } = require('../service/all-properties-required'),
-    { setNoAdditionalProperties } = require('../service/no-additional-properties');
+    { setNoAdditionalProperties } = require('../service/no-additional-properties'),
+    { doMergeAllofDefinitions } = require('../service/merge-allof-definitions');
 
 // CONSTANTS
 
@@ -31,7 +32,7 @@ function getJsonPathsToExamples() { return [PATH__EXAMPLES]; }
 
 
 /**
- * Builds a map with the path to the repsonse-schema as key and the paths to the examples, as value. The path of the
+ * Builds a map with the path to the response-schema as key and the paths to the examples, as value. The path of the
  * schema is derived from the path to the example and doesn't necessarily mean that the schema actually exists.
  * @param {Array.<String>}  pathsExamples   Paths to the examples
  * @returns {Object.<String, String>} Map with schema-path as key and example-paths as value
@@ -54,8 +55,9 @@ function buildValidationMap(pathsExamples) {
  * @param {boolean} [allPropertiesRequired=false]   Make all properties required
  * @return {Object} The prepared OpenAPI-spec
  */
-function prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired } = {}) {
+function prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired, mergeAllofDefinitions } = {}) {
     const openapiSpecCopy = cloneDeep(openapiSpec);
+    mergeAllofDefinitions && doMergeAllofDefinitions(openapiSpecCopy, openapiSpec);
     noAdditionalProperties && setNoAdditionalProperties(openapiSpecCopy, getJsonPathsToExamples());
     allPropertiesRequired && setAllPropertiesRequired(openapiSpecCopy, getJsonPathsToExamples());
     return openapiSpecCopy;
