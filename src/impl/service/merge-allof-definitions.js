@@ -23,12 +23,14 @@ function doMergeAllofDefinitions(openApiSpec) {
                     schema.properties = Object.assign({}, ...schema[allOfSchemaCombiner]
                         .map(allOfSchema => allOfSchema.properties));
                     schema.required = schema[allOfSchemaCombiner].map(allOfSchema => allOfSchema.required || []).flat();
-                    if (schema[allOfSchemaCombiner].some((allOfSchema) => allOfSchema.hasOwnProperty('minProperties'))) {
+                    if (schema[allOfSchemaCombiner]
+                        .some((allOfSchema) => allOfSchema.hasOwnProperty('minProperties'))) {
                         schema.minProperties = schema[allOfSchemaCombiner]
                             .map(allOfSchema => allOfSchema.minProperties || 0)
                             .reduce((a, b) => a + b);
                     }
-                    if (schema[allOfSchemaCombiner].some((allOfSchema) => allOfSchema.hasOwnProperty('maxProperties'))) {
+                    if (schema[allOfSchemaCombiner]
+                        .some((allOfSchema) => allOfSchema.hasOwnProperty('maxProperties'))) {
                         schema.maxProperties = schema[allOfSchemaCombiner]
                             .map(allOfSchema => allOfSchema.maxProperties
                                 || (allOfSchema.properties ? Object.keys(allOfSchema.properties).length : 0))

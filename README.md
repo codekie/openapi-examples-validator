@@ -108,13 +108,21 @@ $ docker run --rm -i \
     /data/test/data/v3/simple-api-with-examples-with-refs-invalid.yml
 ```
 
+Experimental features
+---------------------
+
+The option `--merge-allof-definitions` can be used to merge definitions containing `allOf` keyword. This feature has been designed to allow the usage of `--no-additional-properties` even when there are `allOf` definitions. The merge of definitions have some limitations:
+- the path showed in the error message will be related to the schema with the `allOf` definitions merged.
+- if the keywords `minProperties` or `maxProperties` are used, the properties limits of all definitions will be summed up.
+
+
 Caveat
 ------
 
 - The formats `int32`, `float` and `double` are supported for the type `number`. The format `int64` is only available
   for the type `string`, though (due to the precision-limitations of Javascript).
 - The option `--no-additional-properties` is not compatible with [sub-schemas combiner keyword](https://json-schema.org/understanding-json-schema/reference/combining.html). A warning will be logged if one model is skipped because it contains a combiner keyword.
-  - The option `--merge-allof-definitions` can be used to mitigate this issue and allow the support only of the sub-schema combiner `allOf` (see issue [#174](https://github.com/codekie/openapi-examples-validator/issues/174) for more details). This option will also sum all the `minProperties` and `maxProperties` rules inside the sub definitions if any.
+  - The option `--merge-allof-definitions` can be used to mitigate this issue and allow the support only of the sub-schema combiner `allOf` keyword.
 
 Test
 ----
