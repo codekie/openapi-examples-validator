@@ -46,7 +46,7 @@ Options:
                                              for the examples
   -n, --no-additional-properties             don't allow properties that are not described in the schema
   -r, --all-properties-required              make all the properties in the schema required
-  -a, --merge-allof-definitions              enable the --no-additional-properties to support allOf-definitions by merging them before validating the examples
+  -a, --merge-allof-definitions              enable the --no-additional-properties to support allOf-definitions by merging them before validating the examples (experimental)
   -o, --ignore-formats <ignored-formats...>  Datatype formats to ignore (to prevent "unknown format" errors.)
   -h, --help                                 output usage information
 ````
@@ -114,7 +114,7 @@ Caveat
 - The formats `int32`, `float` and `double` are supported for the type `number`. The format `int64` is only available
   for the type `string`, though (due to the precision-limitations of Javascript).
 - The option `--no-additional-properties` is not compatible with [sub-schemas combiner keyword](https://json-schema.org/understanding-json-schema/reference/combining.html). A warning will be logged if one model is skipped because it contains a combiner keyword.
-  - The option `--merge-allof-definitions` can be used to mitigate this issue and allow the support only of the sub-schema combiner `allOf` (See issue [#174](https://github.com/codekie/openapi-examples-validator/issues/174) for more details).
+  - The option `--merge-allof-definitions` can be used to mitigate this issue and allow the support only of the sub-schema combiner `allOf` (see issue [#174](https://github.com/codekie/openapi-examples-validator/issues/174) for more details). This option will also sum all the `minProperties` and `maxProperties` rules inside the sub definitions if any.
 
 Test
 ----

@@ -31,7 +31,7 @@ program
     .option('-n, --no-additional-properties', 'don\'t allow properties that are not described in the schema')
     .option('-r, --all-properties-required', 'make all the properties in the schema required')
     .option('-a, --merge-allof-definitions', 'enable the --no-additional-properties to support allOf-definitions'
-        + ' by merging them before validating the examples')
+        + ' by merging them before validating the examples (experimental)')
     .option('-o, --ignore-formats <ignored-formats...>', 'Datatype formats to ignore '
         + '(to prevent "unknown format" errors.)')
     .action(processAction);
