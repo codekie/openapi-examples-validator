@@ -86,7 +86,7 @@ function buildValidationMap(pathsExamples) {
  */
 function prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired, mergeAllofDefinitions } = {}) {
     const openapiSpecCopy = cloneDeep(openapiSpec);
-    mergeAllofDefinitions && doMergeAllofDefinitions(openapiSpecCopy, openapiSpec);
+    mergeAllofDefinitions && doMergeAllofDefinitions(openapiSpecCopy);
     noAdditionalProperties && setNoAdditionalProperties(openapiSpecCopy, getJsonPathsToExamples());
     allPropertiesRequired && setAllPropertiesRequired(openapiSpecCopy, getJsonPathsToExamples());
     return openapiSpecCopy;

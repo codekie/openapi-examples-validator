@@ -1,6 +1,5 @@
 const path = require('path'),
     refParser = require('json-schema-ref-parser');
-const { fixSchemaPathWithAllof } = require('../impl/service/merge-allof-definitions');
 
 module.exports = {
     createValidationResponse,
@@ -15,7 +14,6 @@ module.exports = {
  * @private
  */
 function createValidationResponse({ errors, statistics = {} }) {
-    fixSchemaPathWithAllof(errors);
     return {
         valid: !errors.length,
         statistics,
