@@ -1,11 +1,6 @@
 const { JSONPath: jsonPath } = require('jsonpath-plus'),
     ResultType = require('../../const/result-type');
 
-const JSON_PATHS__OBJECTS = [
-    '$..application/json.schema',
-    '$..schema..[?(@.properties && (@property === "schema" || @property === "items" || @.type === "object"))]'
-];
-
 module.exports = {
     applyCallbackToAllObjectModels
 };
@@ -45,17 +40,20 @@ module.exports = {
 function applyCallbackToAllObjectModels(openApiSpec, examplePaths, matchCallbackBuilder) {
     // Find all matches
     const paths = new Set();
-    JSON_PATHS__OBJECTS.forEach(jsPath => {
-        _find(openApiSpec, jsPath)
-            .forEach(match => {
-                paths.add(match);
-            });
-    });
+    _find(openApiSpec, '$..schema..')
+        .forEach(match => {
+            if (_isPropertiesDefinition(match)) { return; }
+            paths.add(match);
+        });
     // Exclude examples
     _excludeExamples(openApiSpec, paths, examplePaths);
     // Set flag
     for (const jsPath of paths) {
-        _find(openApiSpec, jsPath, ResultType.value, matchCallbackBuilder(jsPath));
+        const callback = matchCallbackBuilder(jsPath);
+        _find(openApiSpec, jsPath, ResultType.value, (result, resultType, data) => {
+            if (!_isObjectDefinition(result)) { return; }
+            callback(result, resultType, data);
+        });
     }
 }
 
@@ -95,4 +93,16 @@ function _excludeExamples(openApiSpec, paths, examplePaths) {
                     }
                 });
         });
+}
+
+function _isPropertiesDefinition(path) {
+    // Path has to end with `properties`
+    if (!path.match(/\['properties']$/)) { return; }
+    // Every second consecutive `properties` actually is not a property-definition, but a property itself
+    const consecutiveMatch = path.match(/(?<!\['properties'])(\['properties']\['properties'])+$/);
+    return !consecutiveMatch || consecutiveMatch.length % 2 !== 0;
+}
+
+function _isObjectDefinition(entity) {
+    return entity.type === 'object' || entity.properties;
 }

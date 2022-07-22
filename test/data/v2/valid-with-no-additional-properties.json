@@ -48,6 +48,7 @@
               "required": [
                 "versions"
               ],
+              "additionalProperties": false,
               "properties": {
                 "versions": {
                   "type": "array",
@@ -101,6 +102,7 @@
               "required": [
                 "versions"
               ],
+              "additionalProperties": false,
               "properties": {
                 "versions": {
                   "type": "array",

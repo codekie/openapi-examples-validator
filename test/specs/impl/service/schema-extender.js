@@ -39,8 +39,6 @@ function _getSchema() {
                             'description': 'An array of pets',
                             'content': {
                                 'application/json': {
-// MAYBE (not necessary, but doesn't break if it's included)
-// I haven't been able to write a JSONPath-query, to exclude it (`$..application/json.schema` for the type `array`)
                                     'schema': {
                                         'type': 'array',
 // TO BE FOUND
@@ -277,10 +275,10 @@ function _getSchema() {
 function _getPaths() {
     /* eslint-disable max-len */
     return [
-        "$['paths']['/pets']['get']['responses'][200]['content']['application/json']['schema']",
         "$['paths']['/pets']['get']['responses'][200]['content']['application/json']['schema']['items']",
         "$['paths']['/pets']['get']['responses'][200]['content']['application/json']['schema']['items']['properties']['schema']",
         "$['paths']['/pets']['get']['responses'][200]['content']['application/json']['schema']['items']['properties']['schema']['properties']['properties']",
+        "$['paths']['/pets']['get']['responses'][200]['content']['application/json']['schema']['items']['properties']['schema']['properties']['properties']['properties']['type']",
         "$['paths']['/pets']['get']['responses'][200]['content']['application/json']['schema']['items']['properties']['schema']['properties']['properties']['properties']['properties']",
         "$['paths']['/pets']['get']['responses']['default']['content']['application/json']['schema']",
         "$['paths']['/pets']['post']['responses']['default']['content']['application/json']['schema']",
