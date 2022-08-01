@@ -1,0 +1,163 @@
+openapi: 3.0.0
+info:
+  license:
+    name: MIT
+  title: Swagger Petstore
+  version: 1.0.0
+servers:
+  - url: 'http://petstore.swagger.io/v1'
+paths:
+  /pets:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - location: home
+                      id: 1
+                      name: john
+                      schema:
+                        spec: pet_definition
+                        properties:
+                          nickname: buddy
+                          color: black
+                          properties:
+                            some: id
+                            foo: 5
+                          type:
+                            bar: baz
+              schema:
+                items:
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    schema:
+                      properties:
+                        properties:
+                          properties:
+                            color:
+                              type: string
+                            properties:
+                              properties:
+                                foo:
+                                  type: number
+                              type: object
+                            type:
+                              type: object
+                          type: object
+                      type: object
+                    tag:
+                      type: string
+                  required:
+                    - id
+                    - name
+                  type: object
+                type: array
+          description: An array of pets
+        default:
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: number
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+                type: object
+          description: unexpected error
+      operationId: listPets
+      summary: List all pets
+    post:
+      responses:
+        '201':
+          description: Null response
+        default:
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: number
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+                type: object
+          description: unexpected error
+      tags:
+        - pets
+      operationId: createPets
+      summary: Create a pet
+  '/pets/{petId}':
+    get:
+      parameters:
+        - description: The id of the pet to retrieve
+          in: path
+          name: petId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    age: 5
+                    id: 0
+                    name: Herbert
+                    owner: John
+                    schema:
+                      spec: pet_definition
+                      properties:
+                        callname: buddy
+                        color: black
+                    tag: Doggo
+              schema:
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  schema:
+                    properties:
+                      properties:
+                        properties:
+                          color:
+                            type: string
+                        type: object
+                    type: object
+                  tag:
+                    type: string
+                required:
+                  - id
+                  - name
+                type: object
+          description: Expected response to a valid request
+        default:
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: number
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+                type: object
+          description: unexpected error
+      operationId: showPetById
+      summary: Info for a specific pet
+
