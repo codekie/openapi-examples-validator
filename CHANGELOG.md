@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.7.1](https://github.com/codekie/openapi-examples-validator/compare/v4.7.0...v4.7.1) (2022-08-01)
+
+
+### Bug Fixes
+
+* fix "no-additional-properties" option, especially for OpenAPI v2 ([#179](https://github.com/codekie/openapi-examples-validator/issues/179)) ([65229c7](https://github.com/codekie/openapi-examples-validator/commit/65229c7141b1cdad8151d688ebed0a5952be7cd2))
+* upgrade dependencies ([#180](https://github.com/codekie/openapi-examples-validator/issues/180)) ([d94855d](https://github.com/codekie/openapi-examples-validator/commit/d94855da66a7bed36971e837c4e754b19dbf2c74))
+
 ## [4.7.0](https://github.com/codekie/openapi-examples-validator/compare/v4.6.0...v4.7.0) (2022-07-07)
 
 
