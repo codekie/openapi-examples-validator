@@ -1,0 +1,101 @@
+[
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "[0]",
+    "schemaPath": "#/items/additionalProperties",
+    "params": {
+      "additionalProperty": "location"
+    },
+    "examplePath": "/paths/~1pets/get/responses/200/examples/application~1json"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "[0].schema",
+    "schemaPath": "#/items/properties/schema/additionalProperties",
+    "params": {
+      "additionalProperty": "spec"
+    },
+    "examplePath": "/paths/~1pets/get/responses/200/examples/application~1json"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "[0].schema.properties",
+    "schemaPath": "#/items/properties/schema/properties/properties/additionalProperties",
+    "params": {
+      "additionalProperty": "nickname"
+    },
+    "examplePath": "/paths/~1pets/get/responses/200/examples/application~1json"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "[0].schema.properties.properties",
+    "schemaPath": "#/items/properties/schema/properties/properties/properties/properties/additionalProperties",
+    "params": {
+      "additionalProperty": "some"
+    },
+    "examplePath": "/paths/~1pets/get/responses/200/examples/application~1json"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "",
+    "schemaPath": "#/additionalProperties",
+    "params": {
+      "additionalProperty": "age"
+    },
+    "examplePath": "/paths/~1pets~1{petId}/get/responses/200/examples/application~1json"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "",
+    "schemaPath": "#/additionalProperties",
+    "params": {
+      "additionalProperty": "owner"
+    },
+    "examplePath": "/paths/~1pets~1{petId}/get/responses/200/examples/application~1json"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": ".schema",
+    "schemaPath": "#/properties/schema/additionalProperties",
+    "params": {
+      "additionalProperty": "spec"
+    },
+    "examplePath": "/paths/~1pets~1{petId}/get/responses/200/examples/application~1json"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": ".schema.properties",
+    "schemaPath": "#/properties/schema/properties/properties/additionalProperties",
+    "params": {
+      "additionalProperty": "callname"
+    },
+    "examplePath": "/paths/~1pets~1{petId}/get/responses/200/examples/application~1json"
+  },
+  {
+    "type": "Validation",
+    "message": "should NOT have additional properties",
+    "keyword": "additionalProperties",
+    "dataPath": "[0].schema.properties.type",
+    "schemaPath": "#/items/properties/schema/properties/properties/properties/type/additionalProperties",
+    "params": {
+      "additionalProperty": "bar"
+    },
+    "examplePath": "/paths/~1pets/get/responses/200/examples/application~1json"
+  }
+]

@@ -169,6 +169,44 @@ describe('CLI-module', function() {
                 stdout.should.include('No errors found.');
                 stderr.should.equal('');
             });
+
+            describe('with OpenAPI v2', async function() {
+                it('should show error with providing the flag', async function() {
+                    const pathSchema = getPathOfTestData('v2/additional-properties/invalid-with-examples.yaml', true);
+                    try {
+                        await exec(`${CMD__RUN} -n ${pathSchema}`);
+                        should.fail('Expected to throw an error');
+                    } catch ({ stdout, stderr }) {
+                        stdout.should.equal(
+                            require('../data/output/api-additional-properties').value
+                        );
+                        stderr.should.equal(JSON.stringify(
+                            require('../data/v2/additional-properties/errors-schema-invalid-with-examples.json'),
+                            null,
+                            4
+                        ));
+                    }
+                });
+            });
+
+            describe('with OpenAPI v3', async function() {
+                it('should show error with providing the flag', async function() {
+                    const pathSchema = getPathOfTestData('v3/additional-properties/invalid-with-examples.yaml', true);
+                    try {
+                        await exec(`${CMD__RUN} -n ${pathSchema}`);
+                        should.fail('Expected to throw an error');
+                    } catch ({ stdout, stderr }) {
+                        stdout.should.equal(
+                            require('../data/output/api-additional-properties').value
+                        );
+                        stderr.should.equal(JSON.stringify(
+                            require('../data/v3/additional-properties/errors-schema-invalid-with-examples.json'),
+                            null,
+                            4
+                        ));
+                    }
+                });
+            });
         });
     });
     describe('with all properties required', function() {
