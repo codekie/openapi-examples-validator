@@ -55,7 +55,9 @@ module.exports = {
     'default': validateExamples,
     validateFile,
     validateExample,
-    validateExamplesByMap
+    validateExamplesByMap,
+    prepareOpenapiSpec,
+    validateExampleInline
 };
 
 // IMPLEMENTATION DETAILS
@@ -244,6 +246,50 @@ async function validateExample(filePathSchema, pathSchema, filePathExample, {
             filePathExample
         })
     );
+}
+
+/**
+ * Validates a single example given as argument
+ * @param {object}  openapiSpec                     OpenAPI-spec as prepared object
+ * @param {String}  pathSchema                      JSON-path to the schema
+ * @param {object}  example                         External example as JSON-object
+ * @returns {ValidationResponse}
+ */
+async function validateExampleInline(openapiSpec, pathSchema, example) {
+    let schema = null;
+    const filePathExample = 'inline';
+    try {
+        schema = _extractSchema(pathSchema, openapiSpec);
+    } catch (err) {
+        return createValidationResponse({ errors: [ApplicationError.create(err)] });
+    }
+    return _validate(
+        statistics => _validateExample({
+            createValidator: _initValidatorFactory(openapiSpec),
+            schema,
+            example,
+            statistics,
+            filePathExample
+        })
+    );
+}
+
+/**
+ * Prepares and returns an OpenAPI specs file as reusable object
+ * @param {String}  filePathSchema                  File-path to the OpenAPI-spec
+ * @param {boolean} [noAdditionalProperties=false]  Don't allow properties that are not described in the schema
+ * @returns {object}
+ */
+async function prepareOpenapiSpec(filePathSchema, { noAdditionalProperties } = {}) {
+    let openapiSpec = null;
+    try {
+        openapiSpec = await _parseSpec(filePathSchema);
+        openapiSpec = Determiner.getImplementation(openapiSpec)
+            .prepare(openapiSpec, { noAdditionalProperties });
+    } catch (err) {
+        return createValidationResponse({ errors: [ApplicationError.create(err)] });
+    }
+    return openapiSpec;
 }
 
 // Private
