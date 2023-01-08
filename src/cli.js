@@ -29,6 +29,7 @@ program
     .option('-c, --cwd-to-mapping-file', "changes to the directory of the mapping-file, before resolving the example's"
         + ' paths. Use this option, if your mapping-files use relative paths for the examples')
     .option('-n, --no-additional-properties', 'don\'t allow properties that are not described in the schema')
+    .option('-r, --all-properties-required', 'make all the properties in the schema required')
     .option('-o, --ignore-formats <ignored-formats...>', 'Datatype formats to ignore '
         + '(to prevent "unknown format" errors.)')
     .action(processAction);
@@ -43,7 +44,7 @@ module.exports = program.parseAsync(process.argv);
 // IMPLEMENTATION DETAILS
 
 async function processAction(filepath, options) {
-    const { schemaJsonpath, exampleFilepath, mappingFilepath, cwdToMappingFile } = options,
+    const { schemaJsonpath, exampleFilepath, mappingFilepath, cwdToMappingFile, allPropertiesRequired } = options,
         noAdditionalProperties = !options.additionalProperties,
         ignoreFormats = _prepareIgnoreFormats(options.ignoreFormats);
     let result;
@@ -52,19 +53,22 @@ async function processAction(filepath, options) {
         result = await validateExamplesByMap(filepath, mappingFilepath, {
             cwdToMappingFile,
             noAdditionalProperties,
-            ignoreFormats
+            ignoreFormats,
+            allPropertiesRequired
         });
     } else if (schemaJsonpath && exampleFilepath) {
         console.log('Validating single external example');
         result = await validateExample(filepath, schemaJsonpath, exampleFilepath, {
             noAdditionalProperties,
-            ignoreFormats
+            ignoreFormats,
+            allPropertiesRequired
         });
     } else {
         console.log('Validating examples');
         result = await validateFile(filepath, {
             noAdditionalProperties,
-            ignoreFormats
+            ignoreFormats,
+            allPropertiesRequired
         });
     }
     _handleResult(result);

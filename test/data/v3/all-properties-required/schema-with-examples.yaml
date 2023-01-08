@@ -25,7 +25,6 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/Bird'
                   - $ref: '#/components/schemas/Cat'
                   - $ref: '#/components/schemas/Dog'
               examples:
@@ -38,11 +37,7 @@ paths:
                   value:
                     name: 'Cat 1'
                     hunts: true
-                    age: 3
-                'Bird example':
-                  value:
-                    name: 'Birb'
-                    sizeWings: 'smol'
+                    # This example don't have the optional property 'age'
         '404':
           description: unexpected error
           content:
@@ -52,7 +47,6 @@ paths:
               example:
                 code: 1000
                 message: 'could not find pet'
-                extra_property: 'test' # not allowed and outside of JSON schema combiner, should be picked up
 components:
   schemas:
     Error:
@@ -88,29 +82,8 @@ components:
         - type: object
           required:
             - hunts
-            - age
           properties:
             hunts:
               type: boolean
             age:
               type: integer
-    Bird:
-      anyOf:
-        - type: object
-          required:
-            - name
-            - sizeWings
-          properties:
-            name:
-              type: string
-            sizeWings:
-              type: string
-        - type: object
-          required:
-            - name
-            - eggSize
-          properties:
-            name:
-              type: string
-            sizeEggs:
-              type: string

@@ -1,4 +1,5 @@
-const util = require('util'),
+const { platform } = require('os'),
+    util = require('util'),
     VERSION = require('../../package').version,
     { text: _textHelp } = require('../data/output-help'),
     { text: _textMapExternalExamples } = require('../data/v2/output-map-external-examples'),
@@ -17,6 +18,9 @@ describe('CLI-module', function() {
         // Make sure that `commander`'s output will be the same, independent of the console's width
         this.origColumns = process.stdout.columns;
         process.stdout.columns = 80;
+        if (platform() === 'win32') {
+            process.env.ComSpec = 'PowerShell.exe';
+        }
     });
     after(function() {
         process.stdout.columns = this.origColumns;
@@ -121,11 +125,11 @@ describe('CLI-module', function() {
                     stderr.should.equal(JSON.stringify(
                         require('../data/v3/additional-properties/errors-schema-with-examples.json'),
                         null,
-                        '    '
+                        4
                     ));
                 }
             });
-            it('should show no errors due to the `allOf`-combiner in schema', async function() {
+            it('should show error even if `allOf`-combiner in another example', async function() {
                 const pathSchema
                     = getPathOfTestData('v3/additional-properties/schema-with-schema-combiner-invalid.yaml', true);
                 try {
@@ -135,6 +139,21 @@ describe('CLI-module', function() {
                     stdout.should.include('Errors found.');
                     stderr.should.include('"message": "must NOT have additional properties"');
                     stderr.should.include('extra_property');
+                }
+            });
+            it('should show error even if inside an object with a property called "allOf"', async function() {
+                const pathSchema = getPathOfTestData(
+                    'v3/additional-properties/schema-with-schema-combiner-as-property-invalid.yaml', true);
+                try {
+                    await exec(`${CMD__RUN} -n ${pathSchema}`);
+                    should.fail('Expected to throw an error');
+                } catch ({ stdout, stderr }) {
+                    stdout.should.include('Errors found.');
+                    stderr.should.equal(JSON.stringify(
+                        require('../data/v3/additional-properties/errors-schema-with-schema-combiner-as-property.json'),
+                        null,
+                        4
+                    ));
                 }
             });
             it('should show no errors with `allOf`-combiner in schema', async function() {
@@ -150,6 +169,67 @@ describe('CLI-module', function() {
                 stdout.should.include('No errors found.');
                 stderr.should.equal('');
             });
+
+            describe('with OpenAPI v2', async function() {
+                it('should show error with providing the flag', async function() {
+                    const pathSchema = getPathOfTestData('v2/additional-properties/invalid-with-examples.yaml', true);
+                    try {
+                        await exec(`${CMD__RUN} -n ${pathSchema}`);
+                        should.fail('Expected to throw an error');
+                    } catch ({ stdout, stderr }) {
+                        stdout.should.equal(
+                            require('../data/output/api-additional-properties').value
+                        );
+                        stderr.should.equal(JSON.stringify(
+                            require('../data/v2/additional-properties/errors-schema-invalid-with-examples.json'),
+                            null,
+                            4
+                        ));
+                    }
+                });
+            });
+
+            describe('with OpenAPI v3', async function() {
+                it('should show error with providing the flag', async function() {
+                    const pathSchema = getPathOfTestData('v3/additional-properties/invalid-with-examples.yaml', true);
+                    try {
+                        await exec(`${CMD__RUN} -n ${pathSchema}`);
+                        should.fail('Expected to throw an error');
+                    } catch ({ stdout, stderr }) {
+                        stdout.should.equal(
+                            require('../data/output/api-additional-properties').value
+                        );
+                        stderr.should.equal(JSON.stringify(
+                            require('../data/v3/additional-properties/errors-schema-invalid-with-examples.json'),
+                            null,
+                            4
+                        ));
+                    }
+                });
+            });
+        });
+    });
+    describe('with all properties required', function() {
+        it('should show no error when properties not required are allowed', async function() {
+            const pathSchema
+                = getPathOfTestData('v3/all-properties-required/schema-with-examples.yaml', true);
+            const { stdout, stderr } = await exec(`${CMD__RUN} ${pathSchema}`);
+            stdout.should.include('No errors found.');
+            stderr.should.equal('');
+        });
+        it('should show error with providing the flag', async function() {
+            const pathSchema = getPathOfTestData('v3/all-properties-required/schema-with-examples.yaml', true);
+            try {
+                await exec(`${CMD__RUN} -r ${pathSchema}`);
+                should.fail('Expected to throw an error');
+            } catch ({ stdout, stderr }) {
+                stdout.should.equal(require('../data/output/api-with-examples-and-all-properties-required').value);
+                stderr.should.equal(JSON.stringify(
+                    require('../data/v3/all-properties-required/errors-schema-with-examples.json'),
+                    null,
+                    4
+                ));
+            }
         });
     });
     describe('ignore datatype formats', function() {
@@ -192,7 +272,7 @@ describe('CLI-module', function() {
                     this.output += chunk;
                 }
             };
-            // Capture sterr-stream
+            // Capture stderr-stream
             this.error = '';
             this.origStderrWrite = process.stderr.write.bind(process.stderr);
             process.stderr.write = (chunk) => {

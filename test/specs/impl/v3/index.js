@@ -17,6 +17,7 @@ const path = require('path'),
         = require('../../../data/v3/draft-04-properties/errors-exclusive-minimum.json'),
     errorsEscapedErrorNames
         = require('../../../data/v3/errors/simple-api-with-example-names-to-be-escaped.json');
+const { prepare } = require('../../../../src/impl/v3');
 
 const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/content/application~1json',
     REL_PATH__EXAMPLE__SIMPLE = 'v3/simple-api-with-example',
@@ -53,10 +54,13 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
         = path.join(__dirname, '../../../data/v3/request-invalid-parameter-examples.json'),
     FILE_PATH__VALID__NULLABLE = path.join(__dirname, '../../../data/v3/response-valid-nullable.json'),
     FILE_PATH__VALID__NUMBER_FORMATS = path.join(__dirname, '../../../data/v3/response-valid-number-formats.json'),
+    FILE_PATH__VALID__DATE_TIME_FORMATS = path.join(__dirname, '../../../data/v3/response-valid-date-time-format.json'),
     FILE_PATH__VALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-valid-requestbody.json'),
     FILE_PATH__VALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-valid-requestbody-examples.json'),
     FILE_PATH__INVALID__NUMBER_FORMATS = path.join(__dirname, '../../../data/v3/response-invalid-number-formats.json'),
+    FILE_PATH__INVALID__DATE_TIME_FORMAT
+        = path.join(__dirname, '../../../data/v3/response-invalid-date-time-format.json'),
     FILE_PATH__INVALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-invalid-requestbody.json'),
     FILE_PATH__INVALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-invalid-requestbody-examples.json'),
@@ -294,6 +298,41 @@ describe('Main-module, for v3 should', function() {
             });
         });
     });
+    describe('be able to handle date-time formats', function() {
+        it('with valid examples', async function() {
+            (await validateFile(FILE_PATH__VALID__DATE_TIME_FORMATS)).valid.should.equal(true);
+        });
+        describe('invalid examples', function() {
+            before(async function() {
+                this.validationResults = await validateFile(FILE_PATH__INVALID__DATE_TIME_FORMAT);
+            });
+
+            it('invalid date-time', function() {
+                const error = this.validationResults.errors[0];
+                error.message.should.equal('should match format "date-time"');
+                error.keyword.should.equal('format');
+                error.params.format.should.equal('date-time');
+            });
+        });
+    });
+    describe('unknown formats', function() {
+        describe('without ignoring unknown formats', function() {
+            it('should throw an error', async function() {
+                (await validateFile(FILE_PATH__UNKNOWN_FORMATS)).valid.should.equal(false);
+            });
+        });
+        describe('with passing the argument to ignore unknown formats', function() {
+            it('should throw an error', async function() {
+                (await validateFile(FILE_PATH__UNKNOWN_FORMATS, {
+                    ignoreFormats: [
+                        'country-code-2',
+                        'continental-status',
+                        'license-plate'
+                    ]
+                })).valid.should.equal(true);
+            });
+        });
+    });
     describe('example with `value`s as properties', function() {
         it('should not be recognized as separate example', async function() {
             const { valid, statistics } = (await validateFile(FILE_PATH__VALID__VALUE_PROPERTY));
@@ -311,8 +350,8 @@ describe('Main-module, for v3 should', function() {
                 .statistics.schemasWithExamples.should.equal(2);
         });
     });
-    describe('with additional properties', function() {
-        describe('with flag not set', function() {
+    describe('with noAdditionalProperties option', function() {
+        describe('with option not set', function() {
             it('`validateFile` should not show any error', async function() {
                 (await validateFile(FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES))
                     .valid.should.equal(true);
@@ -343,7 +382,7 @@ describe('Main-module, for v3 should', function() {
                 )).valid.should.equal(true);
             });
         });
-        describe('with flag set', function() {
+        describe('with option set', function() {
             it('`validateFile` should throw an error', async function() {
                 (await validateFile(
                     FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES_WITH_EXAMPLES,
@@ -379,7 +418,10 @@ describe('Main-module, for v3 should', function() {
                     FILE_PATH__SCHEMA__WITH_ADDITIONAL_PROPERTIES,
                     FILE_PATH__MAP__WITH_ADDITIONAL_PROPERTIES,
                     { noAdditionalProperties: true }
-                )).errors.should.deep.equal(_expandFilePathOfErrors(errorsAdditionalPropertiesMap, 'mapFilePath'));
+                )).errors.should.deep.equal(
+                    _normalizeFilePathOfErrors(
+                        _expandFilePathOfErrors(errorsAdditionalPropertiesMap, 'mapFilePath'), 'exampleFilePath')
+                );
             });
         });
     });
@@ -398,11 +440,36 @@ describe('Main-module, for v3 should', function() {
                 .errors.should.deep.equal(errorsEscapedErrorNames);
         });
     });
+    describe('prepare', () => {
+        it('should set noAdditionalProperties in the openapiSpec, if flag provided', async() => {
+            const preparedOpenapi = prepare(
+                loadTestData('v3/simple-api-with-example'),
+                { noAdditionalProperties: true }
+            );
+            preparedOpenapi.should.deep.equal(
+                loadTestData('v3/additional-properties/simple-api-with-no-additional-properties'));
+        });
+        it('should set allPropertiesRequired in the openapiSpec, if flag provided', async() => {
+            const preparedOpenapi = prepare(
+                loadTestData('v3/simple-api-with-example'),
+                { allPropertiesRequired: true }
+            );
+            preparedOpenapi.should.deep.equal(
+                loadTestData('v3/all-properties-required/simple-api-with-all-properties-required'));
+        });
+    });
 });
 
 function _expandFilePathOfErrors(errors, propertyName) {
     errors.forEach(error => {
-        error[propertyName] = path.join(__dirname, '../../../..', error[propertyName]);
+        error[propertyName] = path.normalize(path.join(__dirname, '../../../..', error[propertyName]));
+    });
+    return errors;
+}
+
+function _normalizeFilePathOfErrors(errors, propertyName) {
+    errors.forEach(error => {
+        error[propertyName] = path.normalize(error[propertyName]);
     });
     return errors;
 }

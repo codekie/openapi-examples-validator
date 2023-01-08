@@ -1,0 +1,44 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Sample number formats",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://example.com/v1"
+    }
+  ],
+  "paths": {
+    "/get-numbers": {
+      "get": {
+        "summary": "Gets some big numbers",
+        "operationId": "getNumbers",
+        "responses": {
+          "200": {
+            "description": "Some big numbers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                },
+                "example": {
+                  "date": "2017-07-21T17:32:28Z"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

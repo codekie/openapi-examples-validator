@@ -5,12 +5,17 @@ Validates embedded JSON-examples in OpenAPI-specs (v2 and v3 are supported)
 
 [![npm version](https://badge.fury.io/js/openapi-examples-validator.svg)](https://badge.fury.io/js/openapi-examples-validator)
 [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
-[![Build Status](https://travis-ci.org/codekie/openapi-examples-validator.svg?branch=master)](https://travis-ci.org/codekie/openapi-examples-validator)
-[![Coverage Status](https://coveralls.io/repos/github/codekie/openapi-examples-validator/badge.svg?branch=master)](https://coveralls.io/github/codekie/openapi-examples-validator?branch=master)
-[![Mutation testing badge](https://badge.stryker-mutator.io/github.com/codekie/openapi-examples-validator/master)](https://stryker-mutator.github.io)
+[![Run tests](https://github.com/codekie/openapi-examples-validator/actions/workflows/test-and-deploy-docker.yml/badge.svg?query=branch%3Amain)](https://github.com/codekie/openapi-examples-validator/actions/workflows/test-and-deploy-docker.yml?query=branch%3Amain)
+[![Coverage Status](https://coveralls.io/repos/github/codekie/openapi-examples-validator/badge.svg?branch=main)](https://coveralls.io/github/codekie/openapi-examples-validator?branch=main)
+[![Mutation testing badge](https://badge.stryker-mutator.io/github.com/codekie/openapi-examples-validator/main)](https://stryker-mutator.github.io)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5094f6ac7754e5a18b1b/maintainability)](https://codeclimate.com/github/codekie/openapi-examples-validator/maintainability)
 [![Known Vulnerabilities](https://snyk.io/test/github/codekie/openapi-examples-validator/badge.svg)](https://snyk.io/test/github/codekie/openapi-examples-validator)
 [![Docker Hub](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/codekie/openapi-examples-validator)
+
+Prerequisites
+------------
+
+- [Node.js](https://nodejs.org/) >=10.
 
 Install
 -------
@@ -40,6 +45,7 @@ Options:
                                              example's paths. Use this option, if your mapping-files use relative paths
                                              for the examples
   -n, --no-additional-properties             don't allow properties that are not described in the schema
+  -r, --all-properties-required              make all the properties in the schema required
   -h, --help                                 output usage information
 ````
 
@@ -62,9 +68,11 @@ To validate multiple external examples, pass a mapping file with a similar struc
     "test/data/external-examples-valid-example2.json",
     "test/data/external-examples-invalid-type.json"
   ],
-  "$.paths./.get.responses.300.schema": "test/data/external-examples-invalid-missing-link.json"
+  "$.paths./.get.responses.300.schema": "test/data/external-examples-invalid-missing-link.json",
+  "$.paths./.post.parameters[?(@.in==="body")].schema": "test/data/v2/post-request/*.json"
 }
 ```
+It is possible to use wildcards in the command line to select multiple mapping files, and it is possible to use wildcards inside the mapping file to select multiple examples.
 
 Errors will be written to `stderr`.
 
@@ -103,10 +111,7 @@ Caveat
 
 - The formats `int32`, `float` and `double` are supported for the type `number`. The format `int64` is only available
   for the type `string`, though (due to the precision-limitations of Javascript).
-- The option `--no-additional-properties` does not work, if `allOf` is used to combine subschemas.
-  - Enabling this flag will not apply `additionalProperties` to any subschemas that use
-    [these](https://json-schema.org/understanding-json-schema/reference/combining.html) combiner keywords.
-  - A warning will be logged if setting the `additionalProperties` flag has been skipped.
+- The options `--no-additional-properties` and `--all-properties-required` are not compatible with [sub-schemas combiner keyword](https://json-schema.org/understanding-json-schema/reference/combining.html). A warning will be logged if one model is skipped because it contains a combiner keyword.
 
 Test
 ----
