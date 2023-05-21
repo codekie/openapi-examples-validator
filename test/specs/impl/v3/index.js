@@ -74,8 +74,10 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     FILE_PATH__EXAMPLE_NAMES_TO_BE_ESCAPED
         = path.join(__dirname, '../../../data/v3/simple-api-with-example-names-to-be-escaped.json'),
     FILE_PATH__UNKNOWN_FORMATS = path.join(__dirname, '../../../data/v3/unknown-formats.json'),
-    FILE_PATH__INVALID__REQUEST_BODY__INHERITANCE_EXAMPLES = path.join(__dirname, '../../../data/v3/response-invalid-requestbody-inheritance-examples.json'),
-    FILE_PATH__VALID__REQUEST_BODY__INHERITANCE_EXAMPLES = path.join(__dirname, '../../../data/v3/response-valid-requestbody-inheritance-examples.json');
+    FILE_PATH__INVALID__REQUEST_BODY__INHERITANCE_EXAMPLES
+        = path.join(__dirname, '../../../data/v3/response-invalid-requestbody-inheritance-examples.json'),
+    FILE_PATH__VALID__REQUEST_BODY__INHERITANCE_EXAMPLES
+        = path.join(__dirname, '../../../data/v3/response-valid-requestbody-inheritance-examples.json');
 
 describe('Main-module, for v3 should', function() {
     describe('recognize', function() {
@@ -309,28 +311,42 @@ describe('Main-module, for v3 should', function() {
 
             it('invalid date-time', function() {
                 const error = this.validationResults.errors[0];
-                error.message.should.equal('should match format "date-time"');
+                error.message.should.equal('must match format "date-time"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('date-time');
             });
         });
     });
     describe('unknown formats', function() {
-        describe('without ignoring unknown formats', function() {
-            it('should throw an error', async function() {
-                (await validateFile(FILE_PATH__UNKNOWN_FORMATS)).valid.should.equal(false);
-            });
+        beforeEach(function() {
+            this.origStderrWrite = process.stderr.write;
+            this.capturedStderr = '';
+
+            // Override stderr write function
+            process.stderr.write = (chunk, encoding, callback) => {
+                this.capturedStderr += chunk.toString();
+                if (callback) {
+                    callback();
+                }
+            };
         });
-        describe('with passing the argument to ignore unknown formats', function() {
-            it('should throw an error', async function() {
-                (await validateFile(FILE_PATH__UNKNOWN_FORMATS, {
-                    ignoreFormats: [
-                        'country-code-2',
-                        'continental-status',
-                        'license-plate'
-                    ]
-                })).valid.should.equal(true);
-            });
+        afterEach(function() {
+            process.stderr.write = this.origStderrWrite;
+        });
+
+        it('should not throw an error', async function() {
+            (await validateFile(FILE_PATH__UNKNOWN_FORMATS)).valid.should.equal(true);
+        });
+        it('should show the unknown formats in the error-console', async function() {
+            (await validateFile(FILE_PATH__UNKNOWN_FORMATS));
+            this.capturedStderr.should.equal(
+                `unknown format "continental-status" ignored in schema at path "#/properties/status"
+unknown format "continental-status" ignored in schema at path "#/properties/status"
+unknown format "license-plate" ignored in schema at path "#/properties/licensePlate"
+unknown format "license-plate" ignored in schema at path "#/properties/licensePlate"
+unknown format "country-code-2" ignored in schema at path "#/properties/country"
+unknown format "country-code-2" ignored in schema at path "#/properties/country"
+`);
         });
     });
     describe('example with `value`s as properties', function() {

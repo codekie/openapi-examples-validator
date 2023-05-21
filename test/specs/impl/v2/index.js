@@ -203,10 +203,10 @@ describe('Main-module, for v2 should', () => {
             });
             result.errors.should.deep.equal([{
                 type: 'Validation',
-                message: "should have required property 'links'",
-                keyword: 'required',
-                dataPath: '.versions[0]',
+                message: "must have required property 'links'",
+                instancePath: '/versions/0',
                 schemaPath: '#/properties/versions/items/required',
+                keyword: 'required',
                 exampleFilePath: path.normalize('test/data/v2/external-examples-invalid-missing-link.json'),
                 mapFilePath: path.normalize(
                     path.join(__dirname, '../../../../test/data/v2/map-external-examples-with-wildcards.json')),
@@ -215,10 +215,10 @@ describe('Main-module, for v2 should', () => {
                 }
             }, {
                 type: 'Validation',
-                message: 'should be string',
-                keyword: 'type',
-                dataPath: '.versions[0].id',
+                message: 'must be string',
+                instancePath: '/versions/0/id',
                 schemaPath: '#/properties/versions/items/properties/id/type',
+                keyword: 'type',
                 exampleFilePath: path.normalize('test/data/v2/external-examples-invalid-type.json'),
                 mapFilePath: path.normalize(
                     path.join(__dirname, '../../../../test/data/v2/map-external-examples-with-wildcards.json')),

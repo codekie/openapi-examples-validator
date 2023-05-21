@@ -1,10 +1,10 @@
 [
     {
         "type": "Validation",
-        "message": "should have required property 'age'",
-        "keyword": "required",
-        "dataPath": "",
+        "message": "must have required property 'age'",
+        "instancePath": "",
         "schemaPath": "#/oneOf/0/allOf/1/required",
+        "keyword": "required",
         "params": {
             "missingProperty": "age"
         },
@@ -12,10 +12,10 @@
     },
     {
         "type": "Validation",
-        "message": "should have required property 'bark'",
-        "keyword": "required",
-        "dataPath": "",
+        "message": "must have required property 'bark'",
+        "instancePath": "",
         "schemaPath": "#/oneOf/1/allOf/1/required",
+        "keyword": "required",
         "params": {
             "missingProperty": "bark"
         },
@@ -23,10 +23,10 @@
     },
     {
         "type": "Validation",
-        "message": "should have required property 'breed'",
-        "keyword": "required",
-        "dataPath": "",
+        "message": "must have required property 'breed'",
+        "instancePath": "",
         "schemaPath": "#/oneOf/1/allOf/1/required",
+        "keyword": "required",
         "params": {
             "missingProperty": "breed"
         },
@@ -34,10 +34,10 @@
     },
     {
         "type": "Validation",
-        "message": "should match exactly one schema in oneOf",
-        "keyword": "oneOf",
-        "dataPath": "",
+        "message": "must match exactly one schema in oneOf",
+        "instancePath": "",
         "schemaPath": "#/oneOf",
+        "keyword": "oneOf",
         "params": {
             "passingSchemas": null
         },

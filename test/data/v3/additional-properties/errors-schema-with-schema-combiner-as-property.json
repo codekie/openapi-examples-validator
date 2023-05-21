@@ -1,10 +1,10 @@
 [
     {
         "type": "Validation",
-        "message": "should NOT have additional properties",
-        "keyword": "additionalProperties",
-        "dataPath": ".allOf.anyOf.oneOf.not",
+        "message": "must NOT have additional properties",
+        "instancePath": "/allOf/anyOf/oneOf/not",
         "schemaPath": "#/properties/allOf/properties/anyOf/properties/oneOf/properties/not/additionalProperties",
+        "keyword": "additionalProperties",
         "params": {
             "additionalProperty": "anotherProperty"
         },

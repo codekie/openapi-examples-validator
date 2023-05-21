@@ -1,10 +1,10 @@
 [
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": "[0]",
+    "message": "must NOT have additional properties",
+    "instancePath": "/0",
     "schemaPath": "#/items/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "location"
     },
@@ -12,10 +12,10 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": "[0].schema",
+    "message": "must NOT have additional properties",
+    "instancePath": "/0/schema",
     "schemaPath": "#/items/properties/schema/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "spec"
     },
@@ -23,10 +23,10 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": "[0].schema.properties",
+    "message": "must NOT have additional properties",
+    "instancePath": "/0/schema/properties",
     "schemaPath": "#/items/properties/schema/properties/properties/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "nickname"
     },
@@ -34,10 +34,10 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": "[0].schema.properties.properties",
+    "message": "must NOT have additional properties",
+    "instancePath": "/0/schema/properties/properties",
     "schemaPath": "#/items/properties/schema/properties/properties/properties/properties/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "some"
     },
@@ -45,10 +45,10 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": "",
+    "message": "must NOT have additional properties",
+    "instancePath": "",
     "schemaPath": "#/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "age"
     },
@@ -56,10 +56,10 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": "",
+    "message": "must NOT have additional properties",
+    "instancePath": "",
     "schemaPath": "#/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "owner"
     },
@@ -67,10 +67,10 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": ".schema",
+    "message": "must NOT have additional properties",
+    "instancePath": "/schema",
     "schemaPath": "#/properties/schema/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "spec"
     },
@@ -78,10 +78,10 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": ".schema.properties",
+    "message": "must NOT have additional properties",
+    "instancePath": "/schema/properties",
     "schemaPath": "#/properties/schema/properties/properties/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "callname"
     },
@@ -89,10 +89,10 @@
   },
   {
     "type": "Validation",
-    "message": "should NOT have additional properties",
-    "keyword": "additionalProperties",
-    "dataPath": "[0].schema.properties.type",
+    "message": "must NOT have additional properties",
+    "instancePath": "/0/schema/properties/type",
     "schemaPath": "#/items/properties/schema/properties/properties/properties/type/additionalProperties",
+    "keyword": "additionalProperties",
     "params": {
       "additionalProperty": "bar"
     },
