@@ -1,4 +1,5 @@
 const path = require('path'),
+    structuredClone = require('core-js-pure/actual/structured-clone'),
     { loadTestData, normalizeValidationResultPaths } = require('../../../util/setup-tests'),
     { validateExample, 'default': validateExamples, validateExamplesByMap } = require('../../../../src/index'),
     { ApplicationError, ErrorType } = require('../../../../src/application-error');
@@ -192,8 +193,10 @@ describe('Main-module, for v2 should', () => {
             ]);
         });
         it('should be able to expand examples wildcards', async() => {
-            const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
-                FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WILDCARDS);
+            const result = structuredClone(
+                await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                    FILE_PATH__EXTERNAL_EXAMPLES_MAP_WITH_WILDCARDS)
+            );
             result.valid.should.equal(false);
             result.statistics.should.deep.equal({
                 examplesTotal: 7,
@@ -377,19 +380,22 @@ describe('Main-module, for v2 should', () => {
             ]);
         });
         it('should collect the statistics over all mapping-files', async() => {
-            (await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, FILE_PATH__EXTERNAL_EXAMPLES_GLOB))
-                .statistics.should.deep.equal({
-                    schemasWithExamples: 4,
-                    examplesWithoutSchema: 0,
-                    examplesTotal: 7,
-                    matchingFilePathsMapping: 2
-                });
+            structuredClone(
+                await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA, FILE_PATH__EXTERNAL_EXAMPLES_GLOB)
+            ).statistics.should.deep.equal({
+                schemasWithExamples: 4,
+                examplesWithoutSchema: 0,
+                examplesTotal: 7,
+                matchingFilePathsMapping: 2
+            });
         });
     });
     describe('with set `cwd-to-mapping-file`-flag', () => {
         it('resolve the relative paths in the mapping-files', async() => {
-            const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
-                FILE_PATH__EXTERNAL_EXAMPLES_MAP_RELATIVE, { cwdToMappingFile: true });
+            const result = structuredClone(
+                await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                    FILE_PATH__EXTERNAL_EXAMPLES_MAP_RELATIVE, { cwdToMappingFile: true })
+            );
             result.valid.should.equal(true);
             result.statistics.should.deep.equal({
                 schemasWithExamples: 2,

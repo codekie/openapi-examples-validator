@@ -5,8 +5,7 @@
 const { JSONPath: jsonPath } = require('jsonpath-plus'),
     JsonPointer = require('json-pointer'),
     Ajv = require('ajv-draft-04'),
-    FormatValidator = require('ajv-oai/lib/format-validator');
-const { validateDateTime } = require('./validators/date-time');
+    addFormats = require('ajv-formats');
 
 const PROP__ID = '$id',
     JSON_PATH__REFS = '$..\$ref',
@@ -28,7 +27,7 @@ function getValidatorFactory(specSchema, options) {
     const preparedSpecSchema = _createReferenceSchema(specSchema);
     return () => {
         const validator = new Ajv(options);
-        _addFormatValidators(validator);
+        addFormats(validator);
 
         validator.addSchema(preparedSpecSchema);
 
@@ -106,18 +105,4 @@ function _createReferenceSchema(specSchema) {
         }
     });
     return refSchema;
-}
-
-/**
- * Adds format-validators that are not included in the reference-implementation
- * @param {ajv.Ajv} validator
- * @private
- */
-function _addFormatValidators(validator) {
-    validator.addFormat('int32', { type: 'number', validate: FormatValidator.int32 });
-    validator.addFormat('int64', { type: 'string', validate: FormatValidator.int64 });
-    validator.addFormat('float', { type: 'number', validate: FormatValidator.float });
-    validator.addFormat('double', { type: 'number', validate: FormatValidator.double });
-    validator.addFormat('byte', { type: 'string', validate: FormatValidator.byte });
-    validator.addFormat('date-time', { type: 'string', validate: validateDateTime });
 }

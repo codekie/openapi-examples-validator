@@ -1,6 +1,7 @@
 // IMPORTS
 
 const path = require('path'),
+    structuredClone = require('core-js-pure/actual/structured-clone'),
     { validateFile, validateExample, 'default': validateExamples, validateExamplesByMap } = require('../../src'),
     {
         loadTestData,
@@ -80,7 +81,7 @@ describe('Main API', function() {
         });
         describe('collect statistics', () => {
             it('with examples with missing schemas', async() => {
-                (await validateFile(getPathOfTestData('v2/simple-example'))).statistics.should.deep
+                structuredClone(await validateFile(getPathOfTestData('v2/simple-example'))).statistics.should.deep
                     .equal({
                         schemasWithExamples: 1,
                         examplesWithoutSchema: 3,
@@ -88,7 +89,7 @@ describe('Main API', function() {
                     });
             });
             it('without examples', async() => {
-                (await validateFile(getPathOfTestData('v2/valid-without-examples'))).statistics
+                structuredClone(await validateFile(getPathOfTestData('v2/valid-without-examples'))).statistics
                     .should.deep.equal({
                         schemasWithExamples: 1,
                         examplesWithoutSchema: 0,
@@ -96,7 +97,7 @@ describe('Main API', function() {
                     });
             });
             it('without schema', async() => {
-                (await validateFile(getPathOfTestData('v2/valid-without-schema'))).statistics
+                structuredClone(await validateFile(getPathOfTestData('v2/valid-without-schema'))).statistics
                     .should.deep.equal({
                         schemasWithExamples: 1,
                         examplesWithoutSchema: 1,
