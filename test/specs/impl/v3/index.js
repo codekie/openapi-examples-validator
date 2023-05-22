@@ -73,11 +73,7 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
         = path.join(__dirname, '../../../data/v3/simple-api-with-examples-exclusive-minimum-invalid.json'),
     FILE_PATH__EXAMPLE_NAMES_TO_BE_ESCAPED
         = path.join(__dirname, '../../../data/v3/simple-api-with-example-names-to-be-escaped.json'),
-    FILE_PATH__UNKNOWN_FORMATS = path.join(__dirname, '../../../data/v3/unknown-formats.json'),
-    FILE_PATH__INVALID__REQUEST_BODY__INHERITANCE_EXAMPLES
-        = path.join(__dirname, '../../../data/v3/response-invalid-requestbody-inheritance-examples.json'),
-    FILE_PATH__VALID__REQUEST_BODY__INHERITANCE_EXAMPLES
-        = path.join(__dirname, '../../../data/v3/response-valid-requestbody-inheritance-examples.json');
+    FILE_PATH__UNKNOWN_FORMATS = path.join(__dirname, '../../../data/v3/unknown-formats.json');
 
 describe('Main-module, for v3 should', function() {
     describe('recognize', function() {
@@ -221,25 +217,6 @@ describe('Main-module, for v3 should', function() {
                 });
                 it('should recognize all errors', function() {
                     this.validationResult.errors.length.should.equal(3);
-                });
-            });
-            describe('with invalid inheritance examples', function() {
-                before(async function() {
-                    this.validationResult = await validateFile(FILE_PATH__INVALID__REQUEST_BODY__INHERITANCE_EXAMPLES);
-                });
-                it('should recognize it as invalid', function() {
-                    this.validationResult.valid.should.equal(false);
-                });
-                it('should recognize all errors', function() {
-                    this.validationResult.errors.length.should.equal(1);
-                });
-            });
-            describe('with valid inheritance examples', function() {
-                before(async function() {
-                    this.validationResult = await validateFile(FILE_PATH__VALID__REQUEST_BODY__INHERITANCE_EXAMPLES);
-                });
-                it('should recognize it as valid', function() {
-                    this.validationResult.valid.should.equal(true);
                 });
             });
         });

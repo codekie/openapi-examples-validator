@@ -27,6 +27,13 @@
                       "catName": 123,
                       "type": "CAT"
                     }
+                  },
+                  "fish": {
+                    "value": {
+                      "name": "fish_01",
+                      "fishName": "Nemo",
+                      "type": "FISH"
+                    }
                   }
                 }
               }
@@ -55,6 +62,9 @@
       "schemas": {
         "Dog": {
           "type": "object",
+          "required": [
+            "dogName"
+          ],
           "properties": {
             "dogName": {
               "type": "string"
@@ -69,6 +79,9 @@
         },
         "Cat": {
           "type": "object",
+          "required": [
+            "dogName"
+          ],
           "properties": {
             "catName": {
               "type": "string"
