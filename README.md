@@ -46,6 +46,7 @@ Options:
                                              for the examples
   -n, --no-additional-properties             don't allow properties that are not described in the schema
   -r, --all-properties-required              make all the properties in the schema required
+  -o, --ignore-formats <ignored-formats...>  Datatype formats to ignore (to prevent "unknown format" errors.)
   -h, --help                                 output usage information
 ````
 

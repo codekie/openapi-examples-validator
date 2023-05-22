@@ -348,6 +348,19 @@ unknown format "country-code-2" ignored in schema at path "#/properties/country"
 unknown format "country-code-2" ignored in schema at path "#/properties/country"
 `);
         });
+
+        describe('with passing the argument to ignore unknown formats', function() {
+            it('should not show the unknown formats in the error-console', async function() {
+                (await validateFile(FILE_PATH__UNKNOWN_FORMATS, {
+                    ignoreFormats: [
+                        'country-code-2',
+                        'continental-status',
+                        'license-plate'
+                    ]
+                })).valid.should.equal(true);
+                this.capturedStderr.should.equal('');
+            });
+        });
     });
     describe('example with `value`s as properties', function() {
         it('should not be recognized as separate example', async function() {
