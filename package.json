@@ -76,7 +76,7 @@
     "ajv-formats": "^2.1.1",
     "commander": "^6.2.1",
     "errno": "^1.0.0",
-    "glob": "^7.2.0",
+    "glob": "^8.1.0",
     "json-pointer": "^0.6.2",
     "json-schema-ref-parser": "^9.0.9",
     "jsonpath-plus": "^7.2.0",
