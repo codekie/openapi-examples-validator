@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/codekie/openapi-examples-validator/compare/v4.7.1...v5.0.0) (2023-05-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* Minimum required Node version is 16 now
+* Dropped the support of `ajv-oai` in favor of the official
+   `ajv-formats` as `ajv-oai` is not maintained anymore and only supports `ajv@6.x`.
+   This may cause different results when using type with formats.
+* The property `dataPath` in the validation errors has changed
+  to `instancePath` and the type has changed from `jsPropertySyntax`
+  to `JSONPointer`
+* Unknown formats do not result in a validation-error anymore but log
+  a warning to the error-console. To suppress these log entries for
+  specific formats, pass them with the `--ignore-formats` option
+* In the validation-errors, `should` was replaced with `must`
+
+### Features
+
+* support polymorphism with discriminators ([#185](https://github.com/codekie/openapi-examples-validator/issues/185)) ([d596631](https://github.com/codekie/openapi-examples-validator/commit/d59663121ae390037bd0fec037920897923a5c1d))
+
+
+### Bug Fixes
+
+* upgrade dependencies ([#186](https://github.com/codekie/openapi-examples-validator/issues/186)) ([b08229b](https://github.com/codekie/openapi-examples-validator/commit/b08229b8aa00aa4862de51e39eb61437692a8fe2))
+
 ### [4.7.1](https://github.com/codekie/openapi-examples-validator/compare/v4.7.0...v4.7.1) (2022-08-01)
 
 
