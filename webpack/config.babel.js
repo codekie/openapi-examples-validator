@@ -1,6 +1,7 @@
 const fs = require('fs'),
     path = require('path'),
     webpack = require('webpack'),
+    ESLintPlugin = require('eslint-webpack-plugin'),
     {
         PROJECT_ROOT,
         JS_REGEX,
@@ -14,13 +15,6 @@ const BASE_CONFIG = {
     devtool: 'source-map',
     module: {
         rules: [
-            // Preloaders
-            {
-                enforce: 'pre',
-                test: JS_REGEX,
-                exclude: EXCLUDE_REGEX,
-                loader: 'eslint-loader'
-            },
             // Regular loaders
             { test: /\.json$/, loader: 'json-loader', type: 'javascript/auto' },
             { test: JS_REGEX, exclude: EXCLUDE_REGEX, loader: 'babel-loader' }
@@ -33,6 +27,14 @@ const BASE_CONFIG = {
         libraryTarget: 'commonjs2'
     },
     plugins: [
+        new ESLintPlugin({
+//            files: [
+//                '*.js',
+//                '*.es6',
+//                '*.babel'
+//            ],
+            exclude: 'node_modules/'
+        })
     ],
     // NodeJS options
     node: {

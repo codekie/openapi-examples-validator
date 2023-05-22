@@ -1,4 +1,5 @@
 const path = require('path'),
+    structuredClone = require('core-js-pure/actual/structured-clone'),
     { validateFile, validateExamplesByMap } = require('../../../../src/index'),
     { normalizeValidationResultPaths } = require('../../../util/setup-tests');
 
@@ -16,7 +17,7 @@ describe('Main-module, for v2 should', () => {
     describe('be able to dereference $ref pointers', () => {
         describe('with included examples', () => {
             it('with errors', async() => {
-                (await validateFile(FILE_PATH__REFERENCED_EXAMPLE_INVALID))
+                structuredClone(await validateFile(FILE_PATH__REFERENCED_EXAMPLE_INVALID))
                     .should.deep.equal({
                         valid: false,
                         statistics: {
@@ -45,8 +46,10 @@ describe('Main-module, for v2 should', () => {
         });
         describe('with mapping files', () => {
             it('with changing the working directory', async() => {
-                const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
-                    FILE_PATH__EXTERNAL_EXAMPLES_MAP__RELATIVE, { cwdToMappingFile: true });
+                const result = structuredClone(
+                    await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                        FILE_PATH__EXTERNAL_EXAMPLES_MAP__RELATIVE, { cwdToMappingFile: true })
+                );
                 result.valid.should.equal(true);
                 result.statistics.should.deep.equal({
                     schemasWithExamples: 2,
@@ -56,8 +59,10 @@ describe('Main-module, for v2 should', () => {
                 });
             });
             it('without changing the working directory', async() => {
-                const result = await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
-                    FILE_PATH__EXTERNAL_EXAMPLES_MAP, { cwdToMappingFile: false });
+                const result = structuredClone(
+                    await validateExamplesByMap(FILE_PATH__EXTERNAL_EXAMPLES_SCHEMA,
+                        FILE_PATH__EXTERNAL_EXAMPLES_MAP, { cwdToMappingFile: false })
+                );
                 normalizeValidationResultPaths(result).should.deep.equal({
                     valid: false,
                     statistics: {
