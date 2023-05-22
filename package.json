@@ -84,6 +84,6 @@
     "lodash.flatmap": "^4.5.0",
     "lodash.flatten": "^4.4.0",
     "lodash.merge": "^4.6.2",
-    "yaml": "^1.10.2"
+    "yaml": "^2.2.2"
   }
 }

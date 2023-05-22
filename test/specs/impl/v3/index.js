@@ -141,7 +141,12 @@ describe('Main-module, for v3 should', function() {
                 const errors = (await validateFile(FILE_PATH__INVALID__INDENTATION__YAML)).errors,
                     error = errors[0];
                 errors.length.should.equal(1);
-                error.message.should.equal('YAMLSemanticError: Nested mappings are not allowed in compact mappings');
+                error.message.should.equal('YAMLParseError: Nested mappings are not allowed in compact mappings at '
+                    + `line 22, column 19:
+
+            type: number
+                  ^\n`
+                );
                 error.type.should.equal('ParseError');
             });
         });
