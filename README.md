@@ -46,6 +46,7 @@ Options:
                                              for the examples
   -n, --no-additional-properties             don't allow properties that are not described in the schema
   -r, --all-properties-required              make all the properties in the schema required
+  -o, --ignore-formats <ignored-formats...>  Datatype formats to ignore (to prevent "unknown format" errors.)
   -h, --help                                 output usage information
 ````
 
@@ -82,12 +83,12 @@ Sample output of validation errors:
 [
     {
         "keyword": "type",
-        "dataPath": ".versions[0].id",
+        "instancePath": "/versions/0/id",
         "schemaPath": "#/properties/versions/items/properties/id/type",
         "params": {
             "type": "string"
         },
-        "message": "should be string",
+        "message": "must be string",
         "examplePath": "/~1/get/responses/200/examples/application~1json"
     }
 ]

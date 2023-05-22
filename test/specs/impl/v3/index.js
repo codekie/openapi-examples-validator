@@ -247,31 +247,31 @@ describe('Main-module, for v3 should', function() {
             });
             it('number represented as string', function() {
                 const error = this.validationResults.errors[0];
-                error.message.should.equal('should be number');
+                error.message.should.equal('must be number');
                 error.keyword.should.equal('type');
                 error.params.type.should.equal('number');
             });
             it('invalid int32', function() {
                 const error = this.validationResults.errors[1];
-                error.message.should.equal('should match format "int32"');
+                error.message.should.equal('must match format "int32"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('int32');
             });
             it('invalid int64', function() {
                 const error = this.validationResults.errors[2];
-                error.message.should.equal('should match format "int64"');
+                error.message.should.equal('must match format "int64"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('int64');
             });
             it('invalid float', function() {
                 const error = this.validationResults.errors[3];
-                error.message.should.equal('should match format "float"');
+                error.message.should.equal('must match format "float"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('float');
             });
             it('invalid double', function() {
                 const error = this.validationResults.errors[4];
-                error.message.should.equal('should match format "double"');
+                error.message.should.equal('must match format "double"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('double');
             });
@@ -288,20 +288,46 @@ describe('Main-module, for v3 should', function() {
 
             it('invalid date-time', function() {
                 const error = this.validationResults.errors[0];
-                error.message.should.equal('should match format "date-time"');
+                error.message.should.equal('must match format "date-time"');
                 error.keyword.should.equal('format');
                 error.params.format.should.equal('date-time');
             });
         });
     });
     describe('unknown formats', function() {
-        describe('without ignoring unknown formats', function() {
-            it('should throw an error', async function() {
-                (await validateFile(FILE_PATH__UNKNOWN_FORMATS)).valid.should.equal(false);
-            });
+        beforeEach(function() {
+            this.origStderrWrite = process.stderr.write;
+            this.capturedStderr = '';
+
+            // Override stderr write function
+            process.stderr.write = (chunk, encoding, callback) => {
+                this.capturedStderr += chunk.toString();
+                if (callback) {
+                    callback();
+                }
+            };
         });
+        afterEach(function() {
+            process.stderr.write = this.origStderrWrite;
+        });
+
+        it('should not throw an error', async function() {
+            (await validateFile(FILE_PATH__UNKNOWN_FORMATS)).valid.should.equal(true);
+        });
+        it('should show the unknown formats in the error-console', async function() {
+            (await validateFile(FILE_PATH__UNKNOWN_FORMATS));
+            this.capturedStderr.should.equal(
+                `unknown format "continental-status" ignored in schema at path "#/properties/status"
+unknown format "continental-status" ignored in schema at path "#/properties/status"
+unknown format "license-plate" ignored in schema at path "#/properties/licensePlate"
+unknown format "license-plate" ignored in schema at path "#/properties/licensePlate"
+unknown format "country-code-2" ignored in schema at path "#/properties/country"
+unknown format "country-code-2" ignored in schema at path "#/properties/country"
+`);
+        });
+
         describe('with passing the argument to ignore unknown formats', function() {
-            it('should throw an error', async function() {
+            it('should not show the unknown formats in the error-console', async function() {
                 (await validateFile(FILE_PATH__UNKNOWN_FORMATS, {
                     ignoreFormats: [
                         'country-code-2',
@@ -309,6 +335,7 @@ describe('Main-module, for v3 should', function() {
                         'license-plate'
                     ]
                 })).valid.should.equal(true);
+                this.capturedStderr.should.equal('');
             });
         });
     });

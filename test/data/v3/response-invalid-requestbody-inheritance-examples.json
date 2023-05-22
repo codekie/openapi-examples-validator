@@ -1,0 +1,131 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+      "title": "petstore Inheritance",
+      "version": "1.0.7"
+    },
+    "paths": {
+      "/pet": {
+        "post": {
+          "tags": [
+            "pet"
+          ],
+          "summary": "Add a new pet to the store",
+          "description": "Add a new pet to the store",
+          "operationId": "addPet",
+          "requestBody": {
+            "description": "Create a new pet in the store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                },
+                "examples": {
+                  "dog": {
+                    "value": {
+                      "name": "12",
+                      "catName": 123,
+                      "type": "CAT"
+                    }
+                  },
+                  "fish": {
+                    "value": {
+                      "name": "fish_01",
+                      "fishName": "Nemo",
+                      "type": "FISH"
+                    }
+                  }
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful operation",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                }
+              }
+            },
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Dog": {
+          "type": "object",
+          "required": [
+            "dogName"
+          ],
+          "properties": {
+            "dogName": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "DOG"
+              ]
+            }
+          }
+        },
+        "Cat": {
+          "type": "object",
+          "required": [
+            "dogName"
+          ],
+          "properties": {
+            "catName": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "CAT"
+              ]
+            }
+          }
+        },
+        "Pet": {
+          "required": [
+            "name",
+            "type"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "discriminator": {
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/components/schemas/Cat"
+            },
+            {
+              "$ref": "#/components/schemas/Dog"
+            }
+          ]
+        }
+      }
+    }
+  }

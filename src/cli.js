@@ -31,7 +31,7 @@ program
     .option('-n, --no-additional-properties', 'don\'t allow properties that are not described in the schema')
     .option('-r, --all-properties-required', 'make all the properties in the schema required')
     .option('-o, --ignore-formats <ignored-formats...>', 'Datatype formats to ignore '
-        + '(to prevent "unknown format" errors.)')
+        + '(to prevent "unknown format" message in the error-console.)')
     .action(processAction);
 program.on('--help', () => {
     console.log('\n\n  Example for external example-file:\n');
