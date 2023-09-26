@@ -56,7 +56,8 @@ module.exports = {
     'default': validateExamples,
     validateFile,
     validateExample,
-    validateExamplesByMap
+    validateExamplesByMap,
+    getValidatorFactory
 };
 
 // IMPLEMENTATION DETAILS
@@ -99,17 +100,27 @@ module.exports = {
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
  *                                                  will be expanded to a new array containing all entries.
+ * @param {Function} [specPostprocessor]            Provides implementation of spec postprocessor
+ * @param {Function} [validatorFactory]             Validator factory provider
  * @returns {ValidationResponse}
  */
-async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFormats, allPropertiesRequired } = {}) {
+async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFormats, allPropertiesRequired,
+    specPostprocessor = (spec) => spec,
+    validatorFactory = (spec, { ignoreFormats }) => _initValidatorFactory(spec, { ignoreFormats })
+} = {}) {
     const impl = Determiner.getImplementation(openapiSpec);
     openapiSpec = await refParser.dereference(openapiSpec);
     openapiSpec = impl.prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired });
+    if (typeof specPostprocessor === 'function') {
+        openapiSpec = specPostprocessor(openapiSpec);
+    }
     let pathsExamples = impl.getJsonPathsToExamples()
         .reduce((res, pathToExamples) => {
-            return res.concat(_pathToPointer(pathToExamples, openapiSpec));
-        }, []);
-    return _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFormats });
+            return res.concat(_pathToPointer(openapiSpec, pathToExamples));
+        }, [])
+        .map(impl.escapeExampleName);
+    const createValidator = validatorFactory(openapiSpec, { ignoreFormats });
+    return _validateExamplesPaths({ impl, createValidator }, pathsExamples, openapiSpec);
 }
 
 /**
@@ -435,23 +446,19 @@ function _getSchmaPointer(pathSchema, openapiSpec) {
 /**
  * Validates examples at the given paths in the OpenAPI-spec.
  * @param {Object}          impl            Spec-dependant validator
+ * @param {Function}        createValidator Validator factory
  * @param {Array.<String>}  pathsExamples   JSON-paths to examples
  * @param {Object}          openapiSpec     OpenAPI-spec
- * @param {Array.<string>} [ignoreFormats]  List of datatype formats that shall be ignored (to prevent
- *                                          "unsupported format" errors). If an Array with only one string is
- *                                          provided where the formats are separated with `\n`, the entries
- *                                          will be expanded to a new array containing all entries.
  * @returns {ValidationResponse}
  * @private
  */
-function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFormats }) {
+function _validateExamplesPaths({ impl, createValidator },  pathsExamples, openapiSpec) {
     const statistics = _initStatistics(),
         validationResult = {
             valid: true,
             statistics,
             errors: []
-        },
-        createValidator = _initValidatorFactory(openapiSpec, { ignoreFormats });
+        };
     let validationMap;
     try {
         // Create mapping between JSON-schemas and examples

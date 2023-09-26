@@ -23,10 +23,10 @@ module.exports = {
  * @param {Object}  [options]   Options for the validator
  * @returns {function(): (ajv | ajv.Ajv)}
  */
-function getValidatorFactory(specSchema, options) {
+function getValidatorFactory(specSchema, options, { provider = (opt) =>  new Ajv(opt) }) {
     const preparedSpecSchema = _createReferenceSchema(specSchema);
     return () => {
-        const validator = new Ajv(options);
+        const validator = provider(options);
         addFormats(validator);
 
         validator.addSchema(preparedSpecSchema);
