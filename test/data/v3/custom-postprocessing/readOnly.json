@@ -1,0 +1,95 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Swagger Petstore",
+        "license": {
+            "name": "MIT"
+        }
+    },
+    "tags": [
+        {
+            "name": "foo",
+            "description": "Everything about your foo"
+        }
+    ],
+    "servers": [
+        {
+            "url": "http://petstore.swagger.io/v1"
+        }
+    ],
+    "paths": {
+        "/foo": {
+            "post": {
+                "summary": "Add foo",
+                "operationId": "addFoo",
+                "description": "Create Foo",
+                "tags": [
+                    "foo"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Foo"
+                            },
+                            "examples": {
+                                "invalid1": {
+                                    "value": {
+                                        "bar": "aaa",
+                                        "baz": 0
+                                    }
+                                },
+                                "invalid2": {
+                                    "value": {
+                                        "bar": "aaa",
+                                        "xxx": "xxx"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Foo"
+                                },
+                                "examples": {
+                                    "valid": {
+                                        "description": "here it should be correct",
+                                        "value": {
+                                            "bar": "aaa",
+                                            "baz": 0
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Foo": {
+                "type": "object",
+                "description": "Simple Foo",
+                "properties": {
+                    "bar": {
+                        "type": "string"
+                    },
+                    "baz": {
+                        "type": "integer",
+                        "readOnly": true
+                    }
+                },
+                "additionalProperties": false
+            }
+        }
+    }
+}
