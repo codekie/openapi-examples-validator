@@ -2,8 +2,7 @@
  * Contains validation-logic that is specific to V2 of the OpenAPI-spec
  */
 
-const { JSONPath: jsonPath } = require('jsonpath-plus'),
-    cloneDeep = require('lodash.clonedeep'),
+const cloneDeep = require('lodash.clonedeep'),
     { setAllPropertiesRequired } = require('../service/all-properties-required'),
     { setNoAdditionalProperties } = require('../service/no-additional-properties');
 
@@ -30,16 +29,18 @@ module.exports = {
 function getJsonPathsToExamples() { return [PATH__EXAMPLES]; }
 
 
+
 /**
- * Builds a map with the path to the repsonse-schema as key and the paths to the examples, as value. The path of the
- * schema is derived from the path to the example and doesn't necessarily mean that the schema actually exists.
+ * Builds a map with the json-pointers to the response-schema as key and the json-pointers to the examples, as value.
+ * The pointer of the schema is derived from the pointer to the example and doesn't necessarily mean
+ * that the schema actually exists.
  * @param {Array.<String>}  pathsExamples   Paths to the examples
- * @returns {Object.<String, String>} Map with schema-path as key and example-paths as value
+ * @returns {Object.<String, String>} Map with schema-pointers as key and example-pointers as value
  * @private
  */
 function buildValidationMap(pathsExamples) {
     return pathsExamples.reduce((validationMap, pathExample) => {
-        const pathSchema = _getSchemaPathOfExample(pathExample);
+        const pathSchema = _getSchemaPointerOfExample(pathExample);
         validationMap[pathSchema] = (validationMap[pathSchema] || new Set())
             .add(pathExample);
         return validationMap;
@@ -83,14 +84,14 @@ function unescapeExampleNames(rawPath) {
 }
 
 /**
- * Gets a JSON-path to the corresponding response-schema, based on a JSON-path to an example.
- * @param {String}  pathExample JSON-path to example
- * @returns {String} JSON-path to the corresponding response-schema
+ * Gets a JSON-pointer to the corresponding response-schema, based on a JSON-pointer to an example.
+ * @param {String}  examplePointer JSON-pointer to example
+ * @returns {String} JSON-pointer to the corresponding response-schema
  * @private
  */
-function _getSchemaPathOfExample(pathExample) {
-    const pathSegs = jsonPath.toPathArray(pathExample).slice(),
+function _getSchemaPointerOfExample(examplePointer) {
+    const pathSegs = examplePointer.split('/'),
         idxExamples = pathSegs.lastIndexOf(PROP__EXAMPLES);
     pathSegs.splice(idxExamples, pathSegs.length - idxExamples, PROP__SCHEMA);
-    return jsonPath.toPathString(pathSegs);
+    return pathSegs.join('/');
 }
