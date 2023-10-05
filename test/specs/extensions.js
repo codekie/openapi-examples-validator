@@ -1,7 +1,6 @@
 const
     { 'default': validateExamples } = require('../../src'),
     { loadTestData } = require('../util/setup-tests');
-    // { applyCallbackToAllObjectModels } = require('../../src/impl/service/common');
 const { JSONPath: jp } = require('jsonpath-plus');
 
 function removeReadOnlyFromPostModels(oasSpec) {
