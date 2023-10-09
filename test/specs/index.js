@@ -88,6 +88,14 @@ describe('Main API', function() {
                         examplesTotal: 4
                     });
             });
+            it('with examples with missing schemas, when complex MIME types are in use', async() => {
+                structuredClone(await validateFile(getPathOfTestData('v2/simple-example-mime-complex')))
+                    .statistics.should.deep.equal({
+                        schemasWithExamples: 1,
+                        examplesWithoutSchema: 3,
+                        examplesTotal: 4
+                    });
+            });
             it('without examples', async() => {
                 structuredClone(await validateFile(getPathOfTestData('v2/valid-without-examples'))).statistics
                     .should.deep.equal({
