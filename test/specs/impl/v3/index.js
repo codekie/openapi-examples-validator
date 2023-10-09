@@ -20,10 +20,14 @@ const path = require('path'),
         = require('../../../data/v3/errors/simple-api-with-example-names-to-be-escaped.json');
 const { prepare } = require('../../../../src/impl/v3');
 
+const chai = require('chai');
+chai.use(require('chai-string'));
+
 const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/content/application~1json',
     REL_PATH__EXAMPLE__SIMPLE = 'v3/simple-api-with-example',
     REL_PATH__EXAMPLE__INVALID__WITH_INTERNAL_REFS = 'v3/simple-api-with-example-with-refs-invalid',
     REL_PATH__EXAMPLE_AND_EXAMPLES__SIMPLE = 'v3/simple-api-with-example-and-examples',
+    REL_PATH__EXAMPLE_AND_EXAMPLES__MIME_COMPLEX = 'v3/simple-api-with-example-and-examples-mime-complex-invalid',
     REL_PATH__EXAMPLES__SIMPLE = 'v3/simple-api-with-examples',
     REL_PATH__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs',
     REL_PATH__EXAMPLES__INVALID__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs-invalid',
@@ -59,6 +63,8 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     FILE_PATH__VALID__REQUEST_BODY = path.join(__dirname, '../../../data/v3/request-valid-requestbody.json'),
     FILE_PATH__VALID__REQUEST_BODY__EXAMPLES
         = path.join(__dirname, '../../../data/v3/request-valid-requestbody-examples.json'),
+    FILE_PATH__VALID__REQUEST_BODY__EXAMPLES_MIME_COMPLEX
+        = path.join(__dirname, '../../../data/v3/request-valid-requestbody-examples-mime-complex.json'),
     FILE_PATH__INVALID__NUMBER_FORMATS = path.join(__dirname, '../../../data/v3/response-invalid-number-formats.json'),
     FILE_PATH__INVALID__DATE_TIME_FORMAT
         = path.join(__dirname, '../../../data/v3/response-invalid-date-time-format.json'),
@@ -94,6 +100,16 @@ describe('Main-module, for v3 should', function() {
                 error.type.should.equal(ErrorType.errorAndErrorsMutuallyExclusive);
                 error.message.should.not.be.equal('');
                 error.params.pathContext.should.equal(JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE);
+            });
+            it('throw error, if example and examples are defined with for complex MIME', async function() {
+                const validationResult = await validateExamples(
+                        loadTestData(REL_PATH__EXAMPLE_AND_EXAMPLES__MIME_COMPLEX)),
+                    error = validationResult.errors[0];
+                validationResult.valid.should.equal(false);
+                validationResult.errors.length.should.equal(1);
+                error.type.should.equal(ErrorType.errorAndErrorsMutuallyExclusive);
+                error.message.should.not.be.equal('');
+                error.params.pathContext.should.startWith(JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE);
             });
         });
         describe('`examples`-property', function() {
@@ -211,6 +227,15 @@ describe('Main-module, for v3 should', function() {
         describe('in examples-property', function() {
             it('with statistics', async function() {
                 const { statistics } = structuredClone(await validateFile(FILE_PATH__VALID__REQUEST_BODY__EXAMPLES));
+                statistics.should.deep.equal({
+                    examplesTotal: 2,
+                    examplesWithoutSchema: 0,
+                    schemasWithExamples: 2
+                });
+            });
+            it('with statistics when defined as complex MIME', async function() {
+                const { statistics } = structuredClone(
+                    await validateFile(FILE_PATH__VALID__REQUEST_BODY__EXAMPLES_MIME_COMPLEX));
                 statistics.should.deep.equal({
                     examplesTotal: 2,
                     examplesWithoutSchema: 0,

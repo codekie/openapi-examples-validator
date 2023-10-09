@@ -2,20 +2,24 @@
  * Contains validation-logic that is specific to V3 of the OpenAPI-spec
  */
 
-const { JSONPath: jsonPath } = require('jsonpath-plus'),
-    cloneDeep = require('lodash.clonedeep'),
+const cloneDeep = require('lodash.clonedeep'),
     { ApplicationError, ErrorType } = require('../../application-error'),
     { setAllPropertiesRequired } = require('../service/all-properties-required'),
     { setNoAdditionalProperties } = require('../service/no-additional-properties');
 
 // CONSTANTS
 
-const PATH__EXAMPLE = '$..responses..content.application/json.example',
-    PATH__EXAMPLES = '$..responses..content.application/json.examples.*.value',
+const RESPONSES = '$..responses..content[?(@property.match(/[\/+]json/))]';
+const REQUEST = '$..requestBody.content[?(@property.match(/[\/+]json/))]';
+const SINGLE_EXAMPLE = '.example';
+const MANY_EXAMPLES = '.examples.*.value';
+
+const PATH__EXAMPLE = `${RESPONSES}${SINGLE_EXAMPLE}`,
+    PATH__EXAMPLES = `${RESPONSES}${MANY_EXAMPLES}`,
     PATH__EXAMPLE__PARAMETER = '$..parameters..example',
     PATH__EXAMPLES__PARAMETER = '$..parameters..examples.*.value',
-    PATH__EXAMPLE__REQUEST_BODY = '$..requestBody.content.application/json.example',
-    PATH__EXAMPLES__REQUEST_BODY = '$..requestBody.content.application/json.examples.*.value',
+    PATH__EXAMPLE__REQUEST_BODY = `${REQUEST}${SINGLE_EXAMPLE}`,
+    PATH__EXAMPLES__REQUEST_BODY = `${REQUEST}${MANY_EXAMPLES}`,
     PROP__SCHEMA = 'schema',
     PROP__EXAMPLE = 'example',
     PROP__EXAMPLES = 'examples';
@@ -29,10 +33,8 @@ const ExampleType = {
 
 module.exports = {
     buildValidationMap,
-    escapeExampleName,
     getJsonPathsToExamples,
-    prepare,
-    unescapeExampleNames
+    prepare
 };
 
 // IMPLEMENTATION DETAILS
@@ -53,17 +55,18 @@ function getJsonPathsToExamples() {
 }
 
 /**
- * Builds a map with the path to the repsonse-schema as key and the paths to the examples, as value. The path of the
- * schema is derived from the path to the example and doesn't necessarily mean that the schema actually exists.
+ * Builds a map with the json-pointers to the response-schema as key and the json-pointers to the examples, as value.
+ * The pointer of the schema is derived from the pointer to the example and doesn't necessarily mean
+ * that the schema actually exists.
  * @param {Array.<String>}  pathsExamples   Paths to the examples
- * @returns {Object.<String, String>} Map with schema-path as key and example-paths as value
+ * @returns {Object.<String, String>} Map with schema-pointers as key and example-pointers as value
  * @private
  */
 function buildValidationMap(pathsExamples) {
     const exampleTypesOfSchemas = new Map();
     return pathsExamples.reduce((validationMap, pathExample) => {
-        const { pathSchemaAsArray, exampleType } = _getSchemaPathOfExample(pathExample),
-            pathSchema = jsonPath.toPathString(pathSchemaAsArray),
+        const { pathSchemaAsArray, exampleType } = _getSchemaPointerOfExample(pathExample),
+            pathSchema = pathSchemaAsArray.join('/'),
             exampleTypeOfSchema = exampleTypesOfSchemas.get(pathSchema);
         if (exampleTypeOfSchema) {
             exampleTypeOfSchema !== exampleType && _throwMutuallyExclusiveError(pathSchemaAsArray);
@@ -91,37 +94,18 @@ function prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired } 
 }
 
 /**
- * Escapes the name of the example. In order to do that, a backtick has to be added to the beginning of the key.
- * @param {string} rawPath  Unescaped path
- * @returns {string} Escaped path
- * @private
- */
-function escapeExampleName(rawPath) {
-    return rawPath.replace(/\['examples'\]\['(.*)\]\['value'\]$/, "['examples']['`$1]['value']");
-}
-
-/**
- * Escaped example-names reflect in the result (where they shouldn't). This function reverts it.
- * @param {string} rawPath  Escaped path
- * @returns {string} Unescaped path
- */
-function unescapeExampleNames(rawPath) {
-    return rawPath && rawPath.replace(/\/examples\/`(.*)\/value$/, '/examples/$1/value');
-}
-
-/**
- * Gets a JSON-path to the corresponding response-schema, based on a JSON-path to an example.
+ * Gets a JSON-pointer to the corresponding response-schema, based on a JSON-pointer to an example.
  *
- * It is assumed that the JSON-path to the example is valid and existing.
- * @param {String}  pathExample JSON-path to example
+ * It is assumed that the JSON-pointer to the example is valid and existing.
+ * @param {String}  examplePointer JSON-pointer to example
  * @returns {{
  *     exampleType: ExampleType,
  *     pathSchema: String
  * }} JSON-path to the corresponding response-schema
  * @private
  */
-function _getSchemaPathOfExample(pathExample) {
-    const pathSegs = jsonPath.toPathArray(pathExample).slice(),
+function _getSchemaPointerOfExample(examplePointer) {
+    const pathSegs = examplePointer.split('/'),
         idxExample = pathSegs.lastIndexOf(PROP__EXAMPLE),
         /** @type ExampleType */
         exampleType = idxExample > -1
@@ -137,6 +121,7 @@ function _getSchemaPathOfExample(pathExample) {
     };
 }
 
+
 /**
  * Checks if only `example` or `examples` is set for the schema, as they are mutually exclusive by OpenAPI-spec.
  * @param {Array.<String>}  pathSchemaAsArray   JSON-path to the Schema, as JSON-path-array
@@ -149,7 +134,7 @@ function _throwMutuallyExclusiveError(pathSchemaAsArray) {
         type: ErrorType.errorAndErrorsMutuallyExclusive,
         message: 'Properties "error" and "errors" are mutually exclusive',
         params: {
-            pathContext: jsonPath.toPointer(pathContextAsArray)
+            pathContext: pathContextAsArray.join('/')
         }
     });
 }
