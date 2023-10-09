@@ -6,7 +6,7 @@ const
     merge = require('lodash.merge'),
     flatten = require('lodash.flatten'),
     flatMap = require('lodash.flatmap'),
-    jp = require('json-pointer'),
+    jsonPointer = require('json-pointer'),
     fs = require('fs'),
     path = require('path'),
     glob = require('glob'),
@@ -108,8 +108,7 @@ async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFor
     let pathsExamples = impl.getJsonPathsToExamples()
         .reduce((res, pathToExamples) => {
             return res.concat(_pathToPointer(pathToExamples, openapiSpec));
-        }, [])
-        .map(impl.escapeExampleName);
+        }, []);
     return _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFormats });
 }
 
@@ -475,10 +474,6 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFo
             validationResult
         });
     });
-    // Revert escaped example names from the results
-    validationResult.errors.forEach((example) => {
-        example.examplePath = impl.unescapeExampleNames(example.examplePath);
-    });
     return validationResult;
 }
 
@@ -540,12 +535,13 @@ function _initStatistics() {
 
 /**
  * Extract object by the given JSON-pointer
- * @param {String} pointer JSON-pointer
- * @param {Object} json JSON to extract the object(s) from
+ * @param {String}      pointer JSON-pointer
+ * @param {Object}      json JSON to extract the object(s) from
+ * @returns {Object}    Extracted object
  */
 function _getByPointer(pointer, json) {
     try {
-        return jp.get(json, pointer);
+        return jsonPointer.get(json, pointer);
     } catch (_) {
         return undefined;
     }
