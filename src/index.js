@@ -114,9 +114,8 @@ async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFor
     openapiSpec = _postprocess(openapiSpec, specPostprocessor);
     let pathsExamples = impl.getJsonPathsToExamples()
         .reduce((res, pathToExamples) => {
-            return res.concat(_pathToPointer(openapiSpec, pathToExamples));
-        }, [])
-        .map(impl.escapeExampleName);
+            return res.concat(_pathToPointer(pathToExamples, openapiSpec));
+        }, []);
     const createValidator = validatorFactory(openapiSpec, ignoreFormats);
     return _validateExamplesPaths({ impl, createValidator }, pathsExamples, openapiSpec);
 }
