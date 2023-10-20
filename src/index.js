@@ -635,7 +635,7 @@ function _postprocess(oasSpec, specPostprocessor) {
     let result = oasSpec;
     if (typeof specPostprocessor === 'function') {
         result = specPostprocessor(oasSpec);
-        if (!result) { throw new Error('Postprocessor has to be specified'); }
+        if (!result) { throw new Error('Postprocessor does not return processed document'); }
     }
     return result;
 }

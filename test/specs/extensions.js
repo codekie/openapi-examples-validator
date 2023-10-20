@@ -3,9 +3,12 @@ const
     { loadTestData } = require('../util/setup-tests');
 const { JSONPath: jp } = require('jsonpath-plus');
 
+function deepClone(oasSpec) {
+    // please note that $RefParser.dereference used internally is reusing objects
+    return JSON.parse(JSON.stringify(oasSpec));
+}
+
 function removeReadOnlyFromPostModels(oasSpec) {
-    // please note that $RefParser.dereference used internally is reusing objectss
-    oasSpec = JSON.parse(JSON.stringify(oasSpec));
     const path = '$..requestBody..schema..*[?(@.readOnly)]';
     jp({ path, json: oasSpec, resultType: 'parentProperty', callback: (val, _, obj) => {
         const parent = obj.parent;
@@ -14,6 +17,12 @@ function removeReadOnlyFromPostModels(oasSpec) {
         }
     } });
     return oasSpec;
+}
+
+function chained(functions) {
+    return function(input) {
+        return functions.reduce((result, func) => func(result), input);
+    };
 }
 
 describe('OAS postprocessor', function() {
@@ -27,8 +36,9 @@ describe('OAS postprocessor', function() {
             });
 
             it('should find errors in all request examples', async function() {
+                const postProcessor = chained([deepClone, removeReadOnlyFromPostModels]);
                 const result = await validateExamples(loadTestData('v3/custom-postprocessing/readOnly'),
-                    { specPostprocessor: removeReadOnlyFromPostModels });
+                    { specPostprocessor: postProcessor });
                 result.valid.should.equal(false);
                 result.errors.length.should.equal(1);
                 result.errors[0].examplePath.includes('invalid');
