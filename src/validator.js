@@ -21,12 +21,13 @@ module.exports = {
  * Get a factory-function to create a prepared validator-instance
  * @param {Object}  specSchema  OpenAPI-spec of which potential local references will be extracted
  * @param {Object}  [options]   Options for the validator
+ * @param {Function} [provider] Ajv provider
  * @returns {function(): (ajv | ajv.Ajv)}
  */
-function getValidatorFactory(specSchema, options) {
+function getValidatorFactory(specSchema, options, { provider = (opt) => new Ajv(opt) } = {}) {
     const preparedSpecSchema = _createReferenceSchema(specSchema);
     return () => {
-        const validator = new Ajv(options);
+        const validator = provider(options);
         addFormats(validator);
 
         validator.addSchema(preparedSpecSchema);
@@ -49,7 +50,7 @@ function compileValidate(validator, responseSchema) {
     try {
         result = validator.compile(preparedResponseSchema);
     } catch (e) {
-        result = () => {};
+        result = () => { };
         result.errors = [e];
     }
     return result;
@@ -79,7 +80,7 @@ function _replaceRefsToPreparedSpecSchema(schema) {
         json: schema,
         callback(value, type, payload) {
             if (!value.startsWith('#')) { return; }
-            payload.parent[payload.parentProperty] = `${ ID__SPEC_SCHEMA }${ value }`;
+            payload.parent[payload.parentProperty] = `${ID__SPEC_SCHEMA}${value}`;
         }
     });
 }

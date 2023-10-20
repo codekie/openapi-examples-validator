@@ -56,7 +56,8 @@ module.exports = {
     'default': validateExamples,
     validateFile,
     validateExample,
-    validateExamplesByMap
+    validateExamplesByMap,
+    getValidatorFactory
 };
 
 // IMPLEMENTATION DETAILS
@@ -99,17 +100,24 @@ module.exports = {
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
  *                                                  will be expanded to a new array containing all entries.
+ * @param {Function} [specPostprocessor]            Provides implementation of spec postprocessor
+ * @param {Function} [validatorFactory]             Validator factory provider
  * @returns {ValidationResponse}
  */
-async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFormats, allPropertiesRequired } = {}) {
+async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFormats, allPropertiesRequired,
+    specPostprocessor = (spec) => spec,
+    validatorFactory = (spec, ignoreFormats) => _initValidatorFactory(spec, { ignoreFormats })
+} = {}) {
     const impl = Determiner.getImplementation(openapiSpec);
     openapiSpec = await refParser.dereference(openapiSpec);
     openapiSpec = impl.prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired });
+    openapiSpec = _postprocess(openapiSpec, specPostprocessor);
     let pathsExamples = impl.getJsonPathsToExamples()
         .reduce((res, pathToExamples) => {
             return res.concat(_pathToPointer(pathToExamples, openapiSpec));
         }, []);
-    return _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFormats });
+    const createValidator = validatorFactory(openapiSpec, ignoreFormats);
+    return _validateExamplesPaths({ impl, createValidator }, pathsExamples, openapiSpec);
 }
 
 /**
@@ -121,16 +129,24 @@ async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFor
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
  *                                                  will be expanded to a new array containing all entries.
+ * @param {Function} [specPostprocessor]            Provides implementation of spec postprocessor
+ * @param {Function} [validatorFactory]             Validator factory provider
  * @returns {ValidationResponse}
  */
-async function validateFile(filePath, { noAdditionalProperties, ignoreFormats, allPropertiesRequired } = {}) {
+async function validateFile(filePath, { noAdditionalProperties, ignoreFormats, allPropertiesRequired,
+    specPostprocessor = (spec) => spec,
+    validatorFactory = (spec, ignoreFormats) => _initValidatorFactory(spec, { ignoreFormats })
+} = {}) {
     let openapiSpec = null;
     try {
         openapiSpec = await _parseSpec(filePath);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
-    return validateExamples(openapiSpec, { noAdditionalProperties, ignoreFormats, allPropertiesRequired });
+    return validateExamples(openapiSpec, {
+        noAdditionalProperties, ignoreFormats, allPropertiesRequired,
+        specPostprocessor, validatorFactory
+    });
 }
 
 /**
@@ -147,11 +163,15 @@ async function validateFile(filePath, { noAdditionalProperties, ignoreFormats, a
  *                                              "unsupported format" errors). If an Array with only one string is
  *                                              provided where the formats are separated with `\n`, the entries
  *                                              will be expanded to a new array containing all entries.
+ * @param {Function} [specPostprocessor]        Provides implementation of spec postprocessor
+ * @param {Function} [validatorFactory]         Validator factory provider
  * @returns {ValidationResponse}
  */
 async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
-    { cwdToMappingFile, noAdditionalProperties, ignoreFormats, allPropertiesRequired } = {}
-) {
+    { cwdToMappingFile, noAdditionalProperties, ignoreFormats, allPropertiesRequired,
+        specPostprocessor = (spec) => spec,
+        validatorFactory = (spec, ignoreFormats) => _initValidatorFactory(spec, { ignoreFormats })
+    } = {}) {
     let matchingFilePathsMapping = 0;
     const filePathsMaps = glob.sync(
         globMapExternalExamples,
@@ -169,6 +189,7 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
             openapiSpec = await _parseSpec(filePathSchema);
             openapiSpec = Determiner.getImplementation(openapiSpec)
                 .prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired });
+            openapiSpec = _postprocess(openapiSpec, specPostprocessor);
         } catch (err) {
             responses.push(createValidationResponse({ errors: [ApplicationError.create(err)] }));
             continue;
@@ -179,13 +200,11 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
         responses.push(
             _validate(
                 statistics => {
-                    return _handleExamplesByMapValidation(
-                        openapiSpec, mapExternalExamples, statistics, {
-                            cwdToMappingFile,
-                            dirPathMapExternalExamples: path.dirname(filePathMapExternalExamples),
-                            ignoreFormats
-                        }
-                    ).map(
+                    return _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statistics, {
+                        cwdToMappingFile,
+                        dirPathMapExternalExamples: path.dirname(filePathMapExternalExamples),
+                        ignoreFormats, validatorFactory
+                    }).map(
                         (/** @type ApplicationError */ error) => Object.assign(error, {
                             mapFilePath: path.normalize(filePathMapExternalExamples)
                         })
@@ -216,12 +235,16 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
  *                                                  will be expanded to a new array containing all entries.
+ * @param {Function} [specPostprocessor]            Provides implementation of spec postprocessor
+ * @param {Function} [validatorFactory]             Validator factory provider
  * @returns {ValidationResponse}
  */
 async function validateExample(filePathSchema, pathSchema, filePathExample, {
     noAdditionalProperties,
     ignoreFormats,
-    allPropertiesRequired
+    allPropertiesRequired,
+    specPostprocessor = (spec) => spec,
+    validatorFactory = (spec, ignoreFormats) => _initValidatorFactory(spec, { ignoreFormats })
 } = {}) {
     let example = null,
         schema = null,
@@ -231,13 +254,15 @@ async function validateExample(filePathSchema, pathSchema, filePathExample, {
         openapiSpec = await _parseSpec(filePathSchema);
         openapiSpec = Determiner.getImplementation(openapiSpec)
             .prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired });
+        openapiSpec = _postprocess(openapiSpec, specPostprocessor);
         schema = _extractSchema(_getSchmaPointer(pathSchema, openapiSpec), openapiSpec);
     } catch (err) {
         return createValidationResponse({ errors: [ApplicationError.create(err)] });
     }
+    const createValidator = validatorFactory(openapiSpec, ignoreFormats);
     return _validate(
         statistics => _validateExample({
-            createValidator: _initValidatorFactory(openapiSpec, { ignoreFormats }),
+            createValidator,
             schema,
             example,
             statistics,
@@ -312,11 +337,12 @@ function _validate(validationHandler) {
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
  *                                                  will be expanded to a new array containing all entries.
+ * @param {Function} [validatorFactory]             Validator factory provider
  * @returns {Array.<ApplicationError>}
  * @private
  */
 function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statistics,
-    { cwdToMappingFile = false, dirPathMapExternalExamples, ignoreFormats }
+    { cwdToMappingFile = false, dirPathMapExternalExamples, ignoreFormats, validatorFactory }
 ) {
     return flatMap(Object.entries(mapExternalExamples), ([pathSchema, filePathsExample]) => {
         let schema = null;
@@ -326,6 +352,8 @@ function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statis
             // If the schema can't be found, don't even attempt to process the examples
             return ApplicationError.create(err);
         }
+        const createValidator = validatorFactory(openapiSpec, ignoreFormats);
+
         return flatMap(
             flatten([filePathsExample]),
             filePathExample => {
@@ -352,7 +380,7 @@ function _handleExamplesByMapValidation(openapiSpec, mapExternalExamples, statis
                     return [ApplicationError.create(err)];
                 }
                 return flatMap(examples, example => _validateExample({
-                    createValidator: _initValidatorFactory(openapiSpec, { ignoreFormats }),
+                    createValidator,
                     schema,
                     example: example.content,
                     statistics,
@@ -435,23 +463,19 @@ function _getSchmaPointer(pathSchema, openapiSpec) {
 /**
  * Validates examples at the given paths in the OpenAPI-spec.
  * @param {Object}          impl            Spec-dependant validator
+ * @param {Function}        createValidator Validator factory
  * @param {Array.<String>}  pathsExamples   JSON-paths to examples
  * @param {Object}          openapiSpec     OpenAPI-spec
- * @param {Array.<string>} [ignoreFormats]  List of datatype formats that shall be ignored (to prevent
- *                                          "unsupported format" errors). If an Array with only one string is
- *                                          provided where the formats are separated with `\n`, the entries
- *                                          will be expanded to a new array containing all entries.
  * @returns {ValidationResponse}
  * @private
  */
-function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFormats }) {
+function _validateExamplesPaths({ impl, createValidator }, pathsExamples, openapiSpec) {
     const statistics = _initStatistics(),
         validationResult = {
             valid: true,
             statistics,
             errors: []
-        },
-        createValidator = _initValidatorFactory(openapiSpec, { ignoreFormats });
+        };
     let validationMap;
     try {
         // Create mapping between JSON-schemas and examples
@@ -590,16 +614,30 @@ function _validateExample({ createValidator, schema, example, statistics, filePa
  * @private
  */
 function _initValidatorFactory(specSchema, { ignoreFormats }) {
+    const formats = ignoreFormats && ignoreFormats.reduce((result, entry) => {
+        result[entry] = () => true;
+        return result;
+    }, {});
     return getValidatorFactory(specSchema, {
         schemaId: 'auto',
         discriminator: true,
         strict: false,
         allErrors: true,
-        formats: ignoreFormats && ignoreFormats.reduce((result, entry) => {
-            result[entry] = () => true;
-            return result;
-        }, {})
+        formats
     });
+}
+
+/***
+ * Run spec postprocess if defined.
+ * @returns modified OAS spec or the original one in case of errors
+ */
+function _postprocess(oasSpec, specPostprocessor) {
+    let result = oasSpec;
+    if (typeof specPostprocessor === 'function') {
+        result = specPostprocessor(oasSpec);
+        if (!result) { throw new Error('Postprocessor does not return processed document'); }
+    }
+    return result;
 }
 
 /**
