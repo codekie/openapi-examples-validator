@@ -39,12 +39,6 @@
                                         "bar": "aaa",
                                         "baz": 0
                                     }
-                                },
-                                "invalid2": {
-                                    "value": {
-                                        "bar": "aaa",
-                                        "xxx": "xxx"
-                                    }
                                 }
                             }
                         }

@@ -17,14 +17,22 @@ function removeReadOnlyFromPostModels(oasSpec) {
 }
 
 describe('OAS postprocessor', function() {
-    describe('validateExamples', function() {
+    describe('validateExamples taking into readOnly flag from OAS spec', function() {
         describe('API version 3', function() {
+            it('without "readOnly" post-processor an error is not captured', async function() {
+                //please look into spec and check that the 'invalid1' example is not complying to OAS spec
+                const result = await validateExamples(loadTestData('v3/custom-postprocessing/readOnly'));
+                result.valid.should.equal(true);
+                result.statistics.examplesTotal.should.equal(2);
+            });
+
             it('should find errors in all request examples', async function() {
                 const result = await validateExamples(loadTestData('v3/custom-postprocessing/readOnly'),
                     { specPostprocessor: removeReadOnlyFromPostModels });
                 result.valid.should.equal(false);
-                result.errors.length.should.equal(2);
-                result.statistics.examplesTotal.should.equal(3);
+                result.errors.length.should.equal(1);
+                result.errors[0].examplePath.includes('invalid');
+                result.statistics.examplesTotal.should.equal(2);
             });
         });
     });
