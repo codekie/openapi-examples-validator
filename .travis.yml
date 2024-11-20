@@ -1,9 +1,10 @@
 language: node_js
 
 node_js:
-  - "10"
-  - "12"
-  - "14"
+  - "18"
+  - "20"
+  - "22"
+  - "24"
   - "node"
 
 before_script:
