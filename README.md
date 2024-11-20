@@ -15,7 +15,7 @@ Validates embedded JSON-examples in OpenAPI-specs (v2 and v3 are supported)
 Prerequisites
 ------------
 
-- [Node.js](https://nodejs.org/) >=16.
+- [Node.js](https://nodejs.org/) >=18.
 
 Install
 -------
