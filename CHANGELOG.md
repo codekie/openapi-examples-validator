@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.0](https://github.com/codekie/openapi-examples-validator/compare/v5.0.0...v6.0.0) (2024-11-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* **dependencies:** - minimum required Node version is 18 now
+
+### Features
+
+* support complex MIME definitions in OAS3 content type ([#191](https://github.com/codekie/openapi-examples-validator/issues/191)) ([ea1a53f](https://github.com/codekie/openapi-examples-validator/commit/ea1a53f01d4bc87a88847abc486198d7335db6fd)), closes [#190](https://github.com/codekie/openapi-examples-validator/issues/190)
+
+
+### Bug Fixes
+
+* **dependencies:** upgrade dependencies ([#193](https://github.com/codekie/openapi-examples-validator/issues/193)) ([de88e48](https://github.com/codekie/openapi-examples-validator/commit/de88e4830f011ef6a2ada61e297c7cf1160c6c5b))
+
 ## [5.0.0](https://github.com/codekie/openapi-examples-validator/compare/v4.7.1...v5.0.0) (2023-05-22)
 
 
