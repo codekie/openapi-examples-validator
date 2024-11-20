@@ -13,12 +13,12 @@ runs:
   using: "composite"
   steps:
     - name: Use Node.js ${{ inputs.node-version }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
     - id: restore-cached-dependencies
       name: Restore cached dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ./node_modules/
         key: ${{ runner.os }}-install-${{ inputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
