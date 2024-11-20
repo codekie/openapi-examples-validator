@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.0.1](https://github.com/codekie/openapi-examples-validator/compare/v6.0.0...v6.0.1) (2024-11-20)
+
+
+### Bug Fixes
+
+* update README.md that minimum NodeJS version is 18 now ([eb69b27](https://github.com/codekie/openapi-examples-validator/commit/eb69b278134266341636992edc6c6cab42df6125))
+
 ## [6.0.0](https://github.com/codekie/openapi-examples-validator/compare/v5.0.0...v6.0.0) (2024-11-20)
 
 
