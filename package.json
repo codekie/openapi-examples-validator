@@ -80,7 +80,7 @@
     "glob": "^8.1.0",
     "json-pointer": "^0.6.2",
     "json-schema-ref-parser": "^9.0.9",
-    "jsonpath-plus": "^7.2.0",
+    "jsonpath-plus": "^10.2.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.flatmap": "^4.5.0",
     "lodash.flatten": "^4.4.0",
