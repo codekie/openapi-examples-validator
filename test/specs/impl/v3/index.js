@@ -502,6 +502,18 @@ unknown format "country-code-2" ignored in schema at path "#/properties/country"
                 loadTestData('v3/all-properties-required/simple-api-with-all-properties-required'));
         });
     });
+    describe('handling null values in schema', function() {
+        const FILE_PATH__SCHEMA_WITH_NULL = path.join(
+            __dirname,
+            '../../../data/v3/null-values/schema-with-null-property.json'
+        );
+
+        it('should handle null values in schema definitions', async function() {
+            (await validateFile(FILE_PATH__SCHEMA_WITH_NULL, {
+                noAdditionalProperties: true
+            })).valid.should.equal(true);
+        });
+    });
 });
 
 function _expandFilePathOfErrors(errors, propertyName) {
