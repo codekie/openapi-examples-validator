@@ -1,0 +1,35 @@
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/test": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "enum": [
+                                                "active",
+                                                "inactive",
+                                                null
+                                            ],
+                                            "type": "string",
+                                            "nullable": true,
+                                            "description": "The status of the item"
+                                        }
+                                    },
+                                    "required": [
+                                        "status"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+} 

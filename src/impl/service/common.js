@@ -104,5 +104,5 @@ function _isPropertiesDefinition(path) {
 }
 
 function _isObjectDefinition(entity) {
-    return entity.type === 'object' || entity.properties;
+    return entity && (entity.type === 'object' || entity.properties);
 }
