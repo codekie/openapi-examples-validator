@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.0.2](https://github.com/codekie/openapi-examples-validator/compare/v6.0.1...v6.0.2) (2025-04-13)
+
+
+### Bug Fixes
+
+* null values in schema enums ([#195](https://github.com/codekie/openapi-examples-validator/issues/195)) ([9f62d21](https://github.com/codekie/openapi-examples-validator/commit/9f62d21a7cee8a4e2c99f0483575bc79f526e03d))
+* update dependencies ([#196](https://github.com/codekie/openapi-examples-validator/issues/196)) ([916c43e](https://github.com/codekie/openapi-examples-validator/commit/916c43e5baf8b37f4b7bf62ed5cbd37004829c2a))
+
 ### [6.0.1](https://github.com/codekie/openapi-examples-validator/compare/v6.0.0...v6.0.1) (2024-11-20)
 
 
