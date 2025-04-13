@@ -47,10 +47,10 @@
   "homepage": "https://github.com/codekie/openapi-examples-validator#readme",
   "devDependencies": {
     "@babel/cli": "^7.27.0",
-    "@babel/core": "^7.26.0",
+    "@babel/core": "^7.26.10",
     "@babel/eslint-parser": "^7.27.0",
     "@babel/node": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-env": "^7.26.9",
     "@babel/register": "^7.25.9",
     "@stryker-mutator/core": "^8.7.1",
     "@stryker-mutator/mocha-runner": "^8.7.1",
