@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.0.3](https://github.com/codekie/openapi-examples-validator/compare/v6.0.2...v6.0.3) (2025-04-21)
+
+
+### Bug Fixes
+
+* don't throw an error when there is a property named `content` of the type `array` ([#198](https://github.com/codekie/openapi-examples-validator/issues/198)) ([8e33d85](https://github.com/codekie/openapi-examples-validator/commit/8e33d859bc71dfb6a0b3c3229a111b69d31ed484))
+
 ### [6.0.2](https://github.com/codekie/openapi-examples-validator/compare/v6.0.1...v6.0.2) (2025-04-13)
 
 
