@@ -1,0 +1,32 @@
+swagger: '2.0'
+info:
+  title: API
+  version: 1.0.0
+paths:
+  /metrics:
+    get:
+      summary: Get info
+      operationId: get_info
+      description: |
+        This API hook returns server metrics.
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              examples:
+                type: array
+                description: Array of valid entries
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: integer
+                      description: RR type of entry
+          examples:
+            application/json:
+              examples:
+                - type: 0

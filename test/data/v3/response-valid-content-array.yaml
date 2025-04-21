@@ -1,0 +1,32 @@
+openapi: 3.0.2
+components:
+  paths:
+    metrics:
+      get:
+        summary: Get info
+        operationId: "get_info"
+        description: |
+          This API hook returns server metrics.
+        responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    content:
+                      type: array
+                      description: Array of valid entries
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            type: integer
+                            description: RR type of entry
+                examples:
+                  metrics:
+                    summary: Server metrics
+                    value:
+                      content:
+                        - type: 0

@@ -4,6 +4,7 @@ const path = require('path'),
     { validateExample, 'default': validateExamples, validateExamplesByMap } = require('../../../../src/index'),
     { ApplicationError, ErrorType } = require('../../../../src/application-error');
 const { prepare } = require('../../../../src/impl/v2');
+const { validateFile } = require('../../../../src');
 
 const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     PATH__SCHEMA_EXTERNAL_EXAMPLE_INVALID = '$.hmm.what.am.i.gonna.get.for.lunch',
@@ -27,7 +28,9 @@ const PATH__SCHEMA_EXTERNAL_EXAMPLE = '$.paths./.get.responses.200.schema',
     FILE_PATH__NOT_EXISTS = 'there is no spoon',
     FILE_PATH__EXTERNAL_EXAMPLE_INVALID_TYPE = path.join('test', 'data', 'v2', 'external-examples-invalid-type.json'),
     FILE_PATH__EXTERNAL_EXAMPLE_INVALID_MISSING_LINK = path.join('test', 'data', 'v2',
-        'external-examples-invalid-missing-link.json');
+        'external-examples-invalid-missing-link.json'),
+    FILE_PATH__VALID__RESPONSE__EXAMPLES_CONTENT_ARRAY
+        = path.join(__dirname, '../../../data/v2/response-valid-content-array.yaml');
 
 describe('Main-module, for v2 should', () => {
     describe('recognize', () => {
@@ -419,6 +422,19 @@ describe('Main-module, for v2 should', () => {
                 { allPropertiesRequired: true }
             );
             preparedOpenapi.should.deep.equal(loadTestData('v2/valid-with-all-properties-required'));
+        });
+    });
+    describe('handle elements named "content" which are Arrays', function() {
+        it('should validate successfully', async function() {
+            const { valid, statistics } = structuredClone(
+                await validateFile(FILE_PATH__VALID__RESPONSE__EXAMPLES_CONTENT_ARRAY)
+            );
+            valid.should.equal(true);
+            statistics.should.deep.equal({
+                schemasWithExamples: 1,
+                examplesWithoutSchema: 0,
+                examplesTotal: 1
+            });
         });
     });
 });

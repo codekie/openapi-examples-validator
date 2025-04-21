@@ -80,7 +80,9 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
         = path.join(__dirname, '../../../data/v3/simple-api-with-examples-exclusive-minimum-invalid.json'),
     FILE_PATH__EXAMPLE_NAMES_TO_BE_ESCAPED
         = path.join(__dirname, '../../../data/v3/simple-api-with-example-names-to-be-escaped.json'),
-    FILE_PATH__UNKNOWN_FORMATS = path.join(__dirname, '../../../data/v3/unknown-formats.json');
+    FILE_PATH__UNKNOWN_FORMATS = path.join(__dirname, '../../../data/v3/unknown-formats.json'),
+    FILE_PATH__VALID__RESPONSE__EXAMPLES_CONTENT_ARRAY
+        = path.join(__dirname, '../../../data/v3/response-valid-content-array.yaml');
 
 describe('Main-module, for v3 should', function() {
     describe('recognize', function() {
@@ -512,6 +514,19 @@ unknown format "country-code-2" ignored in schema at path "#/properties/country"
             (await validateFile(FILE_PATH__SCHEMA_WITH_NULL, {
                 noAdditionalProperties: true
             })).valid.should.equal(true);
+        });
+    });
+    describe('handle elements named "content" which are Arrays', function() {
+        it('should validate successfully', async function() {
+            const { valid, statistics } = structuredClone(
+                await validateFile(FILE_PATH__VALID__RESPONSE__EXAMPLES_CONTENT_ARRAY)
+            );
+            valid.should.equal(true);
+            statistics.should.deep.equal({
+                schemasWithExamples: 1,
+                examplesWithoutSchema: 0,
+                examplesTotal: 1
+            });
         });
     });
 });
