@@ -9,8 +9,9 @@ const cloneDeep = require('lodash.clonedeep'),
 
 // CONSTANTS
 
-const RESPONSES = '$..responses..content[?(@property.match(/[\/+]json/))]';
-const REQUEST = '$..requestBody.content[?(@property.match(/[\/+]json/))]';
+// eslint-disable-next-line max-len
+const RESPONSES = '$..responses..content[?(@property && typeof @property === "string" && @property.match(/[\/+]json/))]';
+const REQUEST = '$..requestBody.content[?(@property && typeof @property === "string" && @property.match(/[\/+]json/))]';
 const SINGLE_EXAMPLE = '.example';
 const MANY_EXAMPLES = '.examples.*.value';
 

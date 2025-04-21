@@ -8,7 +8,7 @@ const cloneDeep = require('lodash.clonedeep'),
 
 // CONSTANTS
 
-const PATH__EXAMPLES = '$..examples[?(@property.match(/[\/+]json/))]',
+const PATH__EXAMPLES = '$..examples[?(@property && typeof @property === "string" && @property.match(/[\/+]json/))]',
     PROP__SCHEMA = 'schema',
     PROP__EXAMPLES = 'examples';
 
