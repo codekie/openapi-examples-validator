@@ -111,6 +111,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          platforms: linux/amd64,linux/arm64/v8
           load: true
           file: ${{ env.PATH_DOCKERFILE }}
           tags: ${{ env.DOCKER_IMAGE_TEST }}
