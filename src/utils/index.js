@@ -1,5 +1,5 @@
 const path = require('path'),
-    refParser = require('json-schema-ref-parser');
+    refParser = require('@apidevtools/json-schema-ref-parser');
 
 module.exports = {
     createValidationResponse,

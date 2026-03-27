@@ -12,7 +12,7 @@ const
     glob = require('glob'),
     yaml = require('yaml'),
     { JSONPath: jsonPath } = require('jsonpath-plus'),
-    refParser = require('json-schema-ref-parser'),
+    refParser = require('@apidevtools/json-schema-ref-parser'),
     { createError } = require('errno').custom,
     ResultType = require('./const/result-type'),
     { getValidatorFactory, compileValidate } = require('./validator'),
