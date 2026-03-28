@@ -33,7 +33,8 @@ const BASE_CONFIG = {
 //                '*.es6',
 //                '*.babel'
 //            ],
-            exclude: 'node_modules/'
+            exclude: 'node_modules/',
+            configType: 'eslintrc'
         })
     ],
     // NodeJS options
