@@ -1,0 +1,90 @@
+const babelParser = require('@babel/eslint-parser');
+const globals = require('globals');
+
+module.exports = [
+    {
+        files: ['**/*.js'],
+        languageOptions: {
+            parser: babelParser,
+            parserOptions: {
+                requireConfigFile: true,
+                sourceType: 'module'
+            },
+            globals: {
+                ...globals.node,
+                ...globals.es2015,
+                ...globals.mocha
+            }
+        },
+        rules: {
+            'array-bracket-spacing': [2, 'never'],
+            'arrow-parens': 0,
+            'block-scoped-var': 0,
+            'brace-style': [2, '1tbs', { allowSingleLine: true }],
+            'camelcase': [2, { properties: 'always' }],
+            'comma-dangle': [2, 'never'],
+            'comma-spacing': [2, { before: false, after: true }],
+            'comma-style': [2, 'last'],
+            'complexity': [2, 7],
+            'curly': [2, 'all'],
+            'dot-notation': 2,
+            'eol-last': 2,
+            'eqeqeq': [2, 'always', { null: 'ignore' }],
+            'func-names': 0,
+            'func-style': [2, 'declaration'],
+            'generator-star-spacing': 0,
+            'guard-for-in': 2,
+            'indent': [2, 4, { SwitchCase: 1, ignoreComments: true }],
+            'key-spacing': [2, { beforeColon: false, afterColon: true, mode: 'minimum' }],
+            'keyword-spacing': [2, {
+                overrides: {
+                    else: { before: true },
+                    while: { before: true },
+                    catch: { before: true }
+                }
+            }],
+            'linebreak-style': [2, 'unix'],
+            'max-depth': [2, 4],
+            'max-len': [2, 120, { ignoreTrailingComments: true, ignoreUrls: true }],
+            'max-params': [2, 4],
+            'new-cap': [2, { capIsNewExceptions: [] }],
+            'no-bitwise': 2,
+            'no-caller': 2,
+            'no-else-return': 2,
+            'no-empty': 2,
+            'no-eq-null': 0,
+            'no-extra-semi': 2,
+            'no-irregular-whitespace': 2,
+            'no-mixed-spaces-and-tabs': 2,
+            'no-multi-str': 2,
+            'no-nested-ternary': 2,
+            'no-new': 2,
+            'no-new-func': 0,
+            'no-new-wrappers': 0,
+            'no-plusplus': 0,
+            'no-restricted-syntax': 0,
+            'no-sequences': 2,
+            'no-spaced-func': 2,
+            'no-trailing-spaces': 2,
+            'no-undef': 2,
+            'no-unused-expressions': [2, { allowShortCircuit: true, allowTernary: false }],
+            'no-unused-vars': [2, { vars: 'all', args: 'after-used', caughtErrors: 'none' }],
+            'no-use-before-define': [2, { functions: false }],
+            'no-warning-comments': [2, { terms: ['2do'], location: 'anywhere' }],
+            'no-with': 2,
+            'object-curly-spacing': [2, 'always'],
+            'one-var': 0,
+            'operator-linebreak': [2, 'before'],
+            'padded-blocks': [2, 'never'],
+            'quotes': [2, 'single', { avoidEscape: true }],
+            'semi': [2, 'always'],
+            'semi-spacing': [2, { before: false, after: true }],
+            'space-before-blocks': [2, 'always'],
+            'space-before-function-paren': [2, 'never'],
+            'space-in-parens': [2, 'never'],
+            'space-unary-ops': [2, { words: false, nonwords: false }],
+            'strict': ['error', 'safe'],
+            'wrap-iife': [2, 'inside']
+        }
+    }
+];
