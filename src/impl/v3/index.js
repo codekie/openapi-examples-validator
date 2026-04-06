@@ -83,8 +83,9 @@ function buildValidationMap(pathsExamples) {
  * Pre-processes the OpenAPI-spec, for further use.
  * The passed spec won't be modified. If a modification happens, a modified copy will be returned.
  * @param {Object}  openapiSpec     The OpenAPI-spec as JSON-schema
- * @param {boolean} [noAdditionalProperties=false]  Don't allow properties that are not defined in the schema
- * @param {boolean} [allPropertiesRequired=false]   Make all properties required
+ * @param {Object}  options
+ * @param {boolean} [options.noAdditionalProperties=false] Don't allow properties that are not defined in the schema
+ * @param {boolean} [options.allPropertiesRequired=false] Make all properties required
  * @return {Object} The prepared OpenAPI-spec
  */
 function prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired } = {}) {

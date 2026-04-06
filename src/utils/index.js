@@ -8,8 +8,9 @@ module.exports = {
 
 /**
  * Creates a unified response for the validation-result
- * @param {Array.<ApplicationError>}    errors
- * @param {ValidationStatistics}        statistics
+ * @param {Object}                      options
+ * @param {Array.<ApplicationError>}    options.errors
+ * @param {ValidationStatistics}        [options.statistics]
  * @returns {ValidationResponse}
  * @private
  */
