@@ -12,18 +12,18 @@ const
 /**
  * ApplicationErrorOptions
  * @typedef {{
- *      [instancePath]: string,
- *      [examplePath]: string,
- *      [exampleFilePath]: string,
- *      [keyword]: string,
- *      [message]: string,
- *      [mapFilePath]: string,
- *      [params]: {
- *          [path]: string,
- *          [missingProperty]: string,
- *          [type]: string
+ *      instancePath?: string,
+ *      examplePath?: string,
+ *      exampleFilePath?: string,
+ *      keyword?: string,
+ *      message?: string,
+ *      mapFilePath?: string,
+ *      params?: {
+ *          path?: string,
+ *          missingProperty?: string,
+ *          type?: string
  *      },
- *      [schemaPath]: string
+ *      schemaPath?: string
  * }} ApplicationErrorOptions
  */
 

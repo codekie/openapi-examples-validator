@@ -35,8 +35,8 @@ const SYM__INTERNAL = Symbol('internal'),
  * ErrorJsonPathNotFound
  * @typedef {{
  *      cause: {
- *          [params]: {
- *              [path]: string
+ *          params?: {
+ *              path?: string
  *          }
  *      }
  * }} ErrorJsonPathNotFound
@@ -69,7 +69,7 @@ module.exports = {
  *      schemasWithExamples: number,
  *      examplesTotal: number,
  *      examplesWithoutSchema: number,
- *      [matchingFilePathsMapping]: number
+ *      matchingFilePathsMapping?: number
  * }} ValidationStatistics
  */
 
