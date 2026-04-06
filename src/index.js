@@ -495,7 +495,7 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFo
  * @param {string}                  options.schemaPointer     JSON-pointer to schema (for request- or response-property)
  * @param {Record<String, Set<String>>} options.validationMap Map with schema-pointers as key and example-pointers as
  *                                                            value
- * @param {Object}                  options.statistics        Object to contain statistics metrics
+ * @param {ValidationStatistics}    options.statistics        Object to contain statistics metrics
  * @param {Object}                  options.validationResult  Container, for the validation-results
  * @private
  */
@@ -568,7 +568,7 @@ function _getByPointer(pointer, json) {
  * @param {Function}    options.createValidator     Factory, to create JSON-schema validator
  * @param {Object}      options.schema              JSON-schema
  * @param {Object}      options.example             Example to validate
- * @param {Object}      options.statistics          Object to contain statistics metrics
+ * @param {ValidationStatistics} options.statistics Object to contain statistics metrics
  * @param {String}      [options.filePathExample]   File-path to the example file
  * @returns {Array.<Object>} Array with errors. Empty array, if examples are valid
  * @private
