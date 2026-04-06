@@ -102,7 +102,7 @@ function prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired } 
  * @param {String}  examplePointer JSON-pointer to example
  * @returns {{
  *     exampleType: typeof ExampleType[keyof typeof ExampleType],
- *     pathSchema: String
+ *     pathSchemaAsArray: Array<String>
  * }} JSON-path to the corresponding response-schema
  * @private
  */
