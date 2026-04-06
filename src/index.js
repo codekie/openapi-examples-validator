@@ -100,7 +100,7 @@ module.exports = {
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
  *                                                  will be expanded to a new array containing all entries.
- * @returns {ValidationResponse}
+ * @returns {Promise<ValidationResponse>}
  */
 async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFormats, allPropertiesRequired } = {}) {
     const impl = Determiner.getImplementation(openapiSpec);
@@ -123,7 +123,7 @@ async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFor
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
  *                                                  will be expanded to a new array containing all entries.
- * @returns {ValidationResponse}
+ * @returns {Promise<ValidationResponse>}
  */
 async function validateFile(filePath, { noAdditionalProperties, ignoreFormats, allPropertiesRequired } = {}) {
     let openapiSpec = null;
@@ -151,7 +151,7 @@ async function validateFile(filePath, { noAdditionalProperties, ignoreFormats, a
  *                                              "unsupported format" errors). If an Array with only one string is
  *                                              provided where the formats are separated with `\n`, the entries
  *                                              will be expanded to a new array containing all entries.
- * @returns {ValidationResponse}
+ * @returns {Promise<ValidationResponse>}
  */
 async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
     { cwdToMappingFile, noAdditionalProperties, ignoreFormats, allPropertiesRequired } = {}
@@ -221,7 +221,7 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
  *                                                  "unsupported format" errors). If an Array with only one string is
  *                                                  provided where the formats are separated with `\n`, the entries
  *                                                  will be expanded to a new array containing all entries.
- * @returns {ValidationResponse}
+ * @returns {Promise<ValidationResponse>}
  */
 async function validateExample(filePathSchema, pathSchema, filePathExample, {
     noAdditionalProperties,
@@ -256,7 +256,7 @@ async function validateExample(filePathSchema, pathSchema, filePathExample, {
 /**
  * Parses the OpenAPI-spec (supports JSON and YAML)
  * @param {String}  filePath    File-path to the OpenAPI-spec
- * @returns {object}    Parsed OpenAPI-spec
+ * @returns {Promise<object>}   Parsed OpenAPI-spec
  * @private
  */
 async function _parseSpec(filePath) {
