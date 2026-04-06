@@ -117,6 +117,10 @@ function _excludeExamples(openApiSpec, paths, examplePaths) {
         });
 }
 
+/**
+ * @param {string} path
+ * @returns {boolean | undefined}
+ */
 function _isPropertiesDefinition(path) {
     // Path has to end with `properties`
     if (!path.match(/\['properties']$/)) { return; }
@@ -125,6 +129,10 @@ function _isPropertiesDefinition(path) {
     return !consecutiveMatch || consecutiveMatch.length % 2 !== 0;
 }
 
+/**
+ * @param {any} entity
+ * @returns {boolean}
+ */
 function _isObjectDefinition(entity) {
     return entity && (entity.type === 'object' || entity.properties);
 }

@@ -5,6 +5,8 @@
  * Command Line Interface for the validator
  */
 
+/** @import { ValidationResponse, ValidationStatistics } from '.' */
+
 const
     VERSION = require('../package.json').version,
     program = require('commander'),
@@ -43,6 +45,17 @@ module.exports = program.parseAsync(process.argv);
 
 // IMPLEMENTATION DETAILS
 
+/**
+ * @param {string} filepath
+ * @param {Object} options
+ * @param {string} [options.schemaJsonpath]
+ * @param {string} [options.exampleFilepath]
+ * @param {string} [options.mappingFilepath]
+ * @param {boolean} [options.cwdToMappingFile]
+ * @param {boolean} [options.allPropertiesRequired]
+ * @param {boolean} [options.additionalProperties]
+ * @param {Array<string>} [options.ignoreFormats]
+ */
 async function processAction(filepath, options) {
     const { schemaJsonpath, exampleFilepath, mappingFilepath, cwdToMappingFile, allPropertiesRequired } = options,
         noAdditionalProperties = !options.additionalProperties,
@@ -74,6 +87,9 @@ async function processAction(filepath, options) {
     _handleResult(result);
 }
 
+/**
+ * @param {ValidationResponse} result
+ */
 function _handleResult(result) {
     const noExit = ENV_TEST;
     _printStatistics(result.statistics);
@@ -87,6 +103,9 @@ function _handleResult(result) {
     !noExit && process.exit(1);
 }
 
+/**
+ * @param {ValidationStatistics} statistics
+ */
 function _printStatistics(statistics) {
     const {
             schemasWithExamples,
@@ -105,6 +124,9 @@ function _printStatistics(statistics) {
     process.stdout.write(`${ strStatistics.join('\n') }\n`);
 }
 
+/**
+ * @param {Array<string> | undefined} ignoreFormats
+ */
 function _prepareIgnoreFormats(ignoreFormats) {
     if (ignoreFormats == null || !Array.isArray(ignoreFormats)) { return ignoreFormats; }
     if (ignoreFormats.length !== 1) { return ignoreFormats; }

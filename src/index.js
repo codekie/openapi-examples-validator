@@ -604,6 +604,9 @@ function _validateExample({ createValidator, schema, example, statistics, filePa
 
 /**
  * Create a new instance of a JSON schema validator
+ * @param {Object} specSchema
+ * @param {Object} options
+ * @param {Array<string>} [options.ignoreFormats]
  * @returns {function(): Ajv}
  * @private
  */
@@ -639,6 +642,9 @@ function _extractSchema(schemaPointer, openapiSpec, suppressErrorIfNotFound = fa
     return schema;
 }
 
+/**
+ * @param {string} schemaPointer
+ */
 function _pathToSchemaNotFoundError(schemaPointer) {
     throw new ErrorJsonPathNotFound(`Path to schema can't be found: '${schemaPointer}'`, {
         params: {
