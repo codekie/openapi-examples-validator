@@ -418,7 +418,7 @@ function _pathToPointer(path, openapiSpec) {
 }
 /**
  * Extract JSON-pointer(s) for specific path from a OpenAPI-spec
- * @param {String}  path  JSON-path in the OpenAPI-Spec
+ * @param {String}  pathSchema  JSON-path in the OpenAPI-Spec
  * @param {Object}  openapiSpec         OpenAPI-spec
  * @returns {String} JSON-pointer to schema or throws error
  * @private
