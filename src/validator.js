@@ -2,10 +2,12 @@
  * Wrapper for the JSONSchema-validator
  */
 
+/** @import * as ajv from 'ajv-draft-04' */
+
 const { JSONPath: jsonPath } = require('jsonpath-plus'),
     JsonPointer = require('json-pointer'),
-    Ajv = require('ajv-draft-04'),
-    addFormats = require('ajv-formats');
+    { default: Ajv } = require('ajv-draft-04'),
+    { default: addFormats } = require('ajv-formats');
 
 const PROP__ID = '$id',
     JSON_PATH__REFS = '$..\$ref',
@@ -20,8 +22,8 @@ module.exports = {
 /**
  * Get a factory-function to create a prepared validator-instance
  * @param {Object}  specSchema  OpenAPI-spec of which potential local references will be extracted
- * @param {Object}  [options]   Options for the validator
- * @returns {function(): (ajv | ajv.Ajv)}
+ * @param {ajv.Options} [options] Options for the validator
+ * @returns {function(): Ajv}
  */
 function getValidatorFactory(specSchema, options) {
     const preparedSpecSchema = _createReferenceSchema(specSchema);
@@ -37,7 +39,7 @@ function getValidatorFactory(specSchema, options) {
 
 /**
  * Compiles the validator-function.
- * @param {ajv | ajv.Ajv}   validator       Validator-instance
+ * @param {Ajv}             validator       Validator-instance
  * @param {Object}          responseSchema  The response-schema, against the examples will be validated
  * @returns {ajv.ValidateFunction}
  */

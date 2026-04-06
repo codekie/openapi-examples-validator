@@ -2,6 +2,8 @@
  * Entry-point for the validator-API
  */
 
+/** @import Ajv from 'ajv-draft-04' */
+
 const
     merge = require('lodash.merge'),
     flatten = require('lodash.flatten'),
@@ -488,7 +490,7 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFo
  * Validates a single schema.
  * @param {Object}                  options
  * @param {Object}                  options.openapiSpec       OpenAPI-spec
- * @param {ajv}                     options.createValidator   Factory, to create JSON-schema validator
+ * @param {function(): Ajv}         options.createValidator   Factory, to create JSON-schema validator
  * @param {string}                  options.schemaPointer     JSON-pointer to schema (for request- or response-property)
  * @param {Object.<String, String>} options.validationMap Map with schema-pointers as key and example-pointers as value
  * @param {Object}                  options.statistics        Object to contain statistics metrics
@@ -595,7 +597,7 @@ function _validateExample({ createValidator, schema, example, statistics, filePa
 
 /**
  * Create a new instance of a JSON schema validator
- * @returns {ajv}
+ * @returns {function(): Ajv}
  * @private
  */
 function _initValidatorFactory(specSchema, { ignoreFormats }) {
@@ -607,7 +609,7 @@ function _initValidatorFactory(specSchema, { ignoreFormats }) {
         formats: ignoreFormats && ignoreFormats.reduce((result, entry) => {
             result[entry] = () => true;
             return result;
-        }, {})
+        }, /** @type {Record<string, () => boolean>} */ ({}))
     });
 }
 
