@@ -70,6 +70,9 @@ module.exports = {
 /**
  * ValidationStatistics
  * @typedef {{
+ *      [SYM__INTERNAL]: {
+ *          [PROP__SCHEMAS_WITH_EXAMPLES]: Set<Object>
+ *      },
  *      schemasWithExamples: number,
  *      examplesTotal: number,
  *      examplesWithoutSchema: number,
@@ -539,12 +542,11 @@ function _initStatistics() {
             [PROP__SCHEMAS_WITH_EXAMPLES]: new Set()
         },
         examplesTotal: 0,
-        examplesWithoutSchema: 0
+        examplesWithoutSchema: 0,
+        get [PROP__SCHEMAS_WITH_EXAMPLES]() {
+            return statistics[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES].size;
+        }
     };
-    Object.defineProperty(statistics, PROP__SCHEMAS_WITH_EXAMPLES, {
-        enumerable: true,
-        get: () => statistics[SYM__INTERNAL][PROP__SCHEMAS_WITH_EXAMPLES].size
-    });
     return statistics;
 }
 

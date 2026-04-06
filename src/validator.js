@@ -65,9 +65,7 @@ function compileValidate(validator, responseSchema) {
  * @private
  */
 function _prepareResponseSchema(specSchema, idSchema) {
-    const preparedSchema = Object.assign({}, specSchema);
-    preparedSchema[PROP__ID] = idSchema;
-    return preparedSchema;
+    return { ...specSchema, [PROP__ID]: idSchema };
 }
 
 /**
