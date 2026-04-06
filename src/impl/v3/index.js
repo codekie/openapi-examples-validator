@@ -25,10 +25,10 @@ const PATH__EXAMPLE = `${RESPONSES}${SINGLE_EXAMPLE}`,
     PROP__EXAMPLE = 'example',
     PROP__EXAMPLES = 'examples';
 
-const ExampleType = {
+const ExampleType = /** @type {const} */ ({
     single: 'single',
     multi: 'multi'
-};
+});
 
 // PUBLIC API
 
@@ -101,7 +101,7 @@ function prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired } 
  * It is assumed that the JSON-pointer to the example is valid and existing.
  * @param {String}  examplePointer JSON-pointer to example
  * @returns {{
- *     exampleType: ExampleType,
+ *     exampleType: typeof ExampleType[keyof typeof ExampleType],
  *     pathSchema: String
  * }} JSON-path to the corresponding response-schema
  * @private
@@ -109,7 +109,6 @@ function prepare(openapiSpec, { noAdditionalProperties, allPropertiesRequired } 
 function _getSchemaPointerOfExample(examplePointer) {
     const pathSegs = examplePointer.split('/'),
         idxExample = pathSegs.lastIndexOf(PROP__EXAMPLE),
-        /** @type ExampleType */
         exampleType = idxExample > -1
             ? ExampleType.single
             : ExampleType.multi,
