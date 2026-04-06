@@ -1,3 +1,6 @@
+/** @import { ApplicationError } from "../application-error" */
+/** @import { ValidationResponse, ValidationStatistics } from ".." */
+
 const path = require('path'),
     refParser = require('@apidevtools/json-schema-ref-parser');
 

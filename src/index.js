@@ -3,6 +3,7 @@
  */
 
 /** @import Ajv from 'ajv-draft-04' */
+/** @import { CustomError } from './application-error' */
 
 const
     merge = require('lodash.merge'),
