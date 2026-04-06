@@ -493,7 +493,8 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFo
  * @param {Object}                  options.openapiSpec       OpenAPI-spec
  * @param {function(): Ajv}         options.createValidator   Factory, to create JSON-schema validator
  * @param {string}                  options.schemaPointer     JSON-pointer to schema (for request- or response-property)
- * @param {Object.<String, String>} options.validationMap Map with schema-pointers as key and example-pointers as value
+ * @param {Record<String, Set<String>>} options.validationMap Map with schema-pointers as key and example-pointers as
+ *                                                            value
  * @param {Object}                  options.statistics        Object to contain statistics metrics
  * @param {Object}                  options.validationResult  Container, for the validation-results
  * @private

@@ -33,7 +33,7 @@ function getJsonPathsToExamples() { return [PATH__EXAMPLES]; }
  * The pointer of the schema is derived from the pointer to the example and doesn't necessarily mean
  * that the schema actually exists.
  * @param {Array.<String>}  pathsExamples   Paths to the examples
- * @returns {Object.<String, String>} Map with schema-pointers as key and example-pointers as value
+ * @returns {Record<String, Set<String>>} Map with schema-pointers as key and example-pointers as value
  * @private
  */
 function buildValidationMap(pathsExamples) {
@@ -42,7 +42,7 @@ function buildValidationMap(pathsExamples) {
         validationMap[pathSchema] = (validationMap[pathSchema] || new Set())
             .add(pathExample);
         return validationMap;
-    }, {});
+    }, /** @type {Record<String, Set<String>>} */ ({}));
 }
 
 /**
