@@ -3,6 +3,7 @@
   "version": "7.0.0",
   "description": "Validates embedded examples in OpenAPI-JSONs",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "engines": {
     "node": ">=20"
   },
@@ -16,9 +17,10 @@
   },
   "scripts": {
     "start-dev": "babel-node src/cli",
-    "build": "npm run build:clean && npm run build:webpack",
+    "build": "npm run build:clean && npm run build:webpack && npm run build:types",
     "build:clean": "rimraf dist",
     "build:webpack": "webpack --bail --progress --profile --mode production --config ./webpack/config.babel.js",
+    "build:types": "tsc -p tsconfig.json --noCheck",
     "coverage": "rimraf ./coverage && nyc --reporter=lcov --reporter=text -x \"dist/**/*\" -x \"test/**/*.js\" npm test",
     "test": "npm run build && npm run test:mocha",
     "test-mutations": "stryker run",
@@ -53,6 +55,13 @@
     "@babel/register": "^7.28.6",
     "@stryker-mutator/core": "^9.6.0",
     "@stryker-mutator/mocha-runner": "^9.6.0",
+    "@types/glob": "^8.1.0",
+    "@types/json-pointer": "^1.0.34",
+    "@types/lodash.clonedeep": "^4.5.9",
+    "@types/lodash.flatmap": "^4.5.9",
+    "@types/lodash.flatten": "^4.4.9",
+    "@types/lodash.merge": "^4.6.9",
+    "@types/node": "*",
     "babel-loader": "^10.1.1",
     "chai": "^4.5.0",
     "chai-string": "^1.6.0",
@@ -66,6 +75,7 @@
     "nyc": "^17.1.0",
     "rimraf": "^6.1.3",
     "standard-version": "^9.5.0",
+    "typescript": "^6.0.2",
     "webpack": "^5.105.4",
     "webpack-cli": "^6.0.1"
   },
