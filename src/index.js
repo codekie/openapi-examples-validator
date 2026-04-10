@@ -113,7 +113,7 @@ async function validateExamples(openapiSpec, { noAdditionalProperties, ignoreFor
     let pathsExamples = impl.getJsonPathsToExamples()
         .reduce((res, pathToExamples) => {
             return res.concat(_pathToPointer(pathToExamples, openapiSpec));
-        }, []);
+        }, /** @type {Array<string>} */ ([]));
     return _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFormats });
 }
 
@@ -208,7 +208,7 @@ async function validateExamplesByMap(filePathSchema, globMapExternalExamples,
                 return response;
             }
             return _mergeValidationResponses(res, response);
-        }, null),
+        }, /** @type {ValidationResponse | null} */ (null)),
         { statistics: { matchingFilePathsMapping } }
     );
 }
