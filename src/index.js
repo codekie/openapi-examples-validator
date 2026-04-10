@@ -566,7 +566,7 @@ function _getByPointer(pointer, json) {
  * itself
  * @param {Object}      options
  * @param {Function}    options.createValidator     Factory, to create JSON-schema validator
- * @param {Object}      options.schema              JSON-schema
+ * @param {Object | Object[] | null | undefined} options.schema JSON-schema
  * @param {Object | undefined} options.example      Example to validate
  * @param {ValidationStatistics} options.statistics Object to contain statistics metrics
  * @param {String}      [options.filePathExample]   File-path to the example file
