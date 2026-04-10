@@ -574,8 +574,8 @@ function _getByPointer(pointer, json) {
  * @private
  */
 function _validateExample({ createValidator, schema, example, statistics, filePathExample }) {
-    const
-        errors = [];
+    /** @type {Array<Object>} */
+    const errors = [];
     statistics.examplesTotal++;
     // No schema, no validation (Examples without schema are considered valid)
     if (!schema) {
