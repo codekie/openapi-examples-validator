@@ -455,13 +455,14 @@ function _getSchmaPointer(pathSchema, openapiSpec) {
  * @private
  */
 function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFormats }) {
-    const statistics = _initStatistics(),
-        validationResult = {
-            valid: true,
-            statistics,
-            errors: []
-        },
-        createValidator = _initValidatorFactory(openapiSpec, { ignoreFormats });
+    const statistics = _initStatistics();
+    /** @type {ValidationResponse} */
+    const validationResult = {
+        valid: true,
+        statistics,
+        errors: []
+    };
+    const createValidator = _initValidatorFactory(openapiSpec, { ignoreFormats });
     let validationMap;
     try {
         // Create mapping between JSON-schemas and examples
@@ -496,7 +497,7 @@ function _validateExamplesPaths({ impl }, pathsExamples, openapiSpec, { ignoreFo
  * @param {Record<String, Set<String>>} options.validationMap Map with schema-pointers as key and example-pointers as
  *                                                            value
  * @param {ValidationStatistics}    options.statistics        Object to contain statistics metrics
- * @param {Object}                  options.validationResult  Container, for the validation-results
+ * @param {ValidationResponse}      options.validationResult  Container, for the validation-results
  * @private
  */
 function _validateSchema({
