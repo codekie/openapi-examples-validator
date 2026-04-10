@@ -33,8 +33,8 @@ module.exports = {
 /**
  * Apply the input rule to all models of type object in the input openApiSpec
  * @param {Object}                 openApiSpec           The to-be-modified schema
- * @param {Array.<String>}         [examplePaths]        The paths to the examples, which's content must not be modified
- * @param {JsonPathMatchCallbackBuilder}  [matchCallbackBuilder]  Function to build a callback
+ * @param {Array.<String>}         examplePaths          The paths to the examples, which's content must not be modified
+ * @param {JsonPathMatchCallbackBuilder}  matchCallbackBuilder    Function to build a callback
  *                                                                that will be called on each match
  */
 function applyCallbackToAllObjectModels(openApiSpec, examplePaths, matchCallbackBuilder) {
