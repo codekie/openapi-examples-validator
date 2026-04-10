@@ -4,6 +4,7 @@
 
 /** @import Ajv from 'ajv-draft-04' */
 /** @import { CustomError } from './application-error' */
+/** @import { Implementation } from './impl' */
 
 const
     merge = require('lodash.merge'),
@@ -443,7 +444,8 @@ function _getSchmaPointer(pathSchema, openapiSpec) {
 
 /**
  * Validates examples at the given paths in the OpenAPI-spec.
- * @param {Object}          impl            Spec-dependant validator
+ * @param {Object}          impl
+ * @param {Implementation}  impl.impl       Spec-dependant validator
  * @param {Array.<String>}  pathsExamples   JSON-paths to examples
  * @param {Object}          openapiSpec     OpenAPI-spec
  * @param {Object}          options
