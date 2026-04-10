@@ -24,7 +24,7 @@ const BASE_CONFIG = {
         path: path.resolve(PROJECT_ROOT, 'dist'),
         filename: '[name].js',
         chunkFilename: '[name].js',
-        libraryTarget: 'commonjs2'
+        libraryTarget: 'commonjs-static'
     },
     plugins: [
         new ESLintPlugin({

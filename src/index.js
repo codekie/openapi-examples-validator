@@ -56,12 +56,11 @@ const ErrorJsonPathNotFound = createError(ErrorType.jsonPathNotFound);
 
 // PUBLIC API
 
-module.exports = {
-    'default': validateExamples,
-    validateFile,
-    validateExample,
-    validateExamplesByMap
-};
+exports.default = validateExamples;
+exports.validateExamples = validateExamples;
+exports.validateFile = validateFile;
+exports.validateExample = validateExample;
+exports.validateExamplesByMap = validateExamplesByMap;
 
 // IMPLEMENTATION DETAILS
 
