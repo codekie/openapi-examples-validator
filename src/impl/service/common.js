@@ -58,10 +58,32 @@ function applyCallbackToAllObjectModels(openApiSpec, examplePaths, matchCallback
 }
 
 /**
+ * @overload
  * Find matching elements in JSON.
  * @param {Object}                  json                JSON to be searched
  * @param {String}                  path                JSON-path to search
- * @param {String}                  [resultType="path"] Result-type of the query
+ * @param {"path"}                  [resultType="path"] Result-type of the query
+ * @param {JsonPathMatchCallback}   [callback]          Function to be called on a match
+ * @returns {Array<string>} Result of the query, depending on the `resultType`
+ * @private
+ */
+
+/**
+ * @overload
+ * Find matching elements in JSON.
+ * @param {Object}                  json                JSON to be searched
+ * @param {String}                  path                JSON-path to search
+ * @param {"value"}                 resultType          Result-type of the query
+ * @param {JsonPathMatchCallback}   [callback]          Function to be called on a match
+ * @returns {any} Result of the query, depending on the `resultType`
+ * @private
+ */
+
+/**
+ * Find matching elements in JSON.
+ * @param {Object}                  json                JSON to be searched
+ * @param {String}                  path                JSON-path to search
+ * @param {"path" | "value"}        [resultType="path"] Result-type of the query
  * @param {JsonPathMatchCallback}   [callback]          Function to be called on a match
  * @returns {any} Result of the query, depending on the `resultType`
  * @private
