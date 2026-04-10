@@ -549,7 +549,7 @@ function _initStatistics() {
  * Extract object by the given JSON-pointer
  * @param {String}      pointer JSON-pointer
  * @param {Object}      json JSON to extract the object(s) from
- * @returns {Object}    Extracted object
+ * @returns {Object | undefined} Extracted object
  */
 function _getByPointer(pointer, json) {
     try {
@@ -567,7 +567,7 @@ function _getByPointer(pointer, json) {
  * @param {Object}      options
  * @param {Function}    options.createValidator     Factory, to create JSON-schema validator
  * @param {Object}      options.schema              JSON-schema
- * @param {Object}      options.example             Example to validate
+ * @param {Object | undefined} options.example      Example to validate
  * @param {ValidationStatistics} options.statistics Object to contain statistics metrics
  * @param {String}      [options.filePathExample]   File-path to the example file
  * @returns {Array.<Object>} Array with errors. Empty array, if examples are valid
