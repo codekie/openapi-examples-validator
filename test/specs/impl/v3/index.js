@@ -29,6 +29,7 @@ const JSON_PATH__CONTEXT_MUTUALLY_EXCLUSIVE = '/paths/~1pets/get/responses/200/c
     REL_PATH__EXAMPLE_AND_EXAMPLES__SIMPLE = 'v3/simple-api-with-example-and-examples',
     REL_PATH__EXAMPLE_AND_EXAMPLES__MIME_COMPLEX = 'v3/simple-api-with-example-and-examples-mime-complex-invalid',
     REL_PATH__EXAMPLES__SIMPLE = 'v3/simple-api-with-examples',
+    REL_PATH__XQUIK_SEARCH_RESPONSE = 'v3/xquik-search-response-example',
     REL_PATH__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs',
     REL_PATH__EXAMPLES__INVALID__WITH_INTERNAL_REFS = 'v3/simple-api-with-examples-with-refs-invalid',
     FILE_PATH__EXAMPLE__WITH_ADDITIONAL_PROPERTIES__LIST
@@ -89,6 +90,9 @@ describe('Main-module, for v3 should', function() {
         describe('`example`-property', function() {
             it('valid single example', async function() {
                 (await validateExamples(loadTestData(REL_PATH__EXAMPLE__SIMPLE))).valid.should.equal(true);
+            });
+            it('valid Xquik search response example', async function() {
+                (await validateExamples(loadTestData(REL_PATH__XQUIK_SEARCH_RESPONSE))).valid.should.equal(true);
             });
             it('invalid example with internal refs', async function() {
                 (await validateExamples(loadTestData(REL_PATH__EXAMPLE__INVALID__WITH_INTERNAL_REFS)))
